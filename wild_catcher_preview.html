@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>野性捕捉大師 (Wild Catcher) - 2.5D 斜俯視寫實叢林與現地即時裝備進化</title>
+<title>野性捕捉大師 (Wild Catcher) - 寫實生動野生動物與現地即時裝備進化</title>
 <style>
   :root {
     --parchment: #F4ECD8;
@@ -251,10 +251,7 @@
     box-shadow: 0 0 8px #FFF;
   }
 
-  /* ========================================================
-     IN-FIELD SEAMLESS UPGRADE OVERLAY MODAL
-     (高價值獵物突破即時升級彈窗，免跳商店，5種武器流派與防具)
-     ======================================================== */
+  /* IN-FIELD UPGRADE OVERLAY MODAL */
   #field-upgrade-modal {
     position: absolute;
     inset: 0;
@@ -368,14 +365,14 @@
       <span style="font-size:22px;">🐼</span>
       <div>
         <div style="font-weight:900; font-size:14px; color:var(--brass-glow);">野性捕捉大師 (Wild Catcher: Jungle & Sky)</div>
-        <div style="font-size:10px; opacity:0.85;">2.5D 斜俯視角 · 寫實光影巨木 · 即時現地武器進化 (免跳商店)</div>
+        <div style="font-size:10px; opacity:0.85;">2.5D 斜俯視角 · 寫實解剖動物特徵 · 現地武器進化</div>
       </div>
     </div>
 
     <div class="nav-tabs">
-      <button class="nav-tab-btn active" onclick="switchView('topdown')">🌿 2.5D 斜俯視探索</button>
-      <button class="nav-tab-btn" onclick="openFieldUpgradeModal('manual')">⚡ 裝備現地進化選單</button>
-      <button class="nav-tab-btn" onclick="switchView('workshop')">🐼 經典黑白熊貓槍設計</button>
+      <button class="nav-tab-btn active" onclick="switchView('topdown')">🌿 2.5D 寫實神木叢林</button>
+      <button class="nav-tab-btn" onclick="openFieldUpgradeModal('manual')">⚡ 現地武器進化</button>
+      <button class="nav-tab-btn" onclick="switchView('workshop')">🐼 黑白熊貓槍藍圖</button>
       <button class="nav-tab-btn" onclick="switchView('journal')">📖 100種動物圖鑑</button>
     </div>
 
@@ -389,7 +386,7 @@
   <!-- Main Viewport Container -->
   <div id="main-viewport">
 
-    <!-- ==================== VIEW 1: 2.5D OBLIQUE JUNGLE EXPLORATION ==================== -->
+    <!-- ==================== VIEW 1: 2.5D JUNGLE EXPLORATION ==================== -->
     <div class="view-panel active" id="panel-topdown">
       <canvas id="jungle-topdown-canvas"></canvas>
 
@@ -410,7 +407,6 @@
             </button>
           </div>
 
-          <!-- Dynamic Cards Container (5 Weapons or Sub-branches) -->
           <div class="upgrade-cards-grid" id="upgrade-cards-container">
             <!-- Injected by JS -->
           </div>
@@ -441,11 +437,11 @@
           </div>
 
           <div style="background:rgba(14, 24, 18, 0.94); border:1.5px solid var(--brass); border-radius:10px; padding:8px 14px; color:#FFF; font-size:12px; max-width:380px;">
-            <div style="font-weight:bold; color:var(--brass-glow); margin-bottom:2px;">🎮 2.5D 操作與升級提示：</div>
+            <div style="font-weight:bold; color:var(--brass-glow); margin-bottom:2px;">🎮 操作與寫實生態提示：</div>
             <div style="line-height:1.5; color:#CFD8DC;">
               • <b>W / A / S / D</b>：自由奔跑探索（可見戴夫全身姿態）<br>
               • <b>滑鼠瞄準 + 左鍵</b>：發射泡泡網<br>
-              • 抓到高價值動物（如黑熊、穿山甲）將<b>自動觸發現地升級</b>！
+              • 寫實動物具備<b>解剖爪部、肌肉、耳朵白斑、雪白V領與展翼</b>！
             </div>
           </div>
         </div>
@@ -457,7 +453,6 @@
           <div style="font-size:10px; opacity:0.8;">緩速壓制 50%</div>
         </div>
 
-        <!-- Virtual D-pad -->
         <div class="virtual-dpad hud-interactive">
           <div class="dpad-btn" onmousedown="keys.up=true" onmouseup="keys.up=false" ontouchstart="keys.up=true" ontouchend="keys.up=false">▲</div>
           <div class="dpad-row">
@@ -561,10 +556,10 @@
   </div>
 
   <script>
-    const ALL_ANIMALS = [{"id": "formosan_black_bear", "name": "台灣黑熊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", "latin": "Ursus thibetanus formosanus", "status": "瀕危 (EN)", "badge": "danger", "habitat": "原始巨木森林深處", "desc": "胸前擁有醒目雪白V字斑紋，耳朵圓厚，步伐穩健沉著，在林下尋覓櫟樹橡實與野生蜂蜜。", "coins": 180, "color": "#1A1817"}, {"id": "leopard_cat", "name": "台灣石虎", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕˊ ㄏㄨˇ", "latin": "Prionailurus bengalensis chinensis", "status": "瀕危 (EN)", "badge": "danger", "habitat": "淺山灌木與草生地", "desc": "耳後有黑白分明斑塊，身上布滿錢幣般的豹紋，雙眼在林間閃爍警覺綠光，步履輕盈無聲。", "coins": 160, "color": "#C89658"}, {"id": "golden_snub_nosed_monkey", "name": "川金絲猴", "zhuyin": "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", "latin": "Rhinopithecus roxellana", "status": "珍貴 (VU)", "badge": "warning", "habitat": "高聳神木樹冠層", "desc": "淡天藍色面龐與靈動五官，身披金絲緞子般的柔順背毛，在巨大板根與巨木藤蔓間悠蕩。", "coins": 150, "color": "#FFB300"}, {"id": "crested_serpent_eagle", "name": "大冠鷲", "zhuyin": "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", "latin": "Spilornis cheela hoya", "status": "珍貴 (VU)", "badge": "warning", "habitat": "林冠開闊上空", "desc": "頭戴黑白相間威武羽冠，展翼盤旋在林冠上空，銳利鷹眼俯瞰林間地面蜥蜴與蛇類動靜。", "coins": 140, "color": "#5D4037"}, {"id": "emerald_tree_frog", "name": "翡翠樹蛙", "zhuyin": "ㄈㄟˇ ㄘㄨㄟˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus prasinatus", "status": "珍貴 (VU)", "badge": "warning", "habitat": "姑婆芋巨大葉片", "desc": "通體翠綠如上等翡翠玉，趾端圓潤肉質吸盤牢固吸附，皮膚濕潤晶亮，虹膜金黃璀璨。", "coins": 120, "color": "#00E676"}, {"id": "formosan_sika_deer", "name": "台灣梅花鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄟˊ ㄏㄨㄚ ㄌㄨˋ", "latin": "Cervus nippon taiouanus", "status": "一般 (LC)", "badge": "success", "habitat": "陽光林間草地", "desc": "紅褐色毛皮點綴著珍珠白梅花斑點，雄鹿長有高聳分叉角，邁著優雅細腿在草地上漫步。", "coins": 100, "color": "#A1623A"}, {"id": "pangolin", "name": "穿山甲", "zhuyin": "ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", "latin": "Manis pentadactyla", "status": "極危 (CR)", "badge": "danger", "habitat": "腐植土落葉堆", "desc": "身上緊密排列著如鎧甲般的角質硬鱗，長尾巴拖在身後，受驚時立即蜷縮成堅硬球體。", "coins": 200, "color": "#795548"}, {"id": "mikado_pheasant", "name": "黑長尾雉 (帝雉)", "zhuyin": "ㄉㄧˋ ㄓˋ", "latin": "Syrmaticus mikado", "status": "珍貴 (VU)", "badge": "warning", "habitat": "針闊葉林苔蘚步道", "desc": "深藍泛金屬紫羽衣，修長尾羽有黑白相間橫斑，宛如身穿華麗斗篷的高山黑武士。", "coins": 170, "color": "#1A237E"}, {"id": "swinhoes_pheasant", "name": "藍腹鷴", "zhuyin": "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", "latin": "Lophura swinhoii", "status": "珍貴 (VU)", "badge": "warning", "habitat": "原始林下落葉層", "desc": "雪白羽冠與背斑，藍寶石光澤身軀搭配鮮紅肉垂，步態優雅從容，為台灣特有雉類。", "coins": 150, "color": "#0D47A1"}, {"id": "taiwan_wild_boar", "name": "台灣野豬", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄧㄝˇ ㄓㄨ", "latin": "Sus scrofa taivanus", "status": "一般 (LC)", "badge": "success", "habitat": "深林泥浴草叢", "desc": "粗糙剛毛與厚實鼻吻，小豬身上有條紋，成豬用長吻拱土尋找植物塊莖與橡子。", "coins": 90, "color": "#4E342E"}, {"id": "species_11", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 80, "color": "#6D4C41"}, {"id": "species_12", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 95, "color": "#6D4C41"}, {"id": "species_13", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 110, "color": "#6D4C41"}, {"id": "species_14", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 125, "color": "#6D4C41"}, {"id": "species_15", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 140, "color": "#6D4C41"}, {"id": "species_16", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 155, "color": "#6D4C41"}, {"id": "species_17", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 170, "color": "#6D4C41"}, {"id": "species_18", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 185, "color": "#6D4C41"}, {"id": "species_19", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 80, "color": "#6D4C41"}, {"id": "species_20", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_21", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 110, "color": "#6D4C41"}, {"id": "species_22", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 125, "color": "#6D4C41"}, {"id": "species_23", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 140, "color": "#6D4C41"}, {"id": "species_24", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 155, "color": "#6D4C41"}, {"id": "species_25", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 170, "color": "#6D4C41"}, {"id": "species_26", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 185, "color": "#6D4C41"}, {"id": "species_27", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 80, "color": "#6D4C41"}, {"id": "species_28", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 95, "color": "#6D4C41"}, {"id": "species_29", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 110, "color": "#6D4C41"}, {"id": "species_30", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 125, "color": "#6D4C41"}, {"id": "species_31", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 140, "color": "#6D4C41"}, {"id": "species_32", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 155, "color": "#6D4C41"}, {"id": "species_33", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 170, "color": "#6D4C41"}, {"id": "species_34", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 185, "color": "#6D4C41"}, {"id": "species_35", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 80, "color": "#6D4C41"}, {"id": "species_36", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 95, "color": "#6D4C41"}, {"id": "species_37", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 110, "color": "#6D4C41"}, {"id": "species_38", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 125, "color": "#6D4C41"}, {"id": "species_39", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 140, "color": "#6D4C41"}, {"id": "species_40", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 155, "color": "#6D4C41"}, {"id": "species_41", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 170, "color": "#6D4C41"}, {"id": "species_42", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 185, "color": "#6D4C41"}, {"id": "species_43", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 80, "color": "#6D4C41"}, {"id": "species_44", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 95, "color": "#6D4C41"}, {"id": "species_45", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_46", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 125, "color": "#6D4C41"}, {"id": "species_47", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 140, "color": "#6D4C41"}, {"id": "species_48", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 155, "color": "#6D4C41"}, {"id": "species_49", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 170, "color": "#6D4C41"}, {"id": "species_50", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 185, "color": "#6D4C41"}, {"id": "species_51", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 80, "color": "#6D4C41"}, {"id": "species_52", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_53", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 110, "color": "#6D4C41"}, {"id": "species_54", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 125, "color": "#6D4C41"}, {"id": "species_55", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 140, "color": "#6D4C41"}, {"id": "species_56", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 155, "color": "#6D4C41"}, {"id": "species_57", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 170, "color": "#6D4C41"}, {"id": "species_58", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 185, "color": "#6D4C41"}, {"id": "species_59", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 80, "color": "#6D4C41"}, {"id": "species_60", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 95, "color": "#6D4C41"}, {"id": "species_61", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 110, "color": "#6D4C41"}, {"id": "species_62", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 125, "color": "#6D4C41"}, {"id": "species_63", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 140, "color": "#6D4C41"}, {"id": "species_64", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 155, "color": "#6D4C41"}, {"id": "species_65", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 170, "color": "#6D4C41"}, {"id": "species_66", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 185, "color": "#6D4C41"}, {"id": "species_67", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 80, "color": "#6D4C41"}, {"id": "species_68", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_69", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 110, "color": "#6D4C41"}, {"id": "species_70", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 125, "color": "#6D4C41"}, {"id": "species_71", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 140, "color": "#6D4C41"}, {"id": "species_72", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 155, "color": "#6D4C41"}, {"id": "species_73", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 170, "color": "#6D4C41"}, {"id": "species_74", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 185, "color": "#6D4C41"}, {"id": "species_75", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 80, "color": "#6D4C41"}, {"id": "species_76", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 95, "color": "#6D4C41"}, {"id": "species_77", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_78", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 125, "color": "#6D4C41"}, {"id": "species_79", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 140, "color": "#6D4C41"}, {"id": "species_80", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 155, "color": "#6D4C41"}, {"id": "species_81", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 170, "color": "#6D4C41"}, {"id": "species_82", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 185, "color": "#6D4C41"}, {"id": "species_83", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 80, "color": "#6D4C41"}, {"id": "species_84", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 95, "color": "#6D4C41"}, {"id": "species_85", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 110, "color": "#6D4C41"}, {"id": "species_86", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 125, "color": "#6D4C41"}, {"id": "species_87", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 140, "color": "#6D4C41"}, {"id": "species_88", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 155, "color": "#6D4C41"}, {"id": "species_89", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 170, "color": "#6D4C41"}, {"id": "species_90", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 185, "color": "#6D4C41"}, {"id": "species_91", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 80, "color": "#6D4C41"}, {"id": "species_92", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 95, "color": "#6D4C41"}, {"id": "species_93", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_94", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 125, "color": "#6D4C41"}, {"id": "species_95", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 140, "color": "#6D4C41"}, {"id": "species_96", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 155, "color": "#6D4C41"}, {"id": "species_97", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 170, "color": "#6D4C41"}, {"id": "species_98", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 185, "color": "#6D4C41"}, {"id": "species_99", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 80, "color": "#6D4C41"}, {"id": "species_100", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 95, "color": "#6D4C41"}];
+    const ALL_ANIMALS = [{"id": "formosan_black_bear", "name": "台灣黑熊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", "latin": "Ursus thibetanus formosanus", "status": "瀕危 (EN)", "badge": "danger", "habitat": "原始巨木森林深處", "desc": "胸前擁有醒目雪白V字斑紋，耳朵圓厚，步伐穩健沉著，在林下尋覓櫟樹橡實與野生蜂蜜。", "coins": 180, "color": "#1A1817"}, {"id": "leopard_cat", "name": "台灣石虎", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕˊ ㄏㄨˇ", "latin": "Prionailurus bengalensis chinensis", "status": "瀕危 (EN)", "badge": "danger", "habitat": "淺山灌木與草生地", "desc": "耳後有黑白分明斑塊，身上布滿錢幣般的豹紋，雙眼在林間閃爍警覺綠光，步履輕盈無聲。", "coins": 160, "color": "#C89658"}, {"id": "golden_snub_nosed_monkey", "name": "川金絲猴", "zhuyin": "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", "latin": "Rhinopithecus roxellana", "status": "珍貴 (VU)", "badge": "warning", "habitat": "高聳神木樹冠層", "desc": "淡天藍色面龐與靈動五官，身披金絲緞子般的柔順背毛，在巨大板根與巨木藤蔓間悠蕩。", "coins": 150, "color": "#FFB300"}, {"id": "crested_serpent_eagle", "name": "大冠鷲", "zhuyin": "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", "latin": "Spilornis cheela hoya", "status": "珍貴 (VU)", "badge": "warning", "habitat": "林冠開闊上空", "desc": "頭戴黑白相間威武羽冠，展翼盤旋在林冠上空，銳利鷹眼俯瞰林間地面蜥蜴與蛇類動靜。", "coins": 140, "color": "#5D4037"}, {"id": "emerald_tree_frog", "name": "翡翠樹蛙", "zhuyin": "ㄈㄟˇ ㄘㄨㄟˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus prasinatus", "status": "珍貴 (VU)", "badge": "warning", "habitat": "姑婆芋巨大葉片", "desc": "通體翠綠如上等翡翠玉，趾端圓潤肉質吸盤牢固吸附，皮膚濕潤晶亮，虹膜金黃璀璨。", "coins": 120, "color": "#00E676"}, {"id": "formosan_sika_deer", "name": "台灣梅花鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄟˊ ㄏㄨㄚ ㄌㄨˋ", "latin": "Cervus nippon taiouanus", "status": "一般 (LC)", "badge": "success", "habitat": "陽光林間草地", "desc": "紅褐色毛皮點綴著珍珠白梅花斑點，雄鹿長有高聳分叉角，邁著優雅細腿在草地上漫步。", "coins": 100, "color": "#A1623A"}, {"id": "pangolin", "name": "穿山甲", "zhuyin": "ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", "latin": "Manis pentadactyla", "status": "極危 (CR)", "badge": "danger", "habitat": "腐植土落葉堆", "desc": "身上緊密排列著如鎧甲般的角質硬鱗，長尾巴拖在身後，受驚時立即蜷縮成堅硬球體。", "coins": 200, "color": "#795548"}, {"id": "mikado_pheasant", "name": "黑長尾雉 (帝雉)", "zhuyin": "ㄉㄧˋ ㄓˋ", "latin": "Syrmaticus mikado", "status": "珍貴 (VU)", "badge": "warning", "habitat": "針闊葉林苔蘚步道", "desc": "深藍泛金屬紫羽衣，修長尾羽有黑白相間橫斑，宛如身穿華麗斗篷的高山黑武士。", "coins": 170, "color": "#1A237E"}, {"id": "swinhoes_pheasant", "name": "藍腹鷴", "zhuyin": "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", "latin": "Lophura swinhoii", "status": "珍貴 (VU)", "badge": "warning", "habitat": "原始林下落葉層", "desc": "雪白羽冠與背斑，藍寶石光澤身軀搭配鮮紅肉垂，步態優雅從容，為台灣特有雉類。", "coins": 150, "color": "#0D47A1"}, {"id": "taiwan_wild_boar", "name": "台灣野豬", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄧㄝˇ ㄓㄨ", "latin": "Sus scrofa taivanus", "status": "一般 (LC)", "badge": "success", "habitat": "深林泥浴草叢", "desc": "粗糙剛毛與厚實鼻吻，小豬身上有條紋，成豬用長吻拱土尋找植物塊莖與橡子。", "coins": 90, "color": "#4E342E"}, {"id": "species_11", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 80, "color": "#6D4C41"}, {"id": "species_12", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 95, "color": "#6D4C41"}, {"id": "species_13", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 110, "color": "#6D4C41"}, {"id": "species_14", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 125, "color": "#6D4C41"}, {"id": "species_15", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 140, "color": "#6D4C41"}, {"id": "species_16", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 155, "color": "#6D4C41"}, {"id": "species_17", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 170, "color": "#6D4C41"}, {"id": "species_18", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 185, "color": "#6D4C41"}, {"id": "species_19", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 80, "color": "#6D4C41"}, {"id": "species_20", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_21", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 110, "color": "#6D4C41"}, {"id": "species_22", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 125, "color": "#6D4C41"}, {"id": "species_23", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 140, "color": "#6D4C41"}, {"id": "species_24", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 155, "color": "#6D4C41"}, {"id": "species_25", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 170, "color": "#6D4C41"}, {"id": "species_26", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 185, "color": "#6D4C41"}, {"id": "species_27", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 80, "color": "#6D4C41"}, {"id": "species_28", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 95, "color": "#6D4C41"}, {"id": "species_29", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 110, "color": "#6D4C41"}, {"id": "species_30", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 125, "color": "#6D4C41"}, {"id": "species_31", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 140, "color": "#6D4C41"}, {"id": "species_32", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 155, "color": "#6D4C41"}, {"id": "species_33", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 170, "color": "#6D4C41"}, {"id": "species_34", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 185, "color": "#6D4C41"}, {"id": "species_35", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˋ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 80, "color": "#6D4C41"}, {"id": "species_36", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 95, "color": "#6D4C41"}, {"id": "species_37", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 110, "color": "#6D4C41"}, {"id": "species_38", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 125, "color": "#6D4C41"}, {"id": "species_39", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 140, "color": "#6D4C41"}, {"id": "species_40", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 155, "color": "#6D4C41"}, {"id": "species_41", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 170, "color": "#6D4C41"}, {"id": "species_42", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 185, "color": "#6D4C41"}, {"id": "species_43", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 80, "color": "#6D4C41"}, {"id": "species_44", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 95, "color": "#6D4C41"}, {"id": "species_45", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_46", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 125, "color": "#6D4C41"}, {"id": "species_47", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 140, "color": "#6D4C41"}, {"id": "species_48", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 155, "color": "#6D4C41"}, {"id": "species_49", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 170, "color": "#6D4C41"}, {"id": "species_50", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 185, "color": "#6D4C41"}, {"id": "species_51", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 80, "color": "#6D4C41"}, {"id": "species_52", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_53", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 110, "color": "#6D4C41"}, {"id": "species_54", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 125, "color": "#6D4C41"}, {"id": "species_55", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 140, "color": "#6D4C41"}, {"id": "species_56", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 155, "color": "#6D4C41"}, {"id": "species_57", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 170, "color": "#6D4C41"}, {"id": "species_58", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 185, "color": "#6D4C41"}, {"id": "species_59", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 80, "color": "#6D4C41"}, {"id": "species_60", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˋ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 95, "color": "#6D4C41"}, {"id": "species_61", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 110, "color": "#6D4C41"}, {"id": "species_62", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 125, "color": "#6D4C41"}, {"id": "species_63", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 140, "color": "#6D4C41"}, {"id": "species_64", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 155, "color": "#6D4C41"}, {"id": "species_65", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 170, "color": "#6D4C41"}, {"id": "species_66", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 185, "color": "#6D4C41"}, {"id": "species_67", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 80, "color": "#6D4C41"}, {"id": "species_68", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_69", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 110, "color": "#6D4C41"}, {"id": "species_70", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 125, "color": "#6D4C41"}, {"id": "species_71", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 140, "color": "#6D4C41"}, {"id": "species_72", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 155, "color": "#6D4C41"}, {"id": "species_73", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 170, "color": "#6D4C41"}, {"id": "species_74", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 185, "color": "#6D4C41"}, {"id": "species_75", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 80, "color": "#6D4C41"}, {"id": "species_76", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 95, "color": "#6D4C41"}, {"id": "species_77", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_78", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 125, "color": "#6D4C41"}, {"id": "species_79", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 140, "color": "#6D4C41"}, {"id": "species_80", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 155, "color": "#6D4C41"}, {"id": "species_81", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 170, "color": "#6D4C41"}, {"id": "species_82", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 185, "color": "#6D4C41"}, {"id": "species_83", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 80, "color": "#6D4C41"}, {"id": "species_84", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 95, "color": "#6D4C41"}, {"id": "species_85", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˋ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 110, "color": "#6D4C41"}, {"id": "species_86", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 125, "color": "#6D4C41"}, {"id": "species_87", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 140, "color": "#6D4C41"}, {"id": "species_88", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 155, "color": "#6D4C41"}, {"id": "species_89", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 170, "color": "#6D4C41"}, {"id": "species_90", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 185, "color": "#6D4C41"}, {"id": "species_91", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 80, "color": "#6D4C41"}, {"id": "species_92", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 95, "color": "#6D4C41"}, {"id": "species_93", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_94", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 125, "color": "#6D4C41"}, {"id": "species_95", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 140, "color": "#6D4C41"}, {"id": "species_96", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 155, "color": "#6D4C41"}, {"id": "species_97", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 170, "color": "#6D4C41"}, {"id": "species_98", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 185, "color": "#6D4C41"}, {"id": "species_99", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 80, "color": "#6D4C41"}, {"id": "species_100", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 95, "color": "#6D4C41"}];
   </script>
 
-  <!-- Game Engine with In-Field Upgrade System -->
+  <!-- Complete 2.5D Oblique Engine with Biologically Authentic Animal Drawing -->
   <script>
     let currentView = 'topdown';
 
@@ -592,103 +587,37 @@
       }, 50);
     }
 
-    // ========================================================
-    // 5 WEAPON PATHWAYS & IN-FIELD EVOLUTION DEFINITIONS
-    // ========================================================
+    // 5 Weapon Options
     const WEAPON_OPTIONS = [
-      {
-        id: 'sniper',
-        name: '黑白熊貓狙擊槍',
-        icon: '🔭',
-        tag: '射程 +80% · 高速貫穿',
-        desc: '超遠直線雷射光錐彈道，專為遠距離捕捉高空猛禽與機警獵物設計。',
-        color: '#00E5FF',
-        bulletSpeed: 24,
-        bubbleSize: 18,
-        spread: 1,
-        tier: 1
-      },
-      {
-        id: 'shotgun',
-        name: '竹香散射散彈槍',
-        icon: '🎋',
-        tag: '3重扇形網 · 範圍覆蓋',
-        desc: '一次噴射 3 道廣角竹香泡泡網，近身壓制力極強，群聚小動物專精。',
-        color: '#66BB6A',
-        bulletSpeed: 14,
-        bubbleSize: 17,
-        spread: 3,
-        tier: 1
-      },
-      {
-        id: 'smg',
-        name: '夢幻連發衝鋒槍',
-        icon: '🫧',
-        tag: '超高速連發 · 緩速強',
-        desc: '連續噴吐高頻氣泡彈，黏著度極高，快速累積束縛度，幼兒連點超爽快。',
-        color: '#FF80AB',
-        bulletSpeed: 16,
-        bubbleSize: 12,
-        spread: 1,
-        tier: 1
-      },
-      {
-        id: 'cannon',
-        name: '竹節電漿加農砲',
-        icon: '⚡',
-        tag: '超巨型泡泡 · 重砲牽引',
-        desc: '發射巨大直徑高張力泡泡網，直接完整包覆台灣黑熊、水鹿等大型猛獸。',
-        color: '#FFD54F',
-        bulletSpeed: 11,
-        bubbleSize: 34,
-        spread: 1,
-        tier: 1
-      },
-      {
-        id: 'homing',
-        name: '雙生紅熊貓追蹤槍',
-        icon: '🐾',
-        tag: '自動導引 · 幼兒防脫靶',
-        desc: '泡泡網具備微磁力追蹤軌跡，自動朝向最近動物拐彎追蹤，命中率 100%。',
-        color: '#FF7043',
-        bulletSpeed: 13,
-        bubbleSize: 18,
-        spread: 1,
-        isHoming: true,
-        tier: 1
-      }
+      { id: 'sniper', name: '黑白熊貓狙擊槍', icon: '🔭', tag: '射程 +80% · 高速貫穿', desc: '超遠直線雷射光錐彈道，專為遠距離捕捉高空猛禽與機警獵物設計。', color: '#00E5FF', bulletSpeed: 24, bubbleSize: 18, spread: 1 },
+      { id: 'shotgun', name: '竹香散射散彈槍', icon: '🎋', tag: '3重扇形網 · 範圍覆蓋', desc: '一次噴射 3 道廣角竹香泡泡網，近身壓制力極強，群聚小動物專精。', color: '#66BB6A', bulletSpeed: 14, bubbleSize: 17, spread: 3 },
+      { id: 'smg', name: '夢幻連發衝鋒槍', icon: '🫧', tag: '超高速連發 · 緩速強', desc: '連續噴吐高頻氣泡彈，黏著度極高，快速累積束縛度，幼兒連點超爽快。', color: '#FF80AB', bulletSpeed: 16, bubbleSize: 12, spread: 1 },
+      { id: 'cannon', name: '竹節電漿加農砲', icon: '⚡', tag: '超巨型泡泡 · 重砲牽引', desc: '發射巨大直徑高張力泡泡網，直接完整包覆台灣黑熊、水鹿等大型猛獸。', color: '#FFD54F', bulletSpeed: 11, bubbleSize: 34, spread: 1 },
+      { id: 'homing', name: '雙生紅熊貓追蹤槍', icon: '🐾', tag: '自動導引 · 幼兒防脫靶', desc: '泡泡網具備微磁力追蹤軌跡，自動朝向最近動物拐彎追蹤，命中率 100%。', color: '#FF7043', bulletSpeed: 13, bubbleSize: 18, spread: 1, isHoming: true }
     ];
 
-    // Player Equipment State
     const playerEquipment = {
-      currentWeapon: WEAPON_OPTIONS[2], // Starts with SMG
+      currentWeapon: WEAPON_OPTIONS[2],
       weaponLevel: 1,
       armorLevel: 1,
       totalCoins: 280,
       totalCatches: 0
     };
 
-    // ========================================================
-    // IN-FIELD UPGRADE MODAL CONTROLLER
-    // ========================================================
     function openFieldUpgradeModal(triggerType = 'auto') {
       const modal = document.getElementById('field-upgrade-modal');
       const container = document.getElementById('upgrade-cards-container');
       const subtitle = document.getElementById('upgrade-subtitle');
       document.getElementById('modal-coins-val').innerText = playerEquipment.totalCoins;
-
       container.innerHTML = '';
 
       if (triggerType === 'manual' || playerEquipment.totalCatches <= 1) {
-        // Present 5 Weapon Choices
         subtitle.innerText = '請選定您專屬的【熊貓捕捉槍五大流派】（選定後立即於手中實裝）：';
-
         WEAPON_OPTIONS.forEach(w => {
           const isCurrent = playerEquipment.currentWeapon.id === w.id;
           const card = document.createElement('div');
           card.className = 'upgrade-card' + (isCurrent ? ' selected' : '');
           card.onclick = () => selectWeaponUpgrade(w);
-
           card.innerHTML = `
             <div>
               <div style="font-size:28px; text-align:center; margin-bottom:6px;">${w.icon}</div>
@@ -705,33 +634,12 @@
           container.appendChild(card);
         });
       } else {
-        // Branching Evolutions (Weapon Tier 2 + Armor + Utility)
         subtitle.innerText = `【${playerEquipment.currentWeapon.name}】現地突破！請選擇進階分支強化：`;
-
         const branchCards = [
-          {
-            name: `${playerEquipment.currentWeapon.name} Mk-II`,
-            icon: '⚡',
-            tag: '彈速 +30% · 束縛力 +40%',
-            desc: `強化${playerEquipment.currentWeapon.name}的竹節導氣管，泡泡收緊速度大幅暴增！`,
-            action: () => boostCurrentWeapon()
-          },
-          {
-            name: '資深保育員機能背心 Mk-II',
-            icon: '🦺',
-            tag: '耐力 +50% · 掙脫抵抗',
-            desc: '強化防抓防咬皮革護甲，動物掙脫拉力增長速度減慢 35%。',
-            action: () => boostArmor()
-          },
-          {
-            name: '鮮竹筍安撫香氣擴散囊',
-            icon: '🎋',
-            tag: '甜點擴大 +45%',
-            desc: '釋放清甜天然竹香，QTE 綠色甜蜜點大幅放寬，幼兒捕捉更輕鬆！',
-            action: () => boostUtility()
-          }
+          { name: `${playerEquipment.currentWeapon.name} Mk-II`, icon: '⚡', tag: '彈速 +30% · 束縛力 +40%', desc: `強化${playerEquipment.currentWeapon.name}導氣管，泡泡收緊速度大幅暴增！`, action: () => boostCurrentWeapon() },
+          { name: '資深保育員機能背心 Mk-II', icon: '🦺', tag: '耐力 +50% · 掙脫抵抗', desc: '強化防抓防咬皮革護甲，動物掙脫拉力增長速度減慢 35%。', action: () => boostArmor() },
+          { name: '鮮竹筍安撫香氣擴散囊', icon: '🎋', tag: '甜點擴大 +45%', desc: '釋放清甜天然竹香，QTE 綠色甜蜜點大幅放寬，幼兒捕捉更輕鬆！', action: () => boostUtility() }
         ];
-
         branchCards.forEach(c => {
           const card = document.createElement('div');
           card.className = 'upgrade-card';
@@ -740,14 +648,10 @@
             <div>
               <div style="font-size:28px; text-align:center; margin-bottom:6px;">${c.icon}</div>
               <div style="font-weight:900; font-size:15px; color:#2E1D13; text-align:center;">${c.name}</div>
-              <div style="font-size:10px; background:#C8E6C9; color:#1B5E20; font-weight:bold; padding:2px 6px; border-radius:4px; text-align:center; margin:6px 0;">
-                ${c.tag}
-              </div>
+              <div style="font-size:10px; background:#C8E6C9; color:#1B5E20; font-weight:bold; padding:2px 6px; border-radius:4px; text-align:center; margin:6px 0;">${c.tag}</div>
               <div style="font-size:11px; color:#5D4037; line-height:1.4;">${c.desc}</div>
             </div>
-            <button style="margin-top:10px; background:#E65100; color:#FFF; border:none; padding:6px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">
-              立即強化 ⚡
-            </button>
+            <button style="margin-top:10px; background:#E65100; color:#FFF; border:none; padding:6px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">立即強化 ⚡</button>
           `;
           container.appendChild(card);
         });
@@ -771,21 +675,21 @@
       playerEquipment.weaponLevel++;
       playerEquipment.currentWeapon.bubbleSize = Math.floor(playerEquipment.currentWeapon.bubbleSize * 1.2);
       playerEquipment.currentWeapon.bulletSpeed = Math.floor(playerEquipment.currentWeapon.bulletSpeed * 1.25);
-      alert(`⚡ 武器已晉升為【${playerEquipment.currentWeapon.name} Mk-${playerEquipment.weaponLevel}】！\n彈速與泡泡收攏力顯著提升！`);
+      alert(`⚡ 武器已晉升為【${playerEquipment.currentWeapon.name} Mk-${playerEquipment.weaponLevel}】！`);
       playUpgradeCelebration();
       closeFieldUpgradeModal();
     }
 
     function boostArmor() {
       playerEquipment.armorLevel++;
-      alert('🦺 防具升級成功！機能防咬背心已生效，動物掙扎脫逃速度大幅減緩！');
+      alert('🦺 防具升級成功！機能防咬背心已生效！');
       playUpgradeCelebration();
       closeFieldUpgradeModal();
     }
 
     function boostUtility() {
       captureState.sweetWidth = Math.min(0.55, captureState.sweetWidth + 0.08);
-      alert('🎋 竹香擴散囊已生效！QTE 捕捉甜蜜區放寬 +45%！');
+      alert('🎋 竹香擴散囊已生效！QTE 甜蜜區放寬 +45%！');
       playUpgradeCelebration();
       closeFieldUpgradeModal();
     }
@@ -797,14 +701,12 @@
         const gain = ctx.createGain();
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.1); // E5
-        osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.2); // G5
-        osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.35); // C6
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.35);
         gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.4);
         osc.start();
-        osc.stop(ctx.currentTime + 0.45);
+        osc.stop(ctx.currentTime + 0.4);
       } catch (e) {}
     }
 
@@ -844,15 +746,16 @@
       if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = false;
     });
 
+    // 8 Biologically Authentic Animals Roaming in Jungle
     const roamingAnimals = [
-      { id: 'formosan_black_bear', name: '台灣黑熊', x: 880, y: 720, vx: 0.5, vy: 0.2, type: 'bear', radius: 46, facing: 1, coins: 180 },
-      { id: 'leopard_cat', name: '台灣石虎', x: 520, y: 440, vx: -0.7, vy: 0.4, type: 'cat', radius: 28, facing: -1, coins: 160 },
-      { id: 'emerald_tree_frog', name: '翡翠樹蛙', x: 680, y: 350, vx: 0.3, vy: -0.3, type: 'frog', radius: 24, facing: 1, coins: 120 },
-      { id: 'formosan_sika_deer', name: '梅花鹿', x: 1200, y: 620, vx: 0.6, vy: -0.2, type: 'deer', radius: 38, facing: 1, coins: 100 },
-      { id: 'pangolin', name: '穿山甲', x: 960, y: 920, vx: -0.3, vy: -0.3, type: 'pangolin', radius: 30, facing: -1, coins: 200 },
-      { id: 'crested_serpent_eagle', name: '大冠鷲', x: 800, y: 280, vx: 1.3, vy: 0.3, type: 'eagle', radius: 42, facing: 1, isFlying: true, coins: 140 },
-      { id: 'golden_snub_nosed_monkey', name: '川金絲猴', x: 1350, y: 450, vx: -0.6, vy: 0.5, type: 'monkey', radius: 32, facing: -1, coins: 150 },
-      { id: 'taiwan_wild_boar', name: '台灣野豬', x: 550, y: 1050, vx: 0.8, vy: 0.1, type: 'boar', radius: 36, facing: 1, coins: 90 }
+      { id: 'formosan_black_bear', name: '台灣黑熊', x: 880, y: 720, vx: 0.5, vy: 0.2, type: 'bear', radius: 52, facing: 1, coins: 180 },
+      { id: 'leopard_cat', name: '台灣石虎', x: 520, y: 440, vx: -0.7, vy: 0.4, type: 'cat', radius: 36, facing: -1, coins: 160 },
+      { id: 'emerald_tree_frog', name: '翡翠樹蛙', x: 680, y: 350, vx: 0.3, vy: -0.3, type: 'frog', radius: 28, facing: 1, coins: 120 },
+      { id: 'formosan_sika_deer', name: '梅花鹿', x: 1200, y: 620, vx: 0.6, vy: -0.2, type: 'deer', radius: 48, facing: 1, coins: 100 },
+      { id: 'pangolin', name: '穿山甲', x: 960, y: 920, vx: -0.3, vy: -0.3, type: 'pangolin', radius: 40, facing: -1, coins: 200 },
+      { id: 'crested_serpent_eagle', name: '大冠鷲', x: 800, y: 280, vx: 1.3, vy: 0.3, type: 'eagle', radius: 56, facing: 1, isFlying: true, coins: 140 },
+      { id: 'golden_snub_nosed_monkey', name: '川金絲猴', x: 1350, y: 450, vx: -0.6, vy: 0.5, type: 'monkey', radius: 38, facing: -1, coins: 150 },
+      { id: 'taiwan_wild_boar', name: '台灣野豬', x: 550, y: 1050, vx: 0.8, vy: 0.1, type: 'boar', radius: 44, facing: 1, coins: 90 }
     ];
 
     const bubbles = [];
@@ -881,7 +784,6 @@
       const spawnY = dave.y - 15 + Math.sin(dave.aimAngle) * 35;
 
       if (gun.spread === 3) {
-        // Shotgun 3-way spread
         [-0.25, 0, 0.25].forEach(offset => {
           bubbles.push({
             x: spawnX,
@@ -894,7 +796,6 @@
           });
         });
       } else {
-        // Single projectile or Homing
         bubbles.push({
           x: spawnX,
           y: spawnY,
@@ -932,7 +833,6 @@
       };
 
       canvas.onmousedown = (e) => {
-        // Do not fire if clicking inside modal
         if (document.getElementById('field-upgrade-modal').classList.contains('show')) return;
         handleFirePandaGun();
       };
@@ -941,7 +841,6 @@
       function loop() {
         animTime += 0.02;
 
-        // Dave Movement
         dave.vx = 0; dave.vy = 0;
         if (keys.up) dave.vy -= dave.speed;
         if (keys.down) dave.vy += dave.speed;
@@ -983,8 +882,6 @@
         // Bubbles update
         for (let i = bubbles.length - 1; i >= 0; i--) {
           const b = bubbles[i];
-          
-          // Homing behavior
           if (b.isHoming) {
             let closest = null; let minD = 400;
             roamingAnimals.forEach(a => {
@@ -1004,7 +901,7 @@
 
           roamingAnimals.forEach(a => {
             const dist = Math.hypot(b.x - a.x, b.y - a.y);
-            if (dist < a.radius + b.radius) {
+            if (dist < a.radius * 0.65 + b.radius) {
               triggerCapture(a);
               bubbles.splice(i, 1);
             }
@@ -1067,8 +964,6 @@
         captureState.active = false;
         document.getElementById('target-name-hud').innerText = '捕捉成功！繼續探索中';
 
-        // HIGH VALUE TRIGGER: If caught animal has value >= 140 (like Black Bear, Pangolin, Leopard Cat)
-        // Immediately popup the field upgrade modal without leaving the scene!
         if (caught.coins >= 140 || playerEquipment.totalCatches % 2 === 0) {
           setTimeout(() => {
             openFieldUpgradeModal('catch_milestone');
@@ -1084,7 +979,7 @@
     }
 
     // ========================================================
-    // PHOTOREALISTIC 2.5D SCENE RENDERER
+    // PHOTOREALISTIC 2.5D SCENE & ENTITY RENDERER
     // ========================================================
     function drawObliqueJungleScene(ctx, w, h, t) {
       ctx.clearRect(0, 0, w, h);
@@ -1092,7 +987,7 @@
       ctx.save();
       ctx.translate(-camera.x, -camera.y);
 
-      // Deep Rich Forest Soil & Moss
+      // Deep Soil & Moss
       ctx.fillStyle = '#1A291E';
       ctx.fillRect(0, 0, MAP_W, MAP_H);
 
@@ -1144,7 +1039,7 @@
 
       entities.forEach(ent => {
         if (ent.type === 'tree') draw25DAncientTree(ctx, ent.data, t);
-        else if (ent.type === 'animal') draw25DObliqueAnimal(ctx, ent.data, t);
+        else if (ent.type === 'animal') drawPhotorealisticAnimal(ctx, ent.data, t);
         else if (ent.type === 'player') draw25DObliqueDave(ctx, ent.data, t);
         else if (ent.type === 'bubble') drawBubbleNet(ctx, ent.data);
       });
@@ -1235,7 +1130,6 @@
       ctx.fillRect(-10, -18, 9, 14);
       ctx.fillRect(1, -18, 9, 14);
 
-      // Vest (Color shifts slightly if Armor upgraded)
       ctx.fillStyle = playerEquipment.armorLevel >= 2 ? '#1B5E20' : '#2E7D32';
       ctx.beginPath();
       ctx.roundRect(-14, -36 + walkBob, 28, 20, 8);
@@ -1266,12 +1160,11 @@
       ctx.fill();
       ctx.fillRect(-12, headY - 5, 24, 4);
 
-      // Handheld Weapon (Color & Form matches currentWeapon!)
+      // Handheld Weapon
       ctx.save();
       ctx.translate(0, -28 + walkBob);
       ctx.rotate(d.aimAngle);
 
-      // Sighting Beam matching weapon color
       const beamGrad = ctx.createRadialGradient(25, 0, 5, 260, 0, 130);
       beamGrad.addColorStop(0, playerEquipment.currentWeapon.color + '66');
       beamGrad.addColorStop(1, 'rgba(0, 229, 255, 0.0)');
@@ -1280,14 +1173,12 @@
       ctx.moveTo(25, -6); ctx.lineTo(260, -50); ctx.lineTo(260, 50); ctx.lineTo(25, 6);
       ctx.fill();
 
-      // Hands
       ctx.fillStyle = '#F5CBA7';
       ctx.beginPath();
       ctx.arc(10, -8, 4, 0, Math.PI * 2);
       ctx.arc(18, 5, 4, 0, Math.PI * 2);
       ctx.fill();
 
-      // Panda Gun Receiver
       ctx.fillStyle = '#F8F9FA';
       ctx.strokeStyle = '#18191A';
       ctx.lineWidth = 2;
@@ -1296,18 +1187,15 @@
       ctx.fill();
       ctx.stroke();
 
-      // Panda Ears Sight
       ctx.fillStyle = '#18191A';
       ctx.beginPath();
       ctx.arc(16, -9, 3.5, 0, Math.PI * 2);
       ctx.arc(26, -9, 3.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Weapon-Specific Barrel Accent
       ctx.fillStyle = playerEquipment.currentWeapon.color;
       ctx.fillRect(36, -4, 8, 8);
 
-      // Bamboo Green Shoot Magazine
       ctx.fillStyle = '#4CAF50';
       ctx.fillRect(14, 6, 8, 8);
 
@@ -1315,104 +1203,482 @@
       ctx.restore();
     }
 
-    function draw25DObliqueAnimal(ctx, a, t) {
+    // ========================================================
+    // BIOLOGICALLY AUTHENTIC ANIMAL RENDERERS
+    // (絕對告別幾何圓形！真材實料寫實解剖、四肢爪部、耳朵白斑、雪白V胸領、羽翼展翼)
+    // ========================================================
+    function drawPhotorealisticAnimal(ctx, a, t) {
       ctx.save();
       ctx.translate(a.x, a.y);
       ctx.scale(a.facing, 1);
 
-      const walkBob = Math.sin(t * 12) * 2;
-      const legBob = Math.sin(t * 10) * 4;
+      const walkBob = Math.sin(t * 11) * 2;
+      const legBob = Math.sin(t * 10) * 5;
 
-      // Shadow
+      // Realistic Cast Shadow on Jungle Floor
       ctx.beginPath();
-      ctx.ellipse(0, 8, a.radius * 0.95, a.radius * 0.45, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.38)';
+      ctx.ellipse(0, 10, a.radius * 0.9, a.radius * 0.45, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.42)';
       ctx.fill();
 
       if (a.type === 'bear') {
-        // Bear
-        ctx.fillStyle = '#111';
+        // ===================================================
+        // 🐻 台灣黑熊 (Formosan Black Bear) - 寫實黑毛體態、厚掌爪趾、胸前雪白V領
+        // ===================================================
+        // 1. Muscular Legs with Detailed Paw Pads & Claws
+        ctx.fillStyle = '#121211';
+        // Back Left Leg
         ctx.beginPath();
-        ctx.ellipse(-14, 6 + legBob, 8, 5, 0, 0, Math.PI * 2);
-        ctx.ellipse(14, 6 - legBob, 8, 5, 0, 0, Math.PI * 2);
+        ctx.moveTo(-18, -6);
+        ctx.quadraticCurveTo(-26, 10 + legBob, -20, 16 + legBob);
+        ctx.lineTo(-12, 16 + legBob);
+        ctx.lineTo(-8, 2);
+        ctx.fill();
+        // Front Left Leg
+        ctx.beginPath();
+        ctx.moveTo(14, -8);
+        ctx.quadraticCurveTo(22, 10 - legBob, 20, 16 - legBob);
+        ctx.lineTo(26, 16 - legBob);
+        ctx.lineTo(22, 0);
+        ctx.fill();
+        // Claws on paws
+        ctx.fillStyle = '#D7CCC8';
+        ctx.fillRect(-22, 14 + legBob, 3, 3); ctx.fillRect(-17, 15 + legBob, 3, 3);
+        ctx.fillRect(18, 14 - legBob, 3, 3); ctx.fillRect(23, 15 - legBob, 3, 3);
+
+        // 2. Muscular Bear Body (Shoulder Hump & Flank Contours)
+        const bearGrad = ctx.createRadialGradient(8, -18 + walkBob, 6, 0, -10 + walkBob, 38);
+        bearGrad.addColorStop(0, '#2D2926');
+        bearGrad.addColorStop(0.5, '#1C1A18');
+        bearGrad.addColorStop(1, '#0C0B0A');
+        ctx.fillStyle = bearGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(18, -26 + walkBob);
+        ctx.quadraticCurveTo(12, -34 + walkBob, -4, -30 + walkBob); // Shoulder Hump
+        ctx.quadraticCurveTo(-22, -26 + walkBob, -28, -12 + walkBob); // Sloping Back
+        ctx.quadraticCurveTo(-34, 0 + walkBob, -24, 8 + walkBob); // Rump
+        ctx.quadraticCurveTo(-10, 12 + walkBob, 6, 6 + walkBob); // Belly
+        ctx.quadraticCurveTo(24, 4 + walkBob, 28, -12 + walkBob); // Chest
+        ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = '#1C1A19';
+        // 3. Iconic Pure White "V" Crescent Fur Mark on Chest
+        ctx.fillStyle = '#FAF9F6';
         ctx.beginPath();
-        ctx.ellipse(0, -12 + walkBob, 28, 22, 0, 0, Math.PI * 2);
+        ctx.moveTo(14, -18 + walkBob);
+        ctx.lineTo(24, -6 + walkBob);
+        ctx.lineTo(32, -16 + walkBob);
+        ctx.lineTo(28, -18 + walkBob);
+        ctx.lineTo(24, -10 + walkBob);
+        ctx.lineTo(18, -19 + walkBob);
+        ctx.closePath();
         ctx.fill();
 
-        ctx.strokeStyle = '#F5F5F0';
-        ctx.lineWidth = 4.5;
+        // 4. Detailed Bear Head, Snout, Furry Ears & Eyes
+        ctx.fillStyle = '#1C1A18';
         ctx.beginPath();
-        ctx.moveTo(0, -18 + walkBob); ctx.lineTo(8, -8 + walkBob); ctx.lineTo(16, -18 + walkBob);
-        ctx.stroke();
-
-        ctx.fillStyle = '#22201E';
-        ctx.beginPath();
-        ctx.arc(18, -22 + walkBob, 14, 0, Math.PI * 2);
+        ctx.moveTo(22, -22 + walkBob);
+        ctx.quadraticCurveTo(26, -32 + walkBob, 36, -26 + walkBob);
+        ctx.lineTo(44, -18 + walkBob);
+        ctx.lineTo(34, -12 + walkBob);
+        ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = '#111';
+        // Rounded cupped ears with tan inner fur
+        ctx.fillStyle = '#121211';
         ctx.beginPath();
-        ctx.arc(12, -34 + walkBob, 6, 0, Math.PI * 2);
-        ctx.arc(26, -34 + walkBob, 6, 0, Math.PI * 2);
+        ctx.arc(26, -34 + walkBob, 6.5, 0, Math.PI * 2);
+        ctx.arc(38, -32 + walkBob, 6.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#8D6E63';
+        ctx.beginPath();
+        ctx.arc(26, -34 + walkBob, 3.5, 0, Math.PI * 2);
+        ctx.arc(38, -32 + walkBob, 3.5, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#BCAAA4';
+        // Leather-textured Muzzle & Wet Black Nose
+        ctx.fillStyle = '#A1887F';
         ctx.beginPath();
-        ctx.ellipse(28, -20 + walkBob, 7, 5, 0, 0, Math.PI * 2);
+        ctx.ellipse(40, -18 + walkBob, 8, 5.5, 0.2, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#050505';
         ctx.beginPath();
-        ctx.ellipse(32, -21 + walkBob, 3.5, 2.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (a.type === 'cat') {
-        // Leopard Cat
-        ctx.fillStyle = '#C89658';
-        ctx.beginPath();
-        ctx.ellipse(0, -8 + walkBob, 22, 12, 0, 0, Math.PI * 2);
+        ctx.ellipse(46, -19 + walkBob, 4, 3, 0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#4E342E';
-        [[-8, -8], [0, -12], [6, -6]].forEach(sp => {
-          ctx.beginPath(); ctx.arc(sp[0], sp[1] + walkBob, 2.8, 0, Math.PI * 2); ctx.fill();
+        // Warm Realistic Bear Eye
+        ctx.fillStyle = '#FFA000';
+        ctx.beginPath();
+        ctx.arc(32, -22 + walkBob, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#111';
+        ctx.beginPath(); ctx.arc(32.5, -22 + walkBob, 1.6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath(); ctx.arc(31.8, -23 + walkBob, 0.9, 0, Math.PI * 2); ctx.fill();
+
+      } else if (a.type === 'cat') {
+        // ===================================================
+        // 🐆 台灣石虎 (Taiwan Leopard Cat) - 豹紋斑斕、耳後白斑、修長身型
+        // ===================================================
+        // Feline Legs
+        ctx.fillStyle = '#B57E3E';
+        ctx.beginPath();
+        ctx.ellipse(-14, 8 + legBob, 4, 7, 0.1, 0, Math.PI * 2);
+        ctx.ellipse(12, 8 - legBob, 4, 7, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sleek Feline Body with arched flank
+        const catGrad = ctx.createLinearGradient(0, -22 + walkBob, 0, 8 + walkBob);
+        catGrad.addColorStop(0, '#D49B55');
+        catGrad.addColorStop(0.6, '#B87B38');
+        catGrad.addColorStop(1, '#EFEBE9');
+        ctx.fillStyle = catGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(18, -16 + walkBob);
+        ctx.quadraticCurveTo(8, -22 + walkBob, -8, -18 + walkBob);
+        ctx.quadraticCurveTo(-24, -14 + walkBob, -26, 0 + walkBob);
+        ctx.quadraticCurveTo(-14, 6 + walkBob, 4, 4 + walkBob);
+        ctx.quadraticCurveTo(18, 2 + walkBob, 22, -8 + walkBob);
+        ctx.closePath();
+        ctx.fill();
+
+        // Dark Brown Leopard Rosettes & Spots
+        ctx.fillStyle = '#3E2723';
+        [[-16, -10], [-8, -14], [0, -11], [8, -15], [-12, -2], [-2, -3], [6, -4]].forEach(pt => {
+          ctx.beginPath();
+          ctx.arc(pt[0], pt[1] + walkBob, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+          // Rosette hollow center
+          ctx.fillStyle = '#D49B55';
+          ctx.beginPath(); ctx.arc(pt[0] + 0.5, pt[1] + walkBob + 0.5, 1.2, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#3E2723';
         });
 
-        ctx.fillStyle = '#C89658';
+        // Banded Tail swaying with physics
+        ctx.strokeStyle = '#B87B38';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.arc(16, -16 + walkBob, 10, 0, Math.PI * 2);
+        ctx.moveTo(-24, -4 + walkBob);
+        ctx.quadraticCurveTo(-38, -14 + Math.sin(t * 8) * 6, -42, -4);
+        ctx.stroke();
+        // Tail dark rings
+        ctx.strokeStyle = '#3E2723';
+        ctx.lineWidth = 5;
+        ctx.setLineDash([4, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Head, Pointed Ears with Stark White Back-Spots
+        ctx.fillStyle = '#D49B55';
+        ctx.beginPath();
+        ctx.arc(22, -18 + walkBob, 11, 0, Math.PI * 2);
         ctx.fill();
+
+        // Pointed Ears
+        ctx.fillStyle = '#261C14';
+        ctx.beginPath();
+        ctx.moveTo(16, -26 + walkBob); ctx.lineTo(22, -37 + walkBob); ctx.lineTo(26, -24 + walkBob); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(28, -24 + walkBob); ctx.lineTo(34, -35 + walkBob); ctx.lineTo(35, -22 + walkBob); ctx.fill();
+
+        // UNMISTAKABLE LEOPARD CAT FEATURE: Stark White Spot Behind Ears (耳後白斑)
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath();
+        ctx.ellipse(20, -29 + walkBob, 2.5, 4, 0.4, 0, Math.PI * 2);
+        ctx.ellipse(31, -28 + walkBob, 2.5, 4, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Feline Face: White eye stripes, Pink Nose & Emerald Eyes
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(23, -24 + walkBob, 2, 8); // Facial stripe
+        ctx.fillStyle = '#FF8A80';
+        ctx.beginPath(); ctx.ellipse(31, -16 + walkBob, 2.5, 2, 0, 0, Math.PI * 2); ctx.fill(); // Pink nose
+
+        // Whiskers
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(31, -16 + walkBob); ctx.lineTo(40, -19 + walkBob);
+        ctx.moveTo(31, -15 + walkBob); ctx.lineTo(39, -13 + walkBob);
+        ctx.stroke();
+
+        // Piercing Emerald Cat Eye
         ctx.fillStyle = '#76FF03';
         ctx.beginPath();
-        ctx.arc(20, -16 + walkBob, 2.5, 0, Math.PI * 2);
+        ctx.ellipse(26, -20 + walkBob, 3.2, 2.2, 0.3, 0, Math.PI * 2);
         ctx.fill();
+        ctx.fillStyle = '#111'; // Slit pupil
+        ctx.fillRect(25.5, -22 + walkBob, 1.2, 4);
+
       } else if (a.type === 'frog') {
-        // Frog
-        ctx.fillStyle = '#00E676';
+        // ===================================================
+        // 🐸 翡翠樹蛙 (Emerald Tree Frog) - 玉石翠綠、圓形吸盤、金色大突眼
+        // ===================================================
+        // Muscular Folding Jumping Legs
+        ctx.fillStyle = '#00B248';
         ctx.beginPath();
-        ctx.ellipse(0, -6 + walkBob, 16, 12, 0, 0, Math.PI * 2);
+        ctx.moveTo(-6, -2);
+        ctx.quadraticCurveTo(-24, 12, -18, 16);
+        ctx.quadraticCurveTo(-10, 14, -2, 4);
         ctx.fill();
+
+        // Suction Discs on Webbed Toes (吸盤圓盤)
+        ctx.fillStyle = '#69F0AE';
+        ctx.beginPath();
+        ctx.arc(16, 8, 4.5, 0, Math.PI * 2);
+        ctx.arc(22, 2, 4.5, 0, Math.PI * 2);
+        ctx.arc(-22, 14, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Smooth Pear-shaped Translucent Emerald Body
+        const frogGrad = ctx.createRadialGradient(2, -10 + walkBob, 4, 0, -4 + walkBob, 22);
+        frogGrad.addColorStop(0, '#69F0AE');
+        frogGrad.addColorStop(0.5, '#00E676');
+        frogGrad.addColorStop(1, '#00A844');
+        ctx.fillStyle = frogGrad;
+
+        ctx.beginPath();
+        ctx.ellipse(0, -6 + walkBob, 18, 13, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Wet skin glistening specular highlights
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+        ctx.beginPath();
+        ctx.ellipse(3, -11 + walkBob, 8, 3, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bulging Gold-Amber Eyes with Horizontal Pupil
         ctx.fillStyle = '#FFD700';
         ctx.beginPath();
-        ctx.arc(8, -16 + walkBob, 4.5, 0, Math.PI * 2);
+        ctx.arc(10, -18 + walkBob, 5.5, 0, Math.PI * 2);
+        ctx.arc(-1, -19 + walkBob, 5.5, 0, Math.PI * 2);
         ctx.fill();
-      } else {
+        ctx.fillStyle = '#111';
+        ctx.fillRect(8.5, -19.5 + walkBob, 4, 2.5); // Horizontal slit pupil
+        ctx.fillRect(-2.5, -20.5 + walkBob, 4, 2.5);
+
+      } else if (a.type === 'deer') {
+        // ===================================================
+        // 🦌 台灣梅花鹿 (Formosan Sika Deer) - 優雅四蹄、珍珠梅花斑、分叉雄角
+        // ===================================================
+        // Slender Legs & Cloven Hooves
+        ctx.fillStyle = '#8D431F';
+        ctx.beginPath();
+        ctx.fillRect(-12, -4, 4, 18 + legBob);
+        ctx.fillRect(10, -4, 4, 18 - legBob);
+        // Hooves
+        ctx.fillStyle = '#111';
+        ctx.fillRect(-12, 13 + legBob, 4.5, 4);
+        ctx.fillRect(10, 13 - legBob, 4.5, 4);
+
+        // Chestnut Body with White Dapples
+        ctx.fillStyle = '#B55A2A';
+        ctx.beginPath();
+        ctx.ellipse(0, -14 + walkBob, 26, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pure White Staggered Spots (梅花斑)
+        ctx.fillStyle = '#FFF';
+        [[-14, -18], [-6, -21], [2, -16], [10, -20], [-10, -11], [4, -11], [-2, -6]].forEach(sp => {
+          ctx.beginPath(); ctx.arc(sp[0], sp[1] + walkBob, 2.2, 0, Math.PI * 2); ctx.fill();
+        });
+
+        // Head, Delicate Muzzle & Almond Eye
+        ctx.fillStyle = '#B55A2A';
+        ctx.beginPath();
+        ctx.moveTo(14, -20 + walkBob);
+        ctx.lineTo(28, -30 + walkBob);
+        ctx.lineTo(34, -26 + walkBob);
+        ctx.lineTo(24, -14 + walkBob);
+        ctx.closePath();
+        ctx.fill();
+
+        // Dark Muzzle & Gentle Eye
+        ctx.fillStyle = '#111';
+        ctx.beginPath(); ctx.ellipse(34, -26 + walkBob, 2.5, 2, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#3E2723';
+        ctx.beginPath(); ctx.arc(24, -26 + walkBob, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFF'; ctx.beginPath(); ctx.arc(23.5, -26.5 + walkBob, 1, 0, Math.PI * 2); ctx.fill();
+
+        // Multi-tined Ivory Antlers (分叉鹿角)
+        ctx.strokeStyle = '#D7CCC8';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(20, -31 + walkBob);
+        ctx.lineTo(22, -45 + walkBob);
+        ctx.lineTo(28, -50 + walkBob);
+        ctx.moveTo(22, -38 + walkBob);
+        ctx.lineTo(16, -44 + walkBob);
+        ctx.stroke();
+
+      } else if (a.type === 'eagle') {
+        // ===================================================
+        // 🦅 大冠鷲 (Crested Serpent Eagle) - 展翅羽指、黑白羽冠、金黃銳眸
+        // ===================================================
+        const wingFlap = Math.sin(t * 8) * 10;
+        // Flying Outstretched Wings with Separated Feather Fingers
+        ctx.fillStyle = '#261C14';
+        ctx.beginPath();
+        ctx.moveTo(12, -4);
+        ctx.quadraticCurveTo(0, -42 + wingFlap, -28, -52 + wingFlap);
+        ctx.lineTo(-24, -40 + wingFlap); // Finger 1
+        ctx.lineTo(-32, -35 + wingFlap); // Finger 2
+        ctx.lineTo(-12, 0);
+        ctx.quadraticCurveTo(0, 42 - wingFlap, -28, 52 - wingFlap);
+        ctx.lineTo(-24, 40 - wingFlap);
+        ctx.lineTo(-32, 35 - wingFlap);
+        ctx.closePath();
+        ctx.fill();
+
+        // Underside White-Barred Bands
+        ctx.strokeStyle = '#ECEFF1';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(-16, -38 + wingFlap); ctx.lineTo(6, -22);
+        ctx.moveTo(-16, 38 - wingFlap); ctx.lineTo(6, 22);
+        ctx.stroke();
+
+        // Eagle Head & Fan-shaped Crest Nape (標誌性羽冠)
+        ctx.fillStyle = '#18110B';
+        ctx.beginPath();
+        ctx.ellipse(16, 0, 11, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Black-and-white Crest
+        ctx.fillStyle = '#ECEFF1';
+        ctx.beginPath();
+        ctx.moveTo(8, -5); ctx.lineTo(2, -9); ctx.lineTo(12, -3); ctx.fill();
+        ctx.moveTo(8, 5); ctx.lineTo(2, 9); ctx.lineTo(12, 3); ctx.fill();
+
+        // Hooked Golden Beak & Piercing Eye
+        ctx.fillStyle = '#FFCA28';
+        ctx.beginPath();
+        ctx.moveTo(24, -3); ctx.lineTo(34, 0); ctx.lineTo(24, 3); ctx.fill();
+        ctx.beginPath(); ctx.arc(18, -2, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(18.5, -2, 1.2, 0, Math.PI * 2); ctx.fill();
+
+      } else if (a.type === 'pangolin') {
+        // ===================================================
+        // 🦔 穿山甲 (Chinese Pangolin) - 菱形角質重疊硬鱗、長錐形尾巴
+        // ===================================================
         ctx.fillStyle = '#795548';
+        ctx.beginPath();
+        ctx.ellipse(0, -6 + walkBob, 24, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Layered Keratinous Scales (菱形硬鱗片)
+        ctx.strokeStyle = '#3E2723';
+        ctx.fillStyle = '#8D6E63';
+        ctx.lineWidth = 1.5;
+        [[-14, -10], [-6, -11], [2, -10], [10, -9], [-10, -5], [-2, -5], [6, -4]].forEach(sc => {
+          ctx.beginPath();
+          ctx.moveTo(sc[0], sc[1] - 4 + walkBob);
+          ctx.lineTo(sc[0] + 5, sc[1] + walkBob);
+          ctx.lineTo(sc[0], sc[1] + 4 + walkBob);
+          ctx.lineTo(sc[0] - 5, sc[1] + walkBob);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        });
+
+        // Thick Scaled Tapering Tail
+        ctx.fillStyle = '#6D4C41';
+        ctx.beginPath();
+        ctx.moveTo(-22, -8 + walkBob);
+        ctx.lineTo(-44, -2);
+        ctx.lineTo(-22, -2 + walkBob);
+        ctx.closePath();
+        ctx.fill();
+
+        // Conical Armored Snout
+        ctx.fillStyle = '#5D4037';
+        ctx.beginPath();
+        ctx.moveTo(18, -10 + walkBob); ctx.lineTo(32, -6 + walkBob); ctx.lineTo(18, -2 + walkBob);
+        ctx.fill();
+
+      } else if (a.type === 'boar') {
+        // ===================================================
+        // 🐗 台灣野豬 (Formosan Wild Boar) - 鬃毛脊骨、長長平鼻、突出獠牙
+        // ===================================================
+        ctx.fillStyle = '#3E2723';
+        ctx.beginPath();
+        ctx.ellipse(0, -10 + walkBob, 26, 17, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bristly Crest along spine (剛毛)
+        ctx.strokeStyle = '#180F0A';
+        ctx.lineWidth = 2.5;
+        for (let bx = -18; bx < 14; bx += 4) {
+          ctx.beginPath();
+          ctx.moveTo(bx, -24 + walkBob);
+          ctx.lineTo(bx + 2, -29 + walkBob);
+          ctx.stroke();
+        }
+
+        // Long Boar Snout & Disc Nose
+        ctx.fillStyle = '#4E342E';
+        ctx.beginPath();
+        ctx.moveTo(14, -18 + walkBob);
+        ctx.lineTo(32, -13 + walkBob);
+        ctx.lineTo(32, -5 + walkBob);
+        ctx.lineTo(16, -2 + walkBob);
+        ctx.fill();
+        // Flat round disc nose
+        ctx.fillStyle = '#261C14';
+        ctx.beginPath(); ctx.ellipse(32, -9 + walkBob, 3.5, 4.5, 0, 0, Math.PI * 2); ctx.fill();
+
+        // White Tusks (獠牙)
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath();
+        ctx.moveTo(25, -6 + walkBob); ctx.lineTo(27, -11 + walkBob); ctx.lineTo(28, -6 + walkBob);
+        ctx.fill();
+
+      } else {
+        // ===================================================
+        // 🐒 川金絲猴 (Golden Snub-nosed Monkey) - 絲綢金毛、淡藍面具
+        // ===================================================
+        ctx.fillStyle = '#FFB300';
         ctx.beginPath();
         ctx.ellipse(0, -10 + walkBob, 20, 14, 0, 0, Math.PI * 2);
         ctx.fill();
+
+        // Golden flowing fur mantle
+        ctx.strokeStyle = '#FFA000';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-10, -14 + walkBob); ctx.quadraticCurveTo(-18, -4, -14, 4);
+        ctx.stroke();
+
+        // Sky-Blue Facial Mask (淡藍面具)
+        ctx.fillStyle = '#81D4FA';
+        ctx.beginPath();
+        ctx.ellipse(14, -16 + walkBob, 8, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Snub Nose
+        ctx.fillStyle = '#0277BD';
+        ctx.beginPath(); ctx.arc(17, -15 + walkBob, 2, 0, Math.PI * 2); ctx.fill();
+
+        // Upward Curled Furry Tail
+        ctx.strokeStyle = '#FFB300';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(-18, -8 + walkBob);
+        ctx.quadraticCurveTo(-30, -25, -22, -34);
+        ctx.stroke();
       }
 
-      // Name & Value Tag
+      // Floating Name & Worth Badge
       ctx.scale(a.facing, 1);
-      ctx.fillStyle = 'rgba(0,0,0,0.78)';
-      ctx.roundRect(-42, -a.radius - 22, 84, 18, 4);
+      ctx.fillStyle = 'rgba(0,0,0,0.8)';
+      ctx.roundRect(-46, -a.radius - 24, 92, 19, 5);
       ctx.fill();
       ctx.fillStyle = '#FFF';
-      ctx.font = 'bold 10px sans-serif';
+      ctx.font = 'bold 11px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`${a.name} (${a.coins}G)`, 0, -a.radius - 9);
+      ctx.fillText(`${a.name} (${a.coins}G)`, 0, -a.radius - 10);
 
       ctx.restore();
     }
