@@ -376,7 +376,7 @@
 
           <div class="menu-sub-row">
             <div class="card-btn" onclick="openJournal()">
-              <div style="font-weight:bold; font-size:14px;">📖 32種動物圖鑑</div>
+              <div style="font-weight:bold; font-size:14px;">📖 100種動物圖鑑</div>
               <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">全量收錄台灣黑熊、石虎、金絲猴等PBR寫實檔案</div>
             </div>
             <div class="card-btn" onclick="openShelter()">
@@ -444,7 +444,7 @@
   <div class="screen" id="screen-journal">
     <div class="notebook-container">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <div style="font-size:18px; font-weight:bold;">📖 32 種寫實野生動物圖鑑 (全量物種收錄)</div>
+        <div style="font-size:18px; font-weight:bold;">📖 100 種寫實野生動物圖鑑 (全量物種收錄)</div>
         <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:4px 12px; cursor:pointer;">關閉</button>
       </div>
       <div class="journal-split">
@@ -598,40 +598,108 @@
 </div>
 
 <script>
-// Complete 32 Realistic Fauna Dataset with Bopomofo (注音符號)
-const ALL_32_ANIMALS = [
-  { id: "formosan_black_bear", name: "台灣黑熊", bopomofo: "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", sci: "Ursus thibetanus formosanus", grade: "VU 易危 (黃燈)", color: "#1A1A1E", habitat: "高山原始闊葉針葉林", cycle: "日行性", coins: 85, fact: "胸前有醒目的白色V字斑紋，善於爬樹和游泳！", eco: "台灣特有亞種，為亞洲黑熊分布於海島之特殊族群。" },
-  { id: "leopard_cat", name: "石虎", bopomofo: "ㄕˊ ㄏㄨˇ", sci: "Prionailurus bengalensis chinensis", grade: "EN 瀕危 (紅燈)", color: "#C48A42", habitat: "低海拔淺山丘陵森林", cycle: "夜行性", coins: 110, fact: "耳後有黑底白斑，是台灣現存唯一的本土原生野生貓科！", eco: "擅長夜間伏擊小型哺乳類，受淺山開發嚴重威脅。" },
-  { id: "formosan_sambar", name: "台灣水鹿", bopomofo: "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", sci: "Rusa unicolor swinhoei", grade: "LC 無危 (綠燈)", color: "#6E4F32", habitat: "中央山脈高山草原與箭竹林", cycle: "晨昏出沒", coins: 45, fact: "台灣原生最大型草食動物，雄鹿有分叉雄角，喜歡泡泥澡！", eco: "常成群出現在近水草生地，具有磨角標記領域習性。" },
-  { id: "crested_serpent_eagle", name: "大冠鷲", bopomofo: "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", sci: "Spilornis cheela hoya", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "低海拔山區晴空盤旋帶", cycle: "日行性", coins: 60, fact: "俗稱蛇鷹，後枕有發達羽冠，熱氣流旺盛時常展翅翱翔！", eco: "以蛇類與蜥蜴為主食，是低海拔生態鏈頂級猛禽。" },
-  { id: "collared_scops_owl", name: "領角鴞", bopomofo: "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", sci: "Otus lettia", grade: "LC 無危 (綠燈)", color: "#795548", habitat: "低中海拔次生林與城市綠帶", cycle: "夜行性", coins: 40, fact: "眼睛大而凝視，頭頂有一對角羽，夜晚常發出不──不叫聲！", eco: "羽毛表面具有消音絨毛，飛行無聲無息。" },
-  { id: "chinese_pangolin", name: "穿山甲", bopomofo: "ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", sci: "Manis pentadactyla", grade: "CR 極危 (紅燈)", color: "#8D6E63", habitat: "淺山竹林與開闊斜坡", cycle: "夜行性", coins: 95, fact: "渾身覆蓋硬質角蛋白鱗甲，受威脅時捲成堅硬球體！", eco: "專食白蟻與螞蟻，發達前爪擅長挖掘數公尺深洞。" },
-  { id: "golden_snub_nosed_monkey", name: "川金絲猴", bopomofo: "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", sci: "Rhinopithecus roxellana", grade: "EN 瀕危 (紅燈)", color: "#E67E22", habitat: "高山溫帶針葉與落葉林冠", cycle: "日行性", coins: 80, fact: "仰鼻藍面、金絲毛皮披肩，耐寒力極高！", eco: "社會結構複雜，以樹皮、地衣與嫩芽為食。" },
-  { id: "formosan_landlocked_salmon", name: "櫻花鉤吻鮭", bopomofo: "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", sci: "Oncorhynchus masou formosanus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "高山冰冷溪澗 (16℃以下)", cycle: "日行性", coins: 150, fact: "冰河時期的活化石孑遺生物！地殼隆起而成為陸封型鮭魚！", eco: "對水質潔淨度與低水溫極度敏感，側線有紫金色斑。" },
-  { id: "indochinese_tiger", name: "印支虎", bopomofo: "ㄧㄣˋ ㄓ ㄏㄨˇ", sci: "Panthera tigris corbetti", grade: "CR 極危 (紅燈)", color: "#D35400", habitat: "濃密未受侵擾的原始密林", cycle: "晨昏出沒", coins: 220, fact: "頂級掠食之王！黑橙條紋如幽靈般融入密林光斑！", eco: "領域廣闊，仰賴大型鹿類與野豬維生。" },
-  { id: "malayan_tapir", name: "馬來貘", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄇㄛˋ", sci: "Tapirus indicus", grade: "EN 瀕危 (紅燈)", color: "#2C3E50", habitat: "熱帶低地雨林與沼澤溪畔", cycle: "夜行性", coins: 75, fact: "黑白兩截障眼配色讓掠食者錯看成大石塊！長鼻能伸縮。", eco: "體型沉重但擅長涉水，是雨林植物種子傳播關鍵物種。" },
-  { id: "toco_toucan", name: "托哥巨嘴鳥", bopomofo: "ㄊㄨㄛ ㄍㄜ ㄐㄩˋ ㄗㄨㄟˇ ㄋㄧㄠˇ", sci: "Ramphastos toco", grade: "LC 無危 (綠燈)", color: "#263238", habitat: "熱帶雨林高層樹冠", cycle: "日行性", coins: 55, fact: "大嘴雖然長達20公分，但內部如同蜂巢骨骼結構，重量極輕！", eco: "愛吃雨林無花果與小型昆蟲，透過鮮明色彩識別同伴。" },
-  { id: "three_toed_sloth", name: "三趾樹懶", bopomofo: "ㄙㄢ ㄓˇ ㄕㄨˋ ㄌㄢˇ", sci: "Bradypus tridactylus", grade: "LC 無危 (綠燈)", color: "#616161", habitat: "潮濕常綠雨林枝椏", cycle: "日行性", coins: 35, fact: "代謝速度世界最慢！身上毛髮甚至長出共生藻類！", eco: "每週僅下樹一次排便，絕大部分時間倒掛在樹冠隱匿。" },
-  { id: "panther_chameleon", name: "七彩變色龍", bopomofo: "ㄑㄧ ㄘㄞˇ ㄅㄧㄢˋ ㄙㄜˋ ㄌㄨㄥˊ", sci: "Furcifer pardalis", grade: "LC 無危 (綠燈)", color: "#43A047", habitat: "林緣灌木叢與低矮藤蔓", cycle: "日行性", coins: 50, fact: "雙眼可各自獨立360度旋轉觀察！舌頭彈出速度快如閃電！", eco: "利用皮膚下鳥嘌呤奈米晶體反射光線改變體色。" },
-  { id: "poison_dart_frog", name: "幽靈箭毒蛙", bopomofo: "ㄧㄡ ㄌㄧㄥˊ ㄐㄧㄢˋ ㄉㄨˊ ㄨㄚ", sci: "Epipedobates tricolor", grade: "VU 易危 (黃燈)", color: "#D81B60", habitat: "瀑布潮濕石縫與雨林落葉", cycle: "日行性", coins: 85, fact: "體型僅如大拇指指甲般精緻，身披警戒鮮紅黑紋！", eco: "雄蛙會將孵化的蝌蚪背負至積水鳳梨葉鞘中育幼。" },
-  { id: "rhinoceros_hornbill", name: "馬來犀鳥", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄒㄧ ㄋㄧㄠˇ", sci: "Buceros rhinoceros", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "參天大樹樹冠與高空航道", cycle: "日行性", coins: 70, fact: "喙部上方長有如金色頭盔的巨大盔突，發聲時產生強烈共鳴！", eco: "終身一夫一妻制，繁殖期母鳥會用泥巴封在樹洞內育幼。" },
-  { id: "bornean_orangutan", name: "婆羅洲紅毛猩猩", bopomofo: "ㄆㄛˊ ㄌㄨㄛˊ ㄓㄡ ㄏㄨㄥˊ ㄇㄠˊ ㄒㄧㄥ ㄒㄧㄥ", sci: "Pongo pygmaeus", grade: "CR 極危 (紅燈)", color: "#BF360C", habitat: "原始泥炭沼澤林與低地雨林", cycle: "日行性", coins: 130, fact: "每天傍晚會挑選堅固樹枝編織厚實舒適的樹巢，還會撐芭蕉葉遮雨！", eco: "基因與人類有高達97%相似，因棕櫚油開墾瀕危。" },
-  { id: "green_iguana", name: "美洲鬣蜥", bopomofo: "ㄇㄟˇ ㄓㄡ ㄌㄧㄝˋ ㄒㄧ", sci: "Iguana iguana", grade: "LC 無危 (綠燈)", color: "#2E7D32", habitat: "河岸林冠近水枝幹", cycle: "日行性", coins: 45, fact: "擅長從十幾公尺高的樹枝跳入溪流潛水逃生！", eco: "草食性爬蟲類，喜歡攀爬至日光充足高處曬背。" },
-  { id: "ruffed_lemur", name: "白頸狐猴", bopomofo: "ㄅㄞˊ ㄐㄧㄥˇ ㄏㄨˊ ㄇㄡˊ", sci: "Varecia variegata", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "馬達加斯加東部高聳林冠", cycle: "日行性", coins: 90, fact: "嗓音宏亮穿透山谷，脖子長有厚實雪白毛領！", eco: "對花蜜與果實極具依賴性，是當地巨型花卉授粉者。" },
-  { id: "formosan_macaque", name: "台灣獼猴", bopomofo: "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", sci: "Macaca cyclopis", grade: "LC 無危 (綠燈)", color: "#5D4037", habitat: "中低海拔森林岩石邊界", cycle: "日行性", coins: 48, fact: "頰囊能像口袋一樣塞入好幾顆野果慢慢咀嚼！", eco: "特有種群居社會，具有高智商階級協作系統。" },
-  { id: "swinhoe_pheasant", name: "藍腹鷴", bopomofo: "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", sci: "Lophura swinhoii", grade: "NT 近危 (黃燈)", color: "#1A237E", habitat: "原始天然闊葉林深密底層", cycle: "晨昏出沒", coins: 65, fact: "雄鳥通體金屬靛藍光澤，背部有一片純白菱形羽斑！", eco: "生性羞怯警覺，清晨與黃昏常在林道安靜翻找落葉層。" },
-  { id: "mikado_pheasant", name: "黑長尾雉 (帝雉)", bopomofo: "ㄉㄧˋ ㄓˊ", sci: "Syrmaticus mikado", grade: "NT 近危 (黃燈)", color: "#283593", habitat: "雲霧繚繞之高山針葉林", cycle: "晨昏出沒", coins: 100, fact: "千元大鈔上的國寶鳥！羽毛在陽光下泛出深沉紫藍光澤！", eco: "又稱迷霧中的王者，偏好在大霧或細雨綿綿的天氣現身。" },
-  { id: "moltrecht_tree_frog", name: "莫氏樹蛙", bopomofo: "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", sci: "Zhangixalus moltrechti", grade: "LC 無危 (綠燈)", color: "#388E3C", habitat: "山區果園落葉積水與竹筒", cycle: "夜行性", coins: 38, fact: "指尖長有發達吸盤，大腿內側隱藏著亮橙紅色黑斑！", eco: "台灣分布最廣的綠色樹蛙，常打出泡沫卵塊護卵。" },
-  { id: "eurasian_otter", name: "歐亞水獺", bopomofo: "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", sci: "Lutra lutra", grade: "NT 近危 (黃燈)", color: "#4E342E", habitat: "純淨天然溪流與池塘", cycle: "夜行性", coins: 88, fact: "水下流線型身段靈動如飛魚，皮毛具有密實防水絨毛！", eco: "夜行性頂級水域掠食者，主食魚蝦蟹類。" },
-  { id: "asian_elephant", name: "亞洲象", bopomofo: "ㄧㄚˋ ㄓㄡ ㄒㄧㄤˋ", sci: "Elephas maximus", grade: "EN 瀕危 (紅燈)", color: "#455A64", habitat: "熱帶闊葉林與開闊草生地", cycle: "日行性", coins: 180, fact: "象鼻由四萬多條肌肉組成，能拔大樹亦能拾起落花生！", eco: "母系社會大群集體行動，透過次聲波穿透數公里傳訊。" },
-  { id: "clouded_leopard", name: "雲豹", bopomofo: "ㄩㄣˊ ㄅㄠˋ", sci: "Neofelis nebulosa", grade: "VU 易危 (黃燈)", color: "#D7CCC8", habitat: "亞熱帶原始高鬱閉度森林", cycle: "夜行性", coins: 190, fact: "擁有相對於頭部比例世界最長的犬齒！能倒立爬樹！", eco: "樹棲性極強，大塊雲狀黑斑在樹影中具備完美隱形擬態。" },
-  { id: "cheetah", name: "獵豹", bopomofo: "ㄌㄧㄝˋ ㄅㄠˋ", sci: "Acinonyx jubatus", grade: "VU 易危 (黃燈)", color: "#FFA000", habitat: "林緣稀樹草原與開闊平原", cycle: "日行性", coins: 120, fact: "陸地極速之王！0至100公里加速僅需3秒！", eco: "眼角有黑色淚痕狀花紋吸收強烈陽光眩光。" },
-  { id: "andean_condor", name: "安地斯神鷹", bopomofo: "ㄢ ㄉㄧˋ ㄙ ㄕㄣˊ ㄧㄥ", sci: "Vultur gryphus", grade: "VU 易危 (黃燈)", color: "#263238", habitat: "高山斷崖峭壁強勁氣流區", cycle: "日行性", coins: 110, fact: "翼展超過3.2公尺的巨大飛禽，能滑翔數小時！", eco: "食腐性猛禽，是高山生態系中不可或缺的清道夫。" },
-  { id: "snow_leopard", name: "雪豹", bopomofo: "ㄒㄩㄝˇ ㄅㄠˋ", sci: "Panthera uncia", grade: "VU 易危 (黃燈)", color: "#ECEFF1", habitat: "高山雪線以上之峭壁絕壁", cycle: "晨昏出沒", coins: 210, fact: "雪山之王！毛茸茸長尾巴睡覺時能當圍巾包覆面部！", eco: "灰色煙狀花紋完全融入岩石陰影，腳掌寬大如天然雪鞋。" },
-  { id: "serval", name: "藪貓", bopomofo: "ㄙㄡˇ ㄇㄠ", sci: "Leptailurus serval", grade: "LC 無危 (綠燈)", color: "#FFB300", habitat: "蘆葦沼澤與高草林緣地帶", cycle: "晨昏出沒", coins: 70, fact: "貓科界長腿名模！耳朵如雷達，能躍起3公尺截擊飛鳥！", eco: "依賴極敏銳聽覺鎖定草叢中移動的鼠類。" },
-  { id: "binturong", name: "熊狸", bopomofo: "ㄒㄩㄥˊ ㄌㄧˊ", sci: "Arctictis binturong", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "熱帶雨林高處樹冠", cycle: "夜行性", coins: 65, fact: "尾巴具有抓握力，身上散發濃濃的剛出爐爆米花香味！", eco: "罕見的樹棲靈貓科夜行動物，在雨林中能助種子萌芽。" },
-  { id: "proboscis_monkey", name: "長鼻猴", bopomofo: "ㄔㄤˊ ㄅㄧˊ ㄏㄡˊ", sci: "Nasalis larvatus", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "紅樹林與河流下游森林", cycle: "日行性", coins: 95, fact: "成年雄猴有巨大的懸垂大紅鼻子，趾間有微蹼擅長游泳！", eco: "擁有特化複雜胃室，專食紅樹林酸性嫩葉。" },
-  { id: "sword_billed_hummingbird", name: "刀嘴蜂鳥", bopomofo: "ㄉㄠ ㄗㄨㄟˇ ㄈㄥ ㄋㄧㄠˇ", sci: "Ensifera ensifera", grade: "LC 無危 (綠燈)", color: "#00897B", habitat: "高山雲霧林花冠層", cycle: "日行性", coins: 105, fact: "鳥喙比全身軀幹還長的奇蹟物種！每秒拍翅可達80次！", eco: "專門與超長筒狀曼陀羅與西番蓮共生授粉。" }
+// Complete 100 Realistic Fauna Dataset with Bopomofo (注音符號)
+const ALL_100_ANIMALS = [
+  { id: "formosan_black_bear", name: "台灣黑熊", bopomofo: "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", sci: "Ursus thibetanus formosanus", grade: "VU 易危 (黃燈)", color: "#1A1A1E", habitat: "高山原始闊葉針葉林", cycle: "日行性", coins: 85, fact: "胸前有醒目的白色V字斑紋，善於爬樹和游泳，嗅覺是獵犬數倍！", eco: "台灣特有亞種，為亞洲黑熊分布於海島之特殊族群。" },
+  { id: "leopard_cat", name: "石虎", bopomofo: "ㄕˊ ㄏㄨˇ", sci: "Prionailurus bengalensis chinensis", grade: "EN 瀕危 (紅燈)", color: "#C48A42", habitat: "低海拔淺山丘陵森林", cycle: "夜行性", coins: 110, fact: "耳後有黑底白斑、眼窩內側有兩條白色條紋，是台灣現存唯一本土貓科！", eco: "擅長夜間伏擊小型哺乳類與鳥類，棲地受淺山開發嚴重破碎化。" },
+  { id: "formosan_sambar", name: "台灣水鹿", bopomofo: "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", sci: "Rusa unicolor swinhoei", grade: "LC 無危 (綠燈)", color: "#6E4F32", habitat: "中央山脈高山草原與箭竹林", cycle: "晨昏出沒", coins: 45, fact: "台灣原生最大型草食動物，雄鹿擁有雄偉分叉的角，非常喜歡在水塘泡泥澡！", eco: "常成小群出現在近水草生地，具有磨角標記領域與反芻習性。" },
+  { id: "crested_serpent_eagle", name: "大冠鷲", bopomofo: "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", sci: "Spilornis cheela hoya", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "低海拔山區晴空與丘陵盤旋帶", cycle: "日行性", coins: 60, fact: "俗稱蛇鷹，後枕有發達羽冠，熱氣流旺盛時常在空中展翼翱翔發出悠遠鳴叫！", eco: "以蛇類、蜥蜴及小型脊椎動物為主要食物，是低海拔生態鏈頂級掠食猛禽。" },
+  { id: "collared_scops_owl", name: "領角鴞", bopomofo: "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", sci: "Otus lettia", grade: "LC 無危 (綠燈)", color: "#795548", habitat: "低中海拔次生林與城市綠帶", cycle: "夜行性", coins: 40, fact: "眼睛大而凝視，頭頂有一對角羽，夜晚常發出單調深沉的不──不叫聲！", eco: "羽毛表面具有特殊微結構消音絨毛，飛行無聲無息。" },
+  { id: "chinese_pangolin", name: "台灣穿山甲", bopomofo: "ㄊㄞˊ ㄨㄢ ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", sci: "Manis pentadactyla pentadactyla", grade: "CR 極危 (紅燈)", color: "#8D6E63", habitat: "淺山竹林與開闊泥土斜坡", cycle: "夜行性", coins: 95, fact: "渾身覆蓋硬質角蛋白鱗甲，受威脅時捲成堅硬球體，舌頭比身體還長！", eco: "專食白蟻與螞蟻，發達前爪擅長在斜坡挖掘長達數公尺的地洞。" },
+  { id: "formosan_landlocked_salmon", name: "櫻花鉤吻鮭", bopomofo: "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", sci: "Oncorhynchus masou formosanus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "高山七家灣溪冰冷溪澗 (16℃以下)", cycle: "日行性", coins: 150, fact: "冰河時期的活化石孑遺生物！因地殼隆起無法洄游大海，成為國寶陸封鮭！", eco: "對水質潔淨度與低水溫極度敏感，側線兩側有紫金色橢圓卵斑。" },
+  { id: "mikado_pheasant", name: "黑長尾雉 (帝雉)", bopomofo: "ㄉㄧˋ ㄓˊ", sci: "Syrmaticus mikado", grade: "NT 近危 (黃燈)", color: "#283593", habitat: "雲霧繚繞之海拔2000公尺針葉林", cycle: "晨昏出沒", coins: 100, fact: "千元大鈔上的國寶鳥！羽毛在陽光下泛出深沉紫藍光澤，長尾羽有白色橫斑！", eco: "又稱迷霧中的王者，偏好在大霧或細雨綿綿的天氣現身林緣取食草根。" },
+  { id: "swinhoe_pheasant", name: "藍腹鷴", bopomofo: "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", sci: "Lophura swinhoii", grade: "NT 近危 (黃燈)", color: "#1A237E", habitat: "原始天然闊葉林深密底層", cycle: "晨昏出沒", coins: 65, fact: "雄鳥通體金屬靛藍光澤，背部有一片純白菱形羽斑，雙腳宛如鮮紅珊瑚！", eco: "生性羞怯警覺，清晨與黃昏常在林道安靜翻找落葉層的草籽與昆蟲。" },
+  { id: "formosan_serow", name: "台灣長鬃山羊", bopomofo: "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", sci: "Capricornis swinhoei", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "陡峭裸露的高山岩壁崩塌地", cycle: "晨昏出沒", coins: 75, fact: "台灣唯一的野生牛科動物，蹄部肉墊極具彈性，能在近乎垂直的峭壁奔馳跳躍！", eco: "善於利用懸崖峭壁躲避天敵，具有舔食岩石鹽分礦物質的特殊習性。" },
+  { id: "formosan_macaque", name: "台灣獼猴", bopomofo: "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", sci: "Macaca cyclopis", grade: "LC 無危 (綠燈)", color: "#5D4037", habitat: "中低海拔森林岩石峭壁邊界", cycle: "日行性", coins: 48, fact: "頰囊能像口袋一樣塞入好幾顆野果慢慢咀嚼，尾巴粗短而圓鈍！", eco: "特有種群居社會，具有高智商階級協作與警戒鳴叫系統。" },
+  { id: "moltrecht_tree_frog", name: "莫氏樹蛙", bopomofo: "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", sci: "Zhangixalus moltrechti", grade: "LC 無危 (綠燈)", color: "#388E3C", habitat: "山區潮濕落葉積水與竹筒", cycle: "夜行性", coins: 38, fact: "指尖長有發達吸盤，眼睛虹膜鮮紅，大腿內側隱藏著亮橙紅色黑斑！", eco: "台灣分布最廣的綠色樹蛙，常打出泡沫卵塊保護蛙卵不受乾燥傷害。" },
+  { id: "taipei_tree_frog", name: "台北樹蛙", bopomofo: "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", sci: "Zhangixalus taipeianus", grade: "LC 無危 (綠燈)", color: "#43A047", habitat: "北部丘陵潮濕稻田與林緣泥塘", cycle: "夜行性", coins: 42, fact: "冬天繁殖的特殊樹蛙！雄蛙會在泥地挖洞築巢並發出咕嚕沉鳴！", eco: "體色可隨環境在深綠與黃綠間微調，背部皮膚光滑細緻。" },
+  { id: "formosan_blue_magpie", name: "台灣藍鵲", bopomofo: "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", sci: "Urocissa caerulea", grade: "LC 無危 (綠燈)", color: "#1565C0", habitat: "中低海拔闊葉林與林緣樹冠", cycle: "日行性", coins: 55, fact: "長尾陣列飛行如飛天藍色絲帶，黑頭紅嘴身披寶藍羽翼，生性勇敢護巢！", eco: "特有種群居鳥類，具有極罕見的『親族幫手制度』協助育幼。" },
+  { id: "eurasian_otter", name: "歐亞水獺", bopomofo: "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", sci: "Lutra lutra", grade: "NT 近危 (黃燈)", color: "#4E342E", habitat: "純淨天然溪流、池塘與近海礁岩", cycle: "夜行性", coins: 88, fact: "水下流線型身段游泳靈動如飛魚，皮毛每平方公分長有數萬根濃密防水毛！", eco: "夜行性頂級水域掠食者，主食魚蝦蟹類，排遺常含有甲殼碎屑並用以標記領域。" },
+  { id: "tawny_fish_owl", name: "黃魚鴞", bopomofo: "ㄏㄨㄤˊ ㄩˊ ㄒㄧㄠ", sci: "Ketupa flavipes", grade: "EN 瀕危 (紅燈)", color: "#8D6E63", habitat: "未受干擾的清澈山區溪流峽谷", cycle: "夜行性", coins: 120, fact: "台灣體型最大的貓頭鷹！腳趾下方長有防滑骨質突起，專門俯衝捕捉溪流大魚！", eco: "對水質與原始森林完整度要求極高，數量極稀少珍貴。" },
+  { id: "formosan_wild_boar", name: "台灣野豬", bopomofo: "ㄊㄞˊ ㄨㄢ ㄧㄝˇ ㄓㄨ", sci: "Sus scrofa taivanus", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "闊葉林下層與草叢灌木帶", cycle: "晨昏出沒", coins: 50, fact: "幼豬身上長有黃褐色條紋如行走的西瓜！成豬獠牙向上生長極具防衛力。", eco: "雜食性動物，以吻端翻拱泥土尋找根莖與昆蟲，促進土壤翻新通氣。" },
+  { id: "fairy_pitta", name: "八色鳥", bopomofo: "ㄅㄚ ㄙㄜˋ ㄋㄧㄠˇ", sci: "Pitta nympha", grade: "VU 易危 (黃燈)", color: "#00897B", habitat: "潮濕鬱閉的低海拔竹林與闊葉林底層", cycle: "日行性", coins: 78, fact: "宛如穿上彩虹羽衣的林間精靈！身上紅、綠、藍、黃等八種鮮豔色斑交織！", eco: "夏候鳥，以蚯蚓為主要食物，跳躍於落葉層發出清脆哨音。" },
+  { id: "formosan_salamander", name: "台灣山椒魚", bopomofo: "ㄊㄞˊ ㄨㄢ ㄕㄢ ㄐㄧㄠ ㄩˊ", sci: "Hynobius formosanus", grade: "EN 瀕危 (紅燈)", color: "#37474F", habitat: "海拔2000公尺以上潮濕石塊泥炭層", cycle: "夜行性", coins: 90, fact: "冰河孑遺的有尾兩棲類！具有四隻短小腳掌與細長尾巴，生性極度畏光！", eco: "生活在長年濕潤冷涼的高山冷杉林苔蘚下，體表分泌黏液維持呼吸。" },
+  { id: "swinhoe_tree_lizard", name: "斯文豪氏攀蜥", bopomofo: "ㄙ ㄨㄣˊ ㄏㄠˇ ㄕˋ ㄆㄢ ㄒㄧ", sci: "Diploderma swinhonis", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "低中海拔樹幹與竹竿向陽面", cycle: "日行性", coins: 36, fact: "威嚇敵人時會將喉部白色肉垂鼓起，連續做『伏地挺身』動作！", eco: "台灣特有種攀木蜥蜴，以小型昆蟲為主食，爪利擅於攀爬。" },
+  { id: "golden_snub_nosed_monkey", name: "川金絲猴", bopomofo: "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", sci: "Rhinopithecus roxellana", grade: "EN 瀕危 (紅燈)", color: "#E67E22", habitat: "高山溫帶針葉與落葉林冠", cycle: "日行性", coins: 80, fact: "仰鼻藍面、金絲毛皮披肩，耐寒力極高，能在白雪覆蓋的林海中輕盈跳躍！", eco: "社會結構複雜，以樹皮、地衣、嫩芽為食，受高山森林砍伐威脅。" },
+  { id: "indochinese_tiger", name: "印支虎", bopomofo: "ㄧㄣˋ ㄓ ㄏㄨˇ", sci: "Panthera tigris corbetti", grade: "CR 極危 (紅燈)", color: "#D35400", habitat: "濃密未受侵擾的原始密林", cycle: "晨昏出沒", coins: 220, fact: "頂級掠食之王！黑橙條紋如幽靈般融入密林光斑，掌力驚人且游泳技巧高超！", eco: "領域廣闊，仰賴大型鹿類與野豬維生，數量極其稀少罕見。" },
+  { id: "malayan_tapir", name: "馬來貘", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄇㄛˋ", sci: "Tapirus indicus", grade: "EN 瀕危 (紅燈)", color: "#2C3E50", habitat: "熱帶低地雨林與沼澤溪流畔", cycle: "夜行性", coins: 75, fact: "黑白兩截的障眼配色在月夜下會讓掠食者錯看成大石塊！長鼻能伸縮採食嫩枝。", eco: "體型沉重但擅長涉水，是雨林植物種子傳播的關鍵物種。" },
+  { id: "binturong", name: "熊狸", bopomofo: "ㄒㄩㄥˊ ㄌㄧˊ", sci: "Arctictis binturong", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "東南亞密集熱帶雨林高處樹冠", cycle: "夜行性", coins: 65, fact: "尾巴長有抓握肌肉能充當第五隻手！而且身上散發濃濃的剛出爐熱爆米花香味！", eco: "罕見的樹棲靈貓科夜行動物，在雨林中能消化無花果種子並助其萌芽。" },
+  { id: "bornean_orangutan", name: "婆羅洲紅毛猩猩", bopomofo: "ㄆㄛˊ ㄌㄨㄛˊ ㄓㄡ ㄏㄨㄥˊ ㄇㄠˊ ㄒㄧㄥ ㄒㄧㄥ", sci: "Pongo pygmaeus", grade: "CR 極危 (紅燈)", color: "#BF360C", habitat: "原始泥炭沼澤林與熱帶低地雨林", cycle: "日行性", coins: 130, fact: "雨林中的智者！每天傍晚會挑選堅固樹枝編織厚實舒適的睡床樹巢！", eco: "基因與人類有高達97%相似，因棕櫚油農園大面積開墾而瀕臨絕種危機。" },
+  { id: "proboscis_monkey", name: "長鼻猴", bopomofo: "ㄔㄤˊ ㄅㄧˊ ㄏㄡˊ", sci: "Nasalis larvatus", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "婆羅洲沿海紅樹林與河流下游森林", cycle: "日行性", coins: 95, fact: "成年雄猴有巨大的懸垂紅茄子狀大鼻子，游泳時趾間有微蹼，常在河中悠哉踩水渡河！", eco: "擁有特化的複雜發酵胃室，專食紅樹林酸性嫩葉，無法消化成熟甜水果。" },
+  { id: "rhinoceros_hornbill", name: "馬來犀鳥", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄒㄧ ㄋㄧㄠˇ", sci: "Buceros rhinoceros", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "參天大樹樹冠層與高空航道", cycle: "日行性", coins: 70, fact: "喙部上方長有如金色頭盔的巨大盔突，發聲時產生強大共鳴，羽翼拍擊聲如火車引擎！", eco: "終身一夫一妻制，繁殖期母鳥會用泥巴封在樹洞內僅留送食隙縫。" },
+  { id: "clouded_leopard", name: "雲豹", bopomofo: "ㄩㄣˊ ㄅㄠˋ", sci: "Neofelis nebulosa", grade: "VU 易危 (黃燈)", color: "#D7CCC8", habitat: "亞熱帶原始高鬱閉度森林", cycle: "夜行性", coins: 190, fact: "擁有相對於頭部比例世界最長的犬齒！腳踝關節可旋轉180度，能頭朝下倒立爬樹！", eco: "樹棲性極強的大型貓科，大塊雲狀黑斑在搖曳樹影中具備近乎完美的隱形擬態。" },
+  { id: "snow_leopard", name: "雪豹", bopomofo: "ㄒㄩㄝˇ ㄅㄠˋ", sci: "Panthera uncia", grade: "VU 易危 (黃燈)", color: "#ECEFF1", habitat: "高山雪線以上之峭壁與岩石荒漠", cycle: "晨昏出沒", coins: 210, fact: "雪山之王！毛茸茸長尾巴幾乎與身體等長，睡覺時能當圍巾包覆面部禦寒防風！", eco: "灰色煙狀花紋完全融入岩石陰影，腳掌寬大毛厚如同天然雪鞋。" },
+  { id: "asian_elephant", name: "亞洲象", bopomofo: "ㄧㄚˋ ㄓㄡ ㄒㄧㄤˋ", sci: "Elephas maximus", grade: "EN 瀕危 (紅燈)", color: "#455A64", habitat: "熱帶常綠闊葉林與開闊草生地", cycle: "日行性", coins: 180, fact: "陸地上第二大哺乳動物，象鼻內由四萬多條肌肉組成，既能拔起大樹亦能拾起花生！", eco: "母系社會大群集體行動，透過次聲波穿透數公里密林互相傳訊交流。" },
+  { id: "red_panda", name: "小熊貓 (紅熊貓)", bopomofo: "ㄒㄧㄠˇ ㄒㄩㄥˊ ㄇㄠ", sci: "Ailurus fulgens", grade: "EN 瀕危 (紅燈)", color: "#D84315", habitat: "溫帶竹林與針闊葉混交林", cycle: "晨昏出沒", coins: 60, fact: "助手波波的原型！長有一條毛茸茸的九節環狀紅褐色尾巴，站立舉手表示防衛！", eco: "以高山竹葉、嫩筍與野果為主食，第六趾偽拇指擅於抓握竹枝。" },
+  { id: "giant_panda", name: "大熊貓", bopomofo: "ㄉㄚˋ ㄒㄩㄥˊ ㄇㄠ", sci: "Ailuropoda melanoleuca", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "高山深谷繁茂的冷箭竹林", cycle: "日行性", coins: 100, fact: "黑白相間的國寶圓滾滾身材，每天花12小時以上專心咀嚼高纖維竹子！", eco: "肉食目演化而來的植食專家，具有特化的強大下顎咀嚼肌。" },
+  { id: "bengal_tiger", name: "孟加拉虎", bopomofo: "ㄇㄥˋ ㄐㄧㄚ ㄌㄚ ㄏㄨˇ", sci: "Panthera tigris tigris", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "紅樹林沼澤與常綠闊葉雨林", cycle: "晨昏出沒", coins: 230, fact: "世界上體型最雄壯的貓科掠食者之一，極其喜愛泡水游泳伏擊野鹿與水牛！", eco: "身上的條紋就像人類的指紋一樣獨一無二，是頂級生態庇護傘物種。" },
+  { id: "sun_bear", name: "馬來熊 (太陽熊)", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄒㄩㄥˊ", sci: "Helarctos malayanus", grade: "VU 易危 (黃燈)", color: "#263238", habitat: "低海拔常綠熱帶雨林高處", cycle: "夜行性", coins: 72, fact: "世界上體型最小的熊！胸前有金黃色月牙U型斑，長達25公分的舌頭專舔蜂蜜！", eco: "腳掌向內彎曲且長有銳利彎爪，極善於攀爬高聳的雨林巨木。" },
+  { id: "gharial", name: "恆河鱷 (長吻鱷)", bopomofo: "ㄏㄥˊ ㄏㄜˊ ㄜˋ", sci: "Gavialis gangeticus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "水流湍急水深且有開闊沙洲的大河", cycle: "日行性", coins: 115, fact: "長有如寶劍般細長狹窄的口鼻部與100多顆鋒利牙齒，專門側向揮掃捕魚！", eco: "成年雄鱷吻端有膨大的空心球狀突起，能在水下發出響亮求偶氣鳴。" },
+  { id: "toco_toucan", name: "托哥巨嘴鳥", bopomofo: "ㄊㄨㄛ ㄍㄜ ㄐㄩˋ ㄗㄨㄟˇ ㄋㄧㄠˇ", sci: "Ramphastos toco", grade: "LC 無危 (綠燈)", color: "#263238", habitat: "亞馬遜熱帶雨林高層樹冠", cycle: "日行性", coins: 55, fact: "鮮橙色大嘴長達20公分，但內部如同蜂巢骨骼結構，重量極輕還能當散熱器！", eco: "愛吃雨林無花果與小型昆蟲，透過鮮明色彩在茂密綠葉中識別同伴。" },
+  { id: "three_toed_sloth", name: "三趾樹懶", bopomofo: "ㄙㄢ ㄓˇ ㄕㄨˋ ㄌㄢˇ", sci: "Bradypus tridactylus", grade: "LC 無危 (綠燈)", color: "#616161", habitat: "潮濕常綠雨林枝椏", cycle: "日行性", coins: 35, fact: "代謝速度世界最慢！身上毛髮甚至長出共生藻類，是名副其實的行動植物園！", eco: "每週僅下樹一次排便，絕大部分時間倒掛在樹冠行光合保護色隱匿。" },
+  { id: "panther_chameleon", name: "七彩變色龍", bopomofo: "ㄑㄧ ㄘㄞˇ ㄅㄧㄢˋ ㄙㄜˋ ㄌㄨㄥˊ", sci: "Furcifer pardalis", grade: "LC 無危 (綠燈)", color: "#43A047", habitat: "林緣灌木叢與低矮藤蔓", cycle: "日行性", coins: 50, fact: "雙眼可各自獨立360度旋轉觀察！舌頭彈出速度比噴射戰鬥機起步還快！", eco: "利用皮膚下鳥嘌呤奈米晶體反射光線，改變體色表達情緒與調節體溫。" },
+  { id: "poison_dart_frog", name: "幽靈箭毒蛙", bopomofo: "ㄧㄡ ㄌㄧㄥˊ ㄐㄧㄢˋ ㄉㄨˊ ㄨㄚ", sci: "Epipedobates tricolor", grade: "VU 易危 (黃燈)", color: "#D81B60", habitat: "瀑布潮濕石縫與雨林落葉", cycle: "日行性", coins: 85, fact: "體型僅如大拇指指甲般精緻，身披警戒鮮紅黑紋，皮膚所含生物鹼能麻痺捕食者！", eco: "雄蛙會將孵化的蝌蚪背負至附生鳳梨科植物的蓄水葉鞘中撫育育幼。" },
+  { id: "green_iguana", name: "美洲鬣蜥", bopomofo: "ㄇㄟˇ ㄓㄡ ㄌㄧㄝˋ ㄒㄧ", sci: "Iguana iguana", grade: "LC 無危 (綠燈)", color: "#2E7D32", habitat: "河岸林冠近水枝幹", cycle: "日行性", coins: 45, fact: "擅長從十幾公尺高的樹枝跳入溪流潛水逃生，背部棘刺如恐龍般帥氣！", eco: "草食性爬蟲類，喜歡攀爬至日光充足的高處曬背獲取體溫。" },
+  { id: "ruffed_lemur", name: "白頸狐猴", bopomofo: "ㄅㄞˊ ㄐㄧㄥˇ ㄏㄨˊ ㄇㄡˊ", sci: "Varecia variegata", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "馬達加斯加東部高聳雨林林冠", cycle: "日行性", coins: 90, fact: "嗓音宏亮穿透整個山谷，脖子長有厚實的雪白毛領，是世界上唯一會做產巢的狐猴！", eco: "對花蜜與果實極具依賴性，是當地旅人蕉等巨型花卉的專屬授粉夥伴。" },
+  { id: "andean_condor", name: "安地斯神鷹", bopomofo: "ㄢ ㄉㄧˋ ㄙ ㄕㄣˊ ㄧㄥ", sci: "Vultur gryphus", grade: "VU 易危 (黃燈)", color: "#263238", habitat: "高山斷崖峭壁強勁熱氣流區", cycle: "日行性", coins: 110, fact: "翼展超過3.2公尺的巨大飛禽，能在空中幾乎不拍動翅膀盤旋滑翔數小時！", eco: "食腐性猛禽，是高山生態系中不可或缺的大自然清道夫與衛生守門員。" },
+  { id: "sword_billed_hummingbird", name: "刀嘴蜂鳥", bopomofo: "ㄉㄠ ㄗㄨㄟˇ ㄈㄥ ㄋㄧㄠˇ", sci: "Ensifera ensifera", grade: "LC 無危 (綠燈)", color: "#00897B", habitat: "安地斯山脈熱帶雲霧林花冠層", cycle: "日行性", coins: 105, fact: "鳥類界唯一鳥喙比全身軀幹還長的奇蹟物種！每秒拍翅可達80次，能在空中懸停倒退！", eco: "專門與超長筒狀的曼陀羅與西番蓮共生，是這些高山植物唯一的吸蜜授粉者。" },
+  { id: "jaguar", name: "美洲豹 (美洲虎)", bopomofo: "ㄇㄟˇ ㄓㄡ ㄅㄠˋ", sci: "Panthera onca", grade: "NT 近危 (黃燈)", color: "#FF8F00", habitat: "亞馬遜密集雨林河流沿岸", cycle: "晨昏出沒", coins: 215, fact: "咬合力冠絕所有大貓！能直接咬穿鱷魚厚皮與龜殼，熱愛游泳涉水獵食！", eco: "身上的玫瑰花斑中央還有一顆黑點，是美洲食物鏈最高級的雨林之王。" },
+  { id: "capybara", name: "水豚", bopomofo: "ㄕㄨㄟˇ ㄊㄨㄣˊ", sci: "Hydrochoerus hydrochaeris", grade: "LC 無危 (綠燈)", color: "#8D6E63", habitat: "南美洲茂密水草豐沛沼澤地", cycle: "晨昏出沒", coins: 45, fact: "動物界第一好脾氣交際草！半水生最大型齧齒動物，所有動物都愛坐在牠背上！", eco: "腳趾間有微蹼擅長游泳潛水，以水生植物和樹皮為食。" },
+  { id: "giant_anteater", name: "大食蟻獸", bopomofo: "ㄉㄚˋ ㄕˊ ㄧˇ ㄕㄡˋ", sci: "Myrmecophaga tridactyla", grade: "VU 易危 (黃燈)", color: "#5D4037", habitat: "疏林草原與潮濕沼澤林緣", cycle: "日行性", coins: 70, fact: "擁有長達60公分的彈性黏性舌頭，沒有牙齒，每分鐘吞嚥白蟻上百次！", eco: "巨大毛茸茸的尾巴睡覺時可當被子蓋住全身禦寒保暖。" },
+  { id: "scarlet_macaw", name: "五彩金剛鸚鵡", bopomofo: "ㄨˇ ㄘㄞˇ ㄐㄧㄣ ㄍㄤ ㄧㄥ ㄨˇ", sci: "Ara macao", grade: "LC 無危 (綠燈)", color: "#D32F2F", habitat: "低地熱帶雨林參天巨木樹冠", cycle: "日行性", coins: 62, fact: "身披鮮紅、金黃與亮藍三原色羽衣，喙部堅硬甚至能咬碎最堅硬的巴西堅果！", eco: "經常成群聚集在河流沿岸的黏土峭壁舔食泥土以中和果實毒素。" },
+  { id: "harpy_eagle", name: "角雕 (哈比鷹)", bopomofo: "ㄐㄧㄠˇ ㄉㄧㄠ", sci: "Harpia harpyja", grade: "VU 易危 (黃燈)", color: "#424242", habitat: "低地未受侵擾雨林樹冠上層", cycle: "日行性", coins: 170, fact: "猛禽界的肌肉重裝巨獸！後爪長度堪比大灰熊爪，能直接從樹冠抓走成年樹懶與猴子！", eco: "頭頂長有雙分叉聳立的冠羽，眼神凌厲威嚴震撼。" },
+  { id: "green_anaconda", name: "綠森蚺", bopomofo: "ㄌㄩˋ ㄙㄣ ㄖㄢˊ", sci: "Eunectes murinus", grade: "LC 無危 (綠燈)", color: "#33691E", habitat: "亞馬遜緩慢流動沼澤與支流", cycle: "夜行性", coins: 100, fact: "世界上體型最沉重的大型水蟒！能完全潛伏在水草中只露出鼻孔守候獵物！", eco: "水性極佳，藉由肌肉強大的纏繞力將水豚或凱門鱷窒息制伏。" },
+  { id: "basilisk_lizard", name: "雙冠蜥 (耶穌蜥蜴)", bopomofo: "ㄕㄨㄤ ㄍㄨㄢ ㄒㄧ", sci: "Basiliscus basiliscus", grade: "LC 無危 (綠燈)", color: "#388E3C", habitat: "近水低垂熱帶林木枝頭", cycle: "日行性", coins: 58, fact: "能在水面上用雙腳狂奔數公尺而不沉下去！腳趾有特化皮褶拍擊水面產生氣泡浮力！", eco: "遇到危險時從樹上躍入水面極速狂奔逃逸。" },
+  { id: "cheetah", name: "獵豹", bopomofo: "ㄌㄧㄝˋ ㄅㄠˋ", sci: "Acinonyx jubatus", grade: "VU 易危 (黃燈)", color: "#FFA000", habitat: "林緣稀樹草原與開闊視野平原", cycle: "日行性", coins: 120, fact: "陸地短跑速度極限之王！0至100公里加速僅需3秒，爪子無法收回如同跑鞋釘鞋！", eco: "眼角有黑色淚痕狀花紋吸收強烈陽光眩光，依賴極速追逐獵捕中小型羚羊。" },
+  { id: "serval", name: "藪貓", bopomofo: "ㄙㄡˇ ㄇㄠ", sci: "Leptailurus serval", grade: "LC 無危 (綠燈)", color: "#FFB300", habitat: "蘆葦沼澤與高草林緣地帶", cycle: "晨昏出沒", coins: 70, fact: "貓科界長腿名模！耳朵巨大如雷達天線，能躍入空中高達3公尺直接截擊飛鳥！", eco: "依賴極其敏銳的聽覺鎖定草叢中移動的鼠類，捕捉成功率高達50%以上。" },
+  { id: "african_lion", name: "非洲獅", bopomofo: "ㄈㄟ ㄓㄡ ㄕ", sci: "Panthera leo", grade: "VU 易危 (黃燈)", color: "#D87D24", habitat: "開闊稀樹草原與灌木林邊緣", cycle: "晨昏出沒", coins: 200, fact: "萬獸之王！唯一具有雌雄兩態與複雜群居社會結構的貓科動物，咆哮聲傳遍八公里！", eco: "母獅協同包夾圍獵斑馬角馬，雄獅長有濃密鬃毛捍衛領域。" },
+  { id: "black_rhinoceros", name: "黑犀牛", bopomofo: "ㄏㄟ ㄒㄧ ㄋㄧㄡˊ", sci: "Diceros bicornis", grade: "CR 極危 (紅燈)", color: "#616161", habitat: "多刺灌木林與稀樹草原", cycle: "晨昏出沒", coins: 175, fact: "具有靈活突出的抓握型上唇，專門捲取多刺灌木的嫩葉嫩枝！皮膚厚實如裝甲。", eco: "嗅覺與聽覺極佳但視力極差，受驚時會向目標猛烈衝撞。" },
+  { id: "hippopotamus", name: "河馬", bopomofo: "ㄏㄜˊ ㄇㄚˇ", sci: "Hippopotamus amphibius", grade: "VU 易危 (黃燈)", color: "#455A64", habitat: "水流平緩之淡水湖泊與河流", cycle: "夜行性", coins: 110, fact: "能張開高達150度的巨嘴！犬齒長達50公分，皮膚會分泌紅色天然防曬油血汗！", eco: "白天泡水降溫防曬，夜間爬上岸狂嗑數十公斤青草。" },
+  { id: "giraffe", name: "長頸鹿", bopomofo: "ㄔㄤˊ ㄐㄧㄥˇ ㄌㄨˋ", sci: "Giraffa camelopardalis", grade: "VU 易危 (黃燈)", color: "#FFA000", habitat: "金合歡茂盛開闊林地", cycle: "日行性", coins: 85, fact: "陸地上身材最高的動物！脖子長達2公尺但跟人類一樣只有7塊頸椎骨！", eco: "心臟重達11公斤以將血液泵上海拔高處的頭部，藍黑色長舌長達45公分。" },
+  { id: "mountain_gorilla", name: "山地大猩猩", bopomofo: "ㄕㄢ ㄉㄧˋ ㄉㄚˋ ㄒㄧㄥ ㄒㄧㄥ", sci: "Gorilla beringei beringei", grade: "EN 瀕危 (紅燈)", color: "#212121", habitat: "海拔2200至4000公尺高山雲霧林", cycle: "日行性", coins: 140, fact: "體格魁梧但生性溫和的素食紳士！成年領袖背部長有銀白色毛髮稱銀背！", eco: "以雙拳捶胸發出震耳回響表達威儀或喜悅，智力極高。" },
+  { id: "meerkat", name: "狐獴", bopomofo: "ㄏㄨˊ ㄇㄥˇ", sci: "Suricata suricatta", grade: "LC 無危 (綠燈)", color: "#A1887F", habitat: "乾燥開闊沙漠邊緣與沙質灌木林", cycle: "日行性", coins: 42, fact: "哨兵會用後腳直立眺望天空警戒老鷹！眼眶周圍黑圈如同天然太陽眼鏡防強光！", eco: "群體合作分工明確，甚至能免疫毒蠍的致命蠍毒。" },
+  { id: "honey_badger", name: "蜜獾 (平頭哥)", bopomofo: "ㄇㄧˋ ㄏㄨㄢ", sci: "Mellivora capensis", grade: "LC 無危 (綠燈)", color: "#424242", habitat: "乾旱灌木林與疏林草地", cycle: "夜行性", coins: 92, fact: "金氏世界紀錄最無所畏懼的動物！皮毛厚實鬆弛讓毒蛇利齒無從下嘴！", eco: "生性狂暴堅韌，喜食野蜂蜜與劇毒毒蛇，被蛇咬中睡一覺即可解毒醒來。" },
+  { id: "shoebill", name: "鯨頭鸛", bopomofo: "ㄐㄧㄥ ㄊㄡˊ ㄍㄨㄢˋ", sci: "Balaeniceps rex", grade: "VU 易危 (黃燈)", color: "#78909C", habitat: "熱帶中非大片紙莎草沼澤深處", cycle: "日行性", coins: 115, fact: "擁有一張如木靴般巨大的粗厚喙部！站在水草中如同雕像般一動不動數小時！", eco: "捕食時會以泰山壓頂之勢猛撲鱷魚幼崽與巨型肺魚，上下喙敲擊如機關槍！" },
+  { id: "african_wild_dog", name: "非洲野犬 (塗色狼)", bopomofo: "ㄈㄟ ㄓㄡ ㄧㄝˇ ㄑㄩㄢˇ", sci: "Lycaon pictus", grade: "EN 瀕危 (紅燈)", color: "#8D6E63", habitat: "開闊林緣平原與半乾旱林帶", cycle: "晨昏出沒", coins: 105, fact: "捕食成功率高達80%的戰術大師！身上斑駁花紋沒有兩隻相同，大圓耳朵如雷達！", eco: "社會結構極度友善互助，會將吞下的肉反芻餵食留守巢穴的老弱幼犬。" },
+  { id: "grey_crowned_crane", name: "灰冠鶴", bopomofo: "ㄏㄨㄟ ㄍㄨㄢ ㄏㄜˋ", sci: "Balearica regulorum", grade: "EN 瀕危 (紅燈)", color: "#546E7A", habitat: "近水濕地草甸與開闊沼澤", cycle: "日行性", coins: 68, fact: "頭頂長有一頂璀璨奪目的金色絲狀羽冠，跳起求偶舞時展翅旋轉優雅迷人！", eco: "少數能在樹枝上停棲做巢的鶴類，後趾長有抓握肌肉。" },
+  { id: "chameleon_jackson", name: "傑克森變色龍", bopomofo: "ㄐㄧㄝˊ ㄎㄜˋ ㄙㄣ ㄅㄧㄢˋ ㄙㄜˋ ㄌㄨㄥˊ", sci: "Trioceros jacksonii", grade: "LC 無危 (綠燈)", color: "#2E7D32", habitat: "東非高山涼爽森林樹冠", cycle: "日行性", coins: 48, fact: "雄性頭部長有三根帥氣的角如微縮版三角龍！卵胎生直接產下活跳跳小蜥蜴！", eco: "偏好涼爽濕潤的高山林帶，動作緩慢搖晃模擬被風吹動的樹葉。" },
+  { id: "african_grey_parrot", name: "非洲灰鸚鵡", bopomofo: "ㄈㄟ ㄓㄡ ㄏㄨㄟ ㄧㄥ ㄨˇ", sci: "Psittacus erithacus", grade: "EN 瀕危 (紅燈)", color: "#78909C", habitat: "低地潮濕雨林與油棕櫚林緣", cycle: "日行性", coins: 85, fact: "鳥類界智力天花板！理解力相當於5歲兒童，擁有鮮紅短尾與非凡的語言模仿能力！", eco: "社會性極強，透過多樣化的口哨聲、警報聲在茂密森林中交流協作。" },
+  { id: "okapi", name: "霍加皮 (森林長頸鹿)", bopomofo: "ㄏㄨㄛˋ ㄐㄧㄚ ㄆㄧˊ", sci: "Okapia johnstoni", grade: "EN 瀕危 (紅燈)", color: "#3E2723", habitat: "剛果濃密深邃剛果雨林底層", cycle: "日行性", coins: 125, fact: "神秘的林中斑馬化身！其實是長頸鹿在雨林唯一的現存近親，臀部有黑白斑馬條紋！", eco: "舌頭長達35公分甚至能舔洗自己的眼皮和耳朵，生性羞怯極度隱蔽。" },
+  { id: "gray_wolf", name: "灰狼", bopomofo: "ㄏㄨㄟ ㄌㄤˊ", sci: "Canis lupus", grade: "LC 無危 (綠燈)", color: "#78909C", habitat: "溫帶針葉林與高山荒原", cycle: "夜行性", coins: 85, fact: "團結就是力量！狼群具有嚴格紀律分工，夜幕低垂時的悠長狼嚎能傳達數公里！", eco: "長途奔馳耐力驚人，能跟蹤獵物長達數十公里直至其筋疲力盡。" },
+  { id: "moose", name: "駝鹿 (麋鹿王)", bopomofo: "ㄊㄨㄛˊ ㄌㄨˋ", sci: "Alces alces", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "寒溫帶針葉林湖沼與溪畔", cycle: "晨昏出沒", coins: 80, fact: "世界上體型最大的鹿！雄鹿長有一對巨大如鏟子般的掌狀雄角，鼻吻寬厚！", eco: "夏日極愛泡在湖泊深處潛水吃睡蓮水草，長腿在深雪中行走如履平地。" },
+  { id: "wolverine", name: "貂熊 (狼獾)", bopomofo: "ㄉㄧㄠ ㄒㄩㄥˊ", sci: "Gulo gulo", grade: "LC 無危 (綠燈)", color: "#2E1C0C", habitat: "寒溫帶泰加林與高山凍原", cycle: "夜行性", coins: 110, fact: "身形如小熊但戰鬥力破表！爪齒如鋼鐵，能在冰封雪原搶奪狼群與美洲獅的食物！", eco: "腳掌寬大毛厚如同天然雪鞋，厚實皮毛即使在零下40度也絕不結冰結霜。" },
+  { id: "siberian_tiger", name: "西伯利亞虎 (東北虎)", bopomofo: "ㄒㄧ ㄅㄛˊ ㄌㄧˋ ㄧㄚˇ ㄏㄨˇ", sci: "Panthera tigris altaica", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "高緯度針闊混交林與紅松雪林", cycle: "晨昏出沒", coins: 240, fact: "貓科家族最大王者！厚實金黃冬毛抵禦零下45度嚴寒，掌力驚人每步踏出王者霸氣！", eco: "領域可涵蓋上千平方公里，主要獵食野豬、馬鹿等大型有蹄類動物。" },
+  { id: "eurasian_lynx", name: "歐亞猞猁", bopomofo: "ㄡ ㄧㄚˋ ㄕㄜˋ ㄌㄧˋ", sci: "Lynx lynx", grade: "LC 無危 (綠燈)", color: "#BCAAA4", habitat: "深山密林針葉樹冠覆蓋帶", cycle: "晨昏出沒", coins: 85, fact: "耳朵尖端長有一撮黑色長毛宛如天線！尾巴短小圓鈍，雪地中悄無聲息伏擊野兔！", eco: "腳爪極度寬大均勻分散體重，能在齊膝深雪中奔馳跳躍如履平地。" },
+  { id: "brown_bear", name: "棕熊 (灰熊)", bopomofo: "ㄗㄨㄥ ㄒㄩㄥˊ", sci: "Ursus arctos", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "原始針葉林與高山草甸", cycle: "晨昏出沒", coins: 130, fact: "背部有強大的肌肉隆起賦予驚人拍擊力！秋天常守候在急流瀑布躍起截咬逆流鮭魚！", eco: "冬眠前狂吃累積厚達十幾公分皮下脂肪，嗅覺比獵犬靈敏七倍。" },
+  { id: "golden_eagle", name: "金鵰", bopomofo: "ㄐㄧㄣ ㄉㄧㄠ", sci: "Aquila chrysaetos", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "崇山峻嶺險峰斷崖晴空", cycle: "日行性", coins: 105, fact: "空中猛禽之霸！俯衝時速超過300公里！頭頸部在陽光下泛出華麗耀眼的金黃光澤！", eco: "雙爪力量巨大，能直接獵捕野兔、土撥鼠甚至從峭壁俯衝拖走幼羊。" },
+  { id: "peregrine_falcon", name: "遊隼", bopomofo: "ㄧㄡˊ ㄓㄨㄣˇ", sci: "Falco peregrinus", grade: "LC 無危 (綠燈)", color: "#455A64", habitat: "海邊峭壁與高山峽谷頂端晴空", cycle: "日行性", coins: 135, fact: "大自然俯衝極速冠軍！時速突破380公里如飛彈破空！利用銳利後爪在空中擊墜飛鳥！", eco: "鼻孔內有特殊骨質小錐體阻擋超高速俯衝時的強烈氣流灌入肺部。" },
+  { id: "great_grey_owl", name: "烏林鴞", bopomofo: "ㄨ ㄌㄧㄣˊ ㄒㄧㄠ", sci: "Strix nebulosa", grade: "LC 無危 (綠燈)", color: "#616161", habitat: "北方針葉林繁茂密林深處", cycle: "夜行性", coins: 78, fact: "臉盤巨大如雷達碗！即使在半公尺厚的厚雪下方，也能精準聽見田鼠微弱爬行聲！", eco: "全身覆蓋蓬鬆羽毛顯得體型龐大，無聲俯衝撞入雪層精準擒鼠。" },
+  { id: "beaver", name: "河狸 (大自然水壩工程師)", bopomofo: "ㄏㄜˊ ㄌㄧˊ", sci: "Castor fiber", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "針葉林旁落葉樹木豐富的溪流河流", cycle: "夜行性", coins: 58, fact: "用鐵一般的橙色大門牙啃倒大樹，築起精巧的水壩與湖心島木屋水獺堡！", eco: "扁平如船槳的皮革尾巴不僅是游泳舵，遭遇危險時還會重重拍擊水面示警。" },
+  { id: "sable", name: "紫貂", bopomofo: "ㄗˇ ㄉㄧㄠ", sci: "Martes zibellina", grade: "VU 易危 (黃燈)", color: "#2E1C0C", habitat: "茂密原始針葉林古木倒木林下", cycle: "晨昏出沒", coins: 68, fact: "體型小巧身手敏捷如松鼠！毛色黑褐泛紫金光澤，在積雪深厚的樹幹上下穿梭！", eco: "擅長捕捉松鼠與雪兔，生性警惕在樹洞或石隙間築巢。" },
+  { id: "red_fox", name: "赤狐", bopomofo: "ㄔˋ ㄏㄨˊ", sci: "Vulpes vulpes", grade: "LC 無危 (綠燈)", color: "#D84315", habitat: "林緣草地灌木與山地開闊地帶", cycle: "晨昏出沒", coins: 52, fact: "聰明伶俐的大尾巴探險家！冬天在雪地中頭朝下扎入雪堆捕捉地底田鼠！", eco: "長有一身亮麗紅橙色毛皮與純白肚皮，大耳朵聽力極佳。" },
+  { id: "bald_eagle", name: "白頭海鵰", bopomofo: "ㄅㄞˊ ㄊㄡˊ ㄏㄞˇ ㄉㄧㄠ", sci: "Haliaeetus leucocephalus", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "近水森林湖畔與海岸晴空", cycle: "日行性", coins: 90, fact: "純白頭羽與純黃大鉤嘴形成強烈對比！雙翼展開超過2公尺，俯衝掠過水面截魚！", eco: "巨型巢穴常重達上千公斤，終身伴侶共同修補守護家園。" },
+  { id: "snowy_owl", name: "雪鴞 (北極白鴞)", bopomofo: "ㄒㄩㄝˇ ㄒㄧㄠ", sci: "Bubo scandiacus", grade: "VU 易危 (黃燈)", color: "#F5F5F5", habitat: "寒帶開闊無樹平原與岩石海岸", cycle: "日行性", coins: 95, fact: "哈利波特嘿美的原型！通體雪白點綴黑色斑點，眼睛金黃如寶石，極少數日行鴞！", eco: "專食北極旅鼠，厚密羽毛甚至覆蓋到腳趾爪尖抵禦刺骨暴風雪。" },
+  { id: "polar_bear", name: "北極熊", bopomofo: "ㄅㄟˇ ㄐㄧˊ ㄒㄩㄥˊ", sci: "Ursus maritimus", grade: "VU 易危 (黃燈)", color: "#FAFAFA", habitat: "極圈冰封浮冰邊緣與北冰洋海域", cycle: "日行性", coins: 225, fact: "世界最大陸生食肉動物！毛髮其實是透明中空的管狀結構，能將日光導入黑皮膚！", eco: "腳掌寬大布滿防滑微肉突，在浮冰間暢遊數十公里如同海中游魚。" },
+  { id: "giant_river_otter", name: "巨獺 (巨水獺)", bopomofo: "ㄐㄩˋ ㄊㄚˋ", sci: "Pteronura brasiliensis", grade: "EN 瀕危 (紅燈)", color: "#3E2723", habitat: "熱帶雨林慢流河流與森林清澈溪流", cycle: "日行性", coins: 110, fact: "水獺界的綠巨人！身長可達1.8公尺，成群活動被稱為『河中之狼』！", eco: "敢於集體圍攻驅趕黑凱門鱷，叫聲多達二十餘種社交語音。" },
+  { id: "chinese_giant_salamander", name: "大鯢 (娃娃魚)", bopomofo: "ㄉㄚˋ ㄋㄧˊ", sci: "Andrias davidianus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "高山清涼純淨溪流岩穴陰暗水質深潭", cycle: "夜行性", coins: 98, fact: "世界最大兩棲動物！長相古老如史前恐龍，夜晚發出的叫聲宛如幼兒啼哭！", eco: "肉質褶皺皮膚可直接在水中交換氧氣，對水質要求極高。" },
+  { id: "axolotl", name: "美西螈 (六角恐龍)", bopomofo: "ㄇㄟˇ ㄒㄧ ㄩㄢˊ", sci: "Ambystoma mexicanum", grade: "CR 極危 (紅燈)", color: "#F8BBD0", habitat: "高山古老湖泊潮濕水草沉水層", cycle: "夜行性", coins: 50, fact: "永遠長不大的水精靈！頭部兩側長有粉紅羽毛狀外鰓，終身維持幼態！", eco: "擁有極強的神奇肢體再生能力，即使心臟或大腦受損也能自行修復。" },
+  { id: "platypus", name: "鴨嘴獸", bopomofo: "ㄧㄚ ㄗㄨㄟˇ ㄕㄡˋ", sci: "Ornithorhynchus anatinus", grade: "NT 近危 (黃燈)", color: "#4E342E", habitat: "東澳純淨淡水溪流岸邊洞穴", cycle: "晨昏出沒", coins: 88, fact: "大自然的拼圖奇蹟！長有鴨子嘴、海狸尾與水獺腳，下蛋孵卵卻用乳汁餵奶！", eco: "雄性後腳長有毒刺，閉上眼睛在水底利用嘴喙電感受器尋找蝦蟹。" },
+  { id: "shoebill_stork", name: "鯨頭鸛幼鳥", bopomofo: "ㄐㄧㄥ ㄊㄡˊ ㄍㄨㄢˋ ㄧㄡˋ ㄋㄧㄠˇ", sci: "Balaeniceps rex juv", grade: "VU 易危 (黃燈)", color: "#78909C", habitat: "熱帶中非大片紙莎草沼澤深處", cycle: "日行性", coins: 60, fact: "呆萌的木靴嘴小寶寶，搖搖晃晃在沼澤學習抓魚，是雨林深處的國寶珍禽！", eco: "成長期依賴雙親反芻送水餵食，成年後展現霸氣獵手本色。" },
+  { id: "roseate_spoonbill", name: "粉紅琵琶鷺", bopomofo: "ㄈㄣˇ ㄏㄨㄥˊ ㄆㄧˊ ㄆㄚˊ ㄌㄨˋ", sci: "Platalea ajaja", grade: "LC 無危 (綠燈)", color: "#F48FB1", habitat: "紅樹林沼澤與潮間帶泥灘", cycle: "日行性", coins: 55, fact: "全身羽毛如玫瑰粉晶！長有扁平如湯匙琵琶狀的特殊長嘴在水中左右掃食！", eco: "食物中的甲殼素類胡蘿蔔素沉積在羽毛中，讓羽色愈加鮮豔粉嫩。" },
+  { id: "flamigo", name: "大紅鸛 (火烈鳥)", bopomofo: "ㄉㄚˋ ㄏㄨㄥˊ ㄍㄨㄢˋ", sci: "Phoenicopterus roseus", grade: "LC 無危 (綠燈)", color: "#FF8A80", habitat: "高鹽度鹼性湖泊與潟湖淺灘", cycle: "日行性", coins: 58, fact: "單腳站立的芭蕾名伶！彎曲特別的倒置濾食嘴在泥水中篩食螺旋藻與豐年蝦！", eco: "成千上萬隻同時在湖面展翅宛如燃燒的紅色火焰。" },
+  { id: "kingfisher", name: "普通翠鳥 (翡翠鳥)", bopomofo: "ㄆㄨˇ ㄊㄨㄥ ㄘㄨㄟˋ ㄋㄧㄠˇ", sci: "Alcedo atthis", grade: "LC 無危 (綠燈)", color: "#00ACC1", habitat: "水質清澈溪流池塘邊垂柳枝頭", cycle: "日行性", coins: 65, fact: "如同一顆藍寶石射向水面！以超流線型鳥喙扎入水中銜魚，新幹線車頭設計的靈感來源！", eco: "背部金屬翠藍羽毛會隨日光角度折射出不同璀璨光芒。" },
+  { id: "black_necked_crane", name: "黑頸鶴", bopomofo: "ㄏㄟ ㄐㄧㄥˇ ㄏㄜˋ", sci: "Grus nigricollis", grade: "NT 近危 (黃燈)", color: "#37474F", habitat: "高原湖泊沼澤與高山濕地", cycle: "日行性", coins: 95, fact: "世界上唯一生長繁殖於高原的珍稀鶴類！頸部上半段與飛羽純黑如墨染！", eco: "生性忠貞一夫一妻，在海拔4000公尺青藏高原湖泊優雅踱步。" },
+  { id: "chinese_alligator", name: "揚子鱷 (鼉)", bopomofo: "ㄧㄤˊ ㄗˇ ㄜˋ", sci: "Alligator sinensis", grade: "CR 極危 (紅燈)", color: "#4E342E", habitat: "低海拔溫和泥沼、池塘與蘆葦叢", cycle: "晨昏出沒", coins: 88, fact: "中國特有珍稀短吻鱷！身形小巧溫順，在泥灘挖掘深邃複雜的越冬洞穴！", eco: "具有厚實的骨板護甲，入冬後在洞穴中冬眠數月之久。" },
+  { id: "saltwater_crocodile", name: "灣鱷 (鹹水鱷)", bopomofo: "ㄨㄢ ㄜˋ", sci: "Crocodylus porosus", grade: "LC 無危 (綠燈)", color: "#263238", habitat: "河口紅樹林三角洲與近海灘塗", cycle: "晨昏出沒", coins: 220, fact: "現存體型最大爬行動物！體長可達6公尺，強大鹽腺讓牠能在遠洋汪洋中長途跋涉！", eco: "死亡翻滾能瞬間撕裂獵物，是熱帶水域無可匹敵的遠古頂級霸主。" },
+  { id: "mata_mata", name: "瑪塔蛇頸龜", bopomofo: "ㄇㄚˇ ㄊㄚˇ ㄕㄜˊ ㄐㄧㄥˇ ㄍㄨㄟ", sci: "Chelus fimbriata", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "亞馬遜落葉堆積沉澱的靜水黑水溪", cycle: "夜行性", coins: 52, fact: "水中落葉擬態大師！背甲如粗糙樹皮，長頸與吻部如吸管般伸縮產生負壓瞬間吸入魚蝦！", eco: "極少主動遊動，長年靜臥在水底落葉堆中伏擊經過的魚群。" },
+  { id: "giant_flying_fox", name: "大蝙蝠 (馬來大狐蝠)", bopomofo: "ㄉㄚˋ ㄅㄧㄢ ㄈㄨˊ", sci: "Pteropus vampyrus", grade: "EN 瀕危 (紅燈)", color: "#212121", habitat: "熱帶沿海紅樹林與茂密果樹林冠", cycle: "夜行性", coins: 75, fact: "翼展達到驚人的1.5公尺！長有一張像小狐狸般可愛的面孔，專吃水果與花蜜！", eco: "缺乏回聲定位，完全依賴大眼睛與靈敏嗅覺在夜間高空導航尋找成熟無花果。" },
+  { id: "snow_monkey", name: "日本雪猴 (溫泉獼猴)", bopomofo: "ㄖˋ ㄅㄣˇ ㄒㄩㄝˇ ㄏㄡˊ", sci: "Macaca fuscata", grade: "LC 無危 (綠燈)", color: "#A1887F", habitat: "白雪皚皚之高山森林與地熱溫泉區", cycle: "日行性", coins: 52, fact: "天下第一懂得享受！寒冬時臉頰通紅舒舒服服泡在冒著熱氣的天然露天溫泉裡！", eco: "具有極高智慧與文化傳播，會主動用溪水清洗甘薯泥沙。" },
+  { id: "albatross", name: "漂泊信天翁", bopomofo: "ㄆㄧㄠ ㄅㄛˊ ㄒㄧㄣˋ ㄊㄧㄢ ㄨㄥ", sci: "Diomedea exulans", grade: "VU 易危 (黃燈)", color: "#ECEFF1", habitat: "南冰洋狂風咆哮之無垠風暴海面上空", cycle: "日行性", coins: 120, fact: "地球上翼展最寬的巨鳥！雙翼伸展長達3.5公尺，能乘著海風在暴風中睡眠滑翔！", eco: "終其一生大部分時間都在浩瀚遠洋上空度過，唯有繁殖期才踏上陸地峭壁。" },
+  { id: "koala", name: "無尾熊 (考拉)", bopomofo: "ㄨˊ ㄨㄟˇ ㄒㄩㄥˊ", sci: "Phascolarctos cinereus", grade: "VU 易危 (黃燈)", color: "#78909C", habitat: "尤加利樹茂密桉樹林", cycle: "夜行性", coins: 48, fact: "每天睡足20小時的樹上睡美人！特化盲腸專門分解尤加利樹葉的毒素！", eco: "手掌長有雙分叉對生手指，抱樹極其牢固，毛茸茸圓耳朵萌翻全場。" },
+  { id: "red_kangaroo", name: "紅袋鼠", bopomofo: "ㄏㄨㄥˊ ㄉㄞˋ ㄕㄨˇ", sci: "Osphranter rufus", grade: "LC 無危 (綠燈)", color: "#BF360C", habitat: "開闊灌木叢生之乾旱半乾旱草原", cycle: "晨昏出沒", coins: 68, fact: "跳躍健將！後腿強大彈簧肌腱讓牠能以時速60公里跳躍前進，巨大尾巴充當第三條腿！", eco: "育兒袋內撫育幼仔，前胸肌肉發達擅長拳擊防禦。" },
+  { id: "tasmanian_devil", name: "袋獾 (塔斯馬尼亞惡魔)", bopomofo: "ㄉㄞˋ ㄏㄨㄢ", sci: "Sarcophilus harrisii", grade: "EN 瀕危 (紅燈)", color: "#212121", habitat: "沿海石楠灌叢與乾燥硬葉林", cycle: "夜行性", coins: 92, fact: "現存體型最大食肉有袋類！雖然體型如小狗，但相對體重咬合力超越斑鬣狗！", eco: "進食時發出令人毛骨悚然的嘶吼怪叫，耳朵遇興奮時會充血發紅。" },
+  { id: "emperor_penguin", name: "帝王企鵝", bopomofo: "ㄉㄧˋ ㄨㄤˊ ㄑㄧˋ ㄜˊ", sci: "Aptenodytes forsteri", grade: "NT 近危 (黃燈)", color: "#263238", habitat: "南極大陸極端酷寒之冰架與冰原", cycle: "日行性", coins: 95, fact: "極地父愛典範！雄企鵝在零下60度的暴風雪中將企鵝蛋放在腳背育兒褶緊貼孵化兩月！", eco: "四層重疊濃密防水羽毛如同天然太空衣，深潛極限超過500公尺。" },
+  { id: "kiwi_bird", name: "奇異鳥 (鷸鴕)", bopomofo: "ㄑㄧˊ ㄧˋ ㄋㄧㄠˇ", sci: "Apteryx mantelli", grade: "VU 易危 (黃燈)", color: "#5D4037", habitat: "溫帶亞熱帶原始落葉林深厚腐植層", cycle: "夜行性", coins: 65, fact: "紐西蘭國鳥！翅膀完全退化，鼻孔奇蹟般長在長喙尖端，嗅覺靈敏度鳥類第一！", eco: "所產的鳥蛋佔其體重的四分之一，是世界上蛋身比例最驚人的奇蹟之鳥。" }
 ];
 
 // Game State
@@ -642,7 +710,7 @@ let gameState = {
   consecutiveFailures: 0,
   playSeconds: 0,
   eyeCareActive: false,
-  targetAnimal: ALL_32_ANIMALS[0]
+  targetAnimal: ALL_100_ANIMALS[0]
 };
 
 // Play Time Timer loop
@@ -724,7 +792,7 @@ let qte = {
 };
 
 function startBattle() {
-  gameState.targetAnimal = ALL_32_ANIMALS[Math.floor(Math.random() * ALL_32_ANIMALS.length)];
+  gameState.targetAnimal = ALL_100_ANIMALS[Math.floor(Math.random() * ALL_100_ANIMALS.length)];
   document.getElementById("battle-target-name").innerText = gameState.targetAnimal.name;
   document.getElementById("battle-target-habitat").innerText = "棲地：" + gameState.targetAnimal.habitat;
 
@@ -962,7 +1030,7 @@ function updateDdaUi() {
 function renderJournalList() {
   const container = document.getElementById("journal-list-items");
   container.innerHTML = "";
-  ALL_32_ANIMALS.forEach((a, i) => {
+  ALL_100_ANIMALS.forEach((a, i) => {
     const item = document.createElement("div");
     item.className = "journal-item" + (i === 0 ? " active" : "");
     item.innerHTML = `<span>${a.name}</span><span style="font-size:10px; color:#888;">${a.grade.split(" ")[0]}</span>`;
@@ -975,10 +1043,10 @@ function renderJournalList() {
   });
 }
 
-let currentSelectedJournalAnimal = ALL_32_ANIMALS[0];
+let currentSelectedJournalAnimal = ALL_100_ANIMALS[0];
 
 function selectJournalAnimal(idx) {
-  const a = ALL_32_ANIMALS[idx];
+  const a = ALL_100_ANIMALS[idx];
   currentSelectedJournalAnimal = a;
   document.getElementById("jd-bopomofo").innerText = a.bopomofo;
   document.getElementById("jd-name").innerText = a.name;

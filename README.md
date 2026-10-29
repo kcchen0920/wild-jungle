@@ -20,8 +20,8 @@
 - 仿皮質封面、泛黃紙張質感的圖文升級介面 (`DaveNotebookFrame`)。
 - 具有清脆翻頁與木質碰撞反饋音效，搭配小熊貓「波波」溫馨語音氣泡指引。
 
-### 3. 100% 全量收錄 32 種寫實野生動物生態與互動圖鑑
-- 完整收錄台灣黑熊、石虎、櫻花鉤吻鮭、穿山甲、帝雉、川金絲猴、大冠鷲等 32 種真實物種。
+### 3. 100% 全量收錄 100 種寫實野生動物生態與互動圖鑑
+- 完整收錄台灣黑熊、石虎、櫻花鉤吻鮭、穿山甲、帝雉、川金絲猴、大冠鷲、北極熊、大熊貓等 100 種全球寫實物種。
 - 保育等級紅黃綠三色燈號、真實叫聲、生活習性與自然科普知識。
 
 ### 4. 自然生態庇護所經營 (Shelter Economy)
@@ -48,8 +48,8 @@ wild_catcher_project/
 │   │   ├── data/
 │   │   │   ├── WildDatabase.kt          # Room Database 定義與型態轉換
 │   │   │   ├── dao/                     # AnimalDao, PlayerDao, ShelterDao, QuizDao
-│   │   │   ├── model/                   # 32種動物實體、玩家檔案、庇護園區、科普題庫
-│   │   │   └── repository/              # WildRepository (全量 32 種動物數據注入)
+│   │   │   ├── model/                   # 100種動物實體、玩家檔案、庇護園區、科普題庫
+│   │   │   └── repository/              # WildRepository (全量 100 種動物數據注入)
 │   │   ├── domain/
 │   │   │   ├── capture/CaptureEngine.kt # 雙手協同評分、左手施力穩定、右手節奏點擊、彈性物理形變
 │   │   │   ├── health/PlayTimeManager.kt# 30分鐘遊玩計時、波波護眼彈窗、隔日睡飽飽獎勵

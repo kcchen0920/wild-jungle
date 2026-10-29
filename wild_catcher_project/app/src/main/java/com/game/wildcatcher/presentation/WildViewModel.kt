@@ -90,7 +90,7 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
 
     fun startRandomExpedition() {
         val list = allAnimals.value
-        val target = list.shuffled().firstOrNull() ?: WildRepository.FULL_32_REALISTIC_ANIMALS[0]
+        val target = list.shuffled().firstOrNull() ?: WildRepository.FULL_100_REALISTIC_ANIMALS[0]
         _currentTargetAnimal.value = target
         navigateTo(ScreenState.CAPTURE_BATTLE)
     }

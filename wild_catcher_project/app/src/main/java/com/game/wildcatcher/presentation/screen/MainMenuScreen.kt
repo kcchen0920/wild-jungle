@@ -289,7 +289,7 @@ fun MainMenuScreen(
                                     modifier = Modifier.padding(12.dp),
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    Text("📖 32種寫實動物圖鑑", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = LeatherDark)
+                                    Text("📖 100種寫實動物圖鑑", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = LeatherDark)
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text("保育燈號、PBR寫實模型與真實叫聲檔案！", fontSize = 10.sp, color = InkGrey)
                                 }
