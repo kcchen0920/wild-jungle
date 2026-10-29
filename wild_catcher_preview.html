@@ -3,1566 +3,1700 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>野性捕捉大師 (Wild Catcher: Jungle & Sky) - 平板橫向模擬體驗</title>
+<title>野性捕捉大師 (Wild Catcher: Jungle & Sky) - 平板實機高階預覽與美術檢驗台</title>
 <style>
   :root {
-    --leather-dark: #2B1B17;
-    --leather-brown: #4A2E1B;
-    --parchment-bg: #F7F2E4;
-    --parchment-card: #EFE6CD;
-    --parchment-border: #D6C8A8;
-    --vintage-brass: #C89D42;
-    --brass-highlight: #FFD57A;
+    --wood-dark: #1F140E;
+    --wood-plank: #332014;
+    --parchment: #F4ECD8;
+    --parchment-card: #ECE2C8;
+    --parchment-border: #C8BA9B;
+    --ink-black: #1A1C18;
+    --ink-muted: #565650;
+    --brass: #C89D42;
+    --brass-glow: #FBD473;
     --bamboo-green: #2E7D32;
-    --bamboo-light: #81C784;
-    --ink-black: #1F2421;
-    --ink-grey: #5A5852;
-    --bubble-cyan: #00ACC1;
-    --sunset-amber: #FF8F00;
-    --danger-coral: #D32F2F;
+    --bamboo-light: #66BB6A;
+    --danger-red: #D32F2F;
+    --ocean-cyan: #00ACC1;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
   body {
-    background: #120B08;
+    background: #0A0807;
     color: var(--ink-black);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
   }
-  /* Forced Landscape 16:10 Tablet Canvas Frame */
-  #tablet-wrapper {
-    width: 960px;
-    height: 600px;
-    background: linear-gradient(135deg, #3A2315, #1B0F0A);
-    border: 5px solid var(--vintage-brass);
-    border-radius: 24px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 15px rgba(200,157,66,0.3);
+
+  /* Top Navigation Bar */
+  .preview-top-nav {
+    width: 100%;
+    max-width: 1240px;
+    background: rgba(31, 20, 14, 0.95);
+    border-bottom: 2px solid var(--brass);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 18px;
+    color: #FFF;
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .nav-tab-btn {
+    background: #2A1A12;
+    color: #E0D3C1;
+    border: 1px solid #4A3325;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-tab-btn:hover { background: #3D261A; border-color: var(--brass); color: #FFF; }
+  .nav-tab-btn.active {
+    background: linear-gradient(180deg, #4A311D, #2D1A10);
+    border: 1.5px solid var(--brass);
+    color: var(--brass-glow);
+    box-shadow: 0 0 10px rgba(200, 157, 66, 0.35);
+  }
+
+  /* Main Container Frame */
+  #main-viewport {
+    width: 100%;
+    max-width: 1240px;
+    height: 720px;
+    background: var(--parchment);
+    border: 4px solid var(--brass);
+    border-radius: 0 0 18px 18px;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.9), inset 0 0 35px rgba(0,0,0,0.08);
   }
-  #eye-care-filter {
+
+  /* View Panels */
+  .view-panel {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .view-panel.active {
+    display: flex;
+  }
+
+  /* Dave the Diver Style Texture & Stamps */
+  .paper-texture {
+    background-color: var(--parchment);
+    background-image: radial-gradient(#d6caa9 1px, transparent 1px), radial-gradient(#d6caa9 1px, var(--parchment) 1px);
+    background-size: 24px 24px;
+    background-position: 0 0, 12px 12px;
+  }
+  .stamp-badge {
+    display: inline-flex;
+    align-items: center;
+    border: 2px dashed #8D6E63;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    transform: rotate(-3deg);
+  }
+
+  /* ========================================================
+     PANEL 1: MAIN MENU & DAVE CAMP
+     ======================================================== */
+  #panel-menu {
+    background: linear-gradient(135deg, #1C120C 0%, #2E1D13 50%, #150E09 100%);
+    color: #FFF;
+    display: flex;
+  }
+  .camp-hero-bg {
     position: absolute;
     inset: 0;
-    background: rgba(255, 168, 52, 0.18);
-    pointer-events: none;
-    z-index: 99;
-    display: none;
-    transition: opacity 0.5s ease;
+    opacity: 0.28;
+    background-size: cover;
+    background-position: center;
+    filter: saturate(1.2) contrast(1.1);
   }
-  #eye-care-filter.active { display: block; }
-  
-  /* Top Tablet Status Bar */
-  .hud-header {
-    height: 44px;
-    background: rgba(43, 27, 23, 0.95);
-    border-bottom: 2px solid var(--vintage-brass);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 18px;
-    color: #FFF;
-    font-size: 13px;
-    z-index: 10;
-  }
-  .hud-stats { display: flex; gap: 16px; align-items: center; }
-  .hud-badge { background: #3E2723; padding: 3px 10px; border-radius: 12px; border: 1px solid var(--vintage-brass); }
-
-  /* Screens */
-  .screen {
-    flex: 1;
-    display: none;
-    position: relative;
-    padding: 16px;
-    background: var(--parchment-bg);
-  }
-  .screen.active { display: flex; flex-direction: column; }
-
-  /* Notebook Dave Style Frame */
-  .notebook-container {
-    flex: 1;
-    background: var(--parchment-bg);
-    border: 2px solid var(--parchment-border);
-    border-radius: 14px;
-    padding: 16px;
+  .camp-left {
+    width: 380px;
+    height: 100%;
+    padding: 28px;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.04);
+    justify-content: space-between;
+    background: rgba(22, 14, 9, 0.88);
+    backdrop-filter: blur(8px);
+    border-right: 2px solid #442C1D;
   }
-
-  /* Main Menu Screen */
-  .menu-grid {
-    display: flex;
-    gap: 18px;
+  .camp-right {
     flex: 1;
+    height: 100%;
+    padding: 28px 36px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
-  .profile-panel {
-    width: 320px;
+  .dave-card {
     background: var(--parchment-card);
-    border: 1.5px solid var(--parchment-border);
+    border: 2px solid var(--parchment-border);
+    border-radius: 16px;
+    padding: 16px;
+    color: var(--ink-black);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .bobo-dialog {
+    background: #FFF9C4;
+    border: 2px solid #FBC02D;
     border-radius: 14px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: 12px 14px;
+    color: #5D4037;
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
-  .action-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    justify-content: space-between;
+  .bobo-dialog::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 28px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #FBC02D transparent;
   }
-  .btn-expedition {
+  .btn-huge-action {
     background: linear-gradient(180deg, #388E3C, #1B5E20);
     color: white;
-    border: 2px solid var(--vintage-brass);
-    padding: 16px;
-    border-radius: 14px;
+    border: 2.5px solid var(--brass);
+    border-radius: 16px;
+    padding: 18px 24px;
+    font-size: 20px;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: transform 0.1s, filter 0.1s;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transition: transform 0.15s, filter 0.15s;
   }
-  .btn-expedition:hover { filter: brightness(1.1); transform: translateY(-2px); }
-  .menu-sub-row { display: flex; gap: 12px; }
-  .card-btn {
-    flex: 1;
-    background: var(--parchment-card);
-    border: 1.5px solid var(--vintage-brass);
-    border-radius: 12px;
-    padding: 12px;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: left;
+  .btn-huge-action:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
   }
-  .card-btn:hover { background: #E8DDBF; transform: translateY(-2px); }
 
-  /* Battle Screen */
-  #battle-screen {
-    background: linear-gradient(180deg, #1D3557, #0B192C);
-    color: white;
+  /* ========================================================
+     PANEL 2: LIVE JUNGLE BATTLE
+     ======================================================== */
+  #panel-battle {
+    background: #0B161B;
     position: relative;
   }
-  #battle-canvas {
+  #jungle-canvas {
     width: 100%;
     height: 100%;
     position: absolute;
     inset: 0;
   }
-  .battle-overlay {
+  .battle-hud-overlay {
     position: absolute;
     inset: 0;
     pointer-events: none;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 16px;
+    padding: 18px;
     z-index: 5;
   }
-  .battle-top { display: flex; justify-content: space-between; align-items: center; pointer-events: auto; }
-  .qte-control-panel {
-    background: rgba(30, 20, 16, 0.94);
-    border: 2px solid var(--vintage-brass);
-    border-radius: 18px;
-    padding: 14px 20px;
-    width: 680px;
+  .hud-interactive { pointer-events: auto; }
+  .qte-cockpit {
+    width: 760px;
     margin: 0 auto;
-    pointer-events: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    background: rgba(22, 16, 12, 0.94);
+    border: 2px solid var(--brass);
+    border-radius: 20px;
+    padding: 14px 22px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+    color: #FFF;
   }
-  .qte-bar-track {
+  .qte-track {
     height: 38px;
     background: #111;
     border-radius: 19px;
     position: relative;
     overflow: hidden;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.25);
     margin: 10px 0;
   }
-  .qte-sweet-spot {
+  .qte-sweet-area {
     position: absolute;
     top: 2px;
     bottom: 2px;
-    background: rgba(46, 125, 50, 0.75);
-    border: 2px solid var(--brass-highlight);
+    background: rgba(76, 175, 80, 0.7);
+    border: 2px solid #A5D6A7;
     border-radius: 16px;
-    box-shadow: 0 0 12px rgba(129, 199, 132, 0.8);
+    box-shadow: 0 0 15px rgba(129, 199, 132, 0.8);
     transition: width 0.3s;
   }
-  .qte-cursor {
+  .qte-cursor-needle {
     position: absolute;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    top: 5px;
-    transform: translateX(-50%);
-    background: #FFF;
-    border: 3px solid var(--danger-coral);
-    box-shadow: 0 0 10px rgba(255,255,255,0.9);
-  }
-  .qte-cursor.in-sweet { border-color: var(--brass-highlight); background: #FFF; box-shadow: 0 0 16px #FFD57A; }
-  .btn-reel {
-    background: var(--bamboo-green);
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 12px 28px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    flex: 1;
-  }
-  .btn-incense {
-    background: #5D4037;
-    color: white;
-    padding: 12px 18px;
-    border: 1px solid var(--vintage-brass);
-    border-radius: 12px;
-    cursor: pointer;
+    top: -2px;
+    bottom: -2px;
+    width: 20px;
+    margin-left: -10px;
+    background: radial-gradient(circle, #FFF, var(--brass));
+    border: 2px solid #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #FFF;
+    z-index: 3;
   }
 
-  /* Journal Screen */
-  .journal-split { display: flex; gap: 16px; height: 100%; }
-  .journal-list {
-    width: 260px;
-    overflow-y: auto;
+  /* Bimanual toddler touch wings */
+  .touch-wing-left, .touch-wing-right {
+    position: absolute;
+    bottom: 120px;
+    width: 140px;
+    height: 140px;
+    border-radius: 28px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    background: var(--parchment-card);
-    border-radius: 10px;
-    padding: 8px;
-  }
-  .journal-item {
-    padding: 8px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    border: 1px solid transparent;
-  }
-  .journal-item.active { background: rgba(200, 157, 66, 0.25); border-color: var(--vintage-brass); font-weight: bold; }
-  .journal-detail {
-    flex: 1;
-    background: var(--parchment-card);
-    border-radius: 10px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  /* Assistant Bobo Bubble */
-  .bobo-bubble {
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    background: var(--parchment-card);
-    border: 2px solid var(--vintage-brass);
-    border-radius: 16px;
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-    z-index: 20;
-    max-width: 320px;
-  }
-
-  /* Rest Modal */
-  .modal-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    display: none;
     align-items: center;
     justify-content: center;
-    z-index: 100;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal-box {
-    width: 500px;
-    background: var(--parchment-bg);
-    border: 3px solid var(--vintage-brass);
-    border-radius: 20px;
-    padding: 24px;
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-  }
-
-  .pbr-chan-btn {
-    flex: 1;
-    background: #333;
-    color: #CCC;
-    border: 1px solid #555;
-    padding: 6px 4px;
-    font-size: 11px;
-    border-radius: 6px;
+    font-weight: 800;
     cursor: pointer;
-    font-weight: bold;
-    transition: all 0.15s;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    transition: transform 0.1s;
+    user-select: none;
   }
-  .pbr-chan-btn.active {
-    background: var(--vintage-brass);
-    color: var(--leather-dark);
-    border-color: #FFF;
-    box-shadow: 0 0 8px rgba(200,157,66,0.6);
+  .touch-wing-left {
+    left: 24px;
+    background: linear-gradient(180deg, #5D4037, #3E2723);
+    border: 3px solid var(--parchment-border);
+    color: #FFE082;
   }
-  .pbr-env-btn {
-    background: var(--parchment-bg);
-    border: 1px solid var(--vintage-brass);
-    color: var(--leather-dark);
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  .pbr-env-btn.active {
-    background: var(--leather-brown);
+  .touch-wing-right {
+    right: 24px;
+    background: linear-gradient(180deg, #2E7D32, #1B5E20);
+    border: 3px solid var(--brass);
     color: #FFF;
   }
+  .touch-wing-left:active, .touch-wing-left.holding {
+    transform: scale(0.92);
+    border-color: var(--brass-glow);
+    background: linear-gradient(180deg, #8D6E63, #4E342E);
+    box-shadow: 0 0 25px rgba(251, 212, 115, 0.8);
+  }
+  .touch-wing-right:active {
+    transform: scale(0.92);
+    background: linear-gradient(180deg, #43A047, #2E7D32);
+    box-shadow: 0 0 25px rgba(102, 187, 106, 0.9);
+  }
 
+  /* ========================================================
+     PANEL 3: INTERACTIVE PBR SHADER & MATERIAL LAB
+     ======================================================== */
+  #panel-pbr {
+    background: #111417;
+    color: #EEE;
+    display: flex;
+  }
+  .pbr-sidebar {
+    width: 320px;
+    background: #181C20;
+    border-right: 2px solid #2B333B;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+  .pbr-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: radial-gradient(circle at center, #1E252D 0%, #0F1316 100%);
+  }
+  #pbr-canvas {
+    flex: 1;
+    width: 100%;
+    cursor: grab;
+  }
+  #pbr-canvas:active { cursor: grabbing; }
+  .channel-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .channel-pill {
+    background: #252D36;
+    border: 1px solid #3B4754;
+    color: #B0BEC5;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .channel-pill.active {
+    background: var(--brass);
+    color: #111;
+    border-color: var(--brass-glow);
+  }
+  .slider-control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+  }
+  .slider-control input[type=range] {
+    accent-color: var(--brass);
+    cursor: pointer;
+  }
+
+  /* ========================================================
+     PANEL 4: 100 ANIMALS ADVENTURE ENCYCLOPEDIA
+     ======================================================== */
+  #panel-journal {
+    background: var(--parchment);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 28px;
+    overflow: hidden;
+  }
+  .journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--parchment-border);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .filter-tabs {
+    display: flex;
+    gap: 6px;
+  }
+  .filter-btn {
+    background: var(--parchment-card);
+    border: 1px solid var(--parchment-border);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filter-btn.active {
+    background: #3E2723;
+    color: #FFF;
+    border-color: #3E2723;
+  }
+  .animal-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 14px;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  .animal-polaroid {
+    background: #FFF;
+    border: 1px solid #DDD;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .animal-polaroid:hover {
+    transform: translateY(-3px) rotate(-0.5deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+  .polaroid-img-box {
+    height: 120px;
+    background: #EEE;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========================================================
+     PANEL 5: SANCTUARY MANAGEMENT
+     ======================================================== */
+  #panel-shelter {
+    background: #233423;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  #shelter-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ========================================================
+     PANEL 6: PANDA GUN WORKSHOP
+     ======================================================== */
+  #panel-workshop {
+    background: #0E273C;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 25px 25px;
+    color: #E0F2FE;
+    display: flex;
+    padding: 24px;
+    gap: 20px;
+  }
 </style>
 </head>
 <body>
 
-<div id="tablet-wrapper">
-  <!-- Warm Eye-Care Filter -->
-  <div id="eye-care-filter"></div>
+  <!-- Navigation Switcher Bar -->
+  <div class="preview-top-nav">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:22px;">🐼</span>
+      <div>
+        <div style="font-weight:800; font-size:15px; letter-spacing:0.5px; color:var(--brass-glow);">野性捕捉大師 (Wild Catcher: Jungle & Sky)</div>
+        <div style="font-size:11px; opacity:0.8;">高階美術預覽與 PBR 材質驗收檢驗台 · 潛水員戴夫風格</div>
+      </div>
+    </div>
 
-  <!-- HUD Bar -->
-  <div class="hud-header">
-    <div style="font-weight:bold; color:var(--brass-highlight);">🎋 野性捕捉大師 (Wild Catcher)</div>
-    <div class="hud-stats">
-      <div class="hud-badge">💰 竹幣: <span id="hud-coins" style="color:var(--brass-highlight);">1200</span></div>
-      <div class="hud-badge">🌐 泡泡彈: <span id="hud-ammo">50</span>/100</div>
-      <div class="hud-badge">⏱️ 遊玩時長: <span id="hud-time">00:00</span></div>
-      <button onclick="openPbrInspector()" style="background:linear-gradient(180deg, #FFD57A, #C89D42); color:#2B1B17; border:1.5px solid #FFF; border-radius:6px; padding:3px 10px; cursor:pointer; font-size:11px; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.4);">🎨 PBR 材質光影檢查室</button>
-      <button onclick="toggleEyeCare()" style="background:#5D4037; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:3px 8px; cursor:pointer; font-size:11px;">護眼切換</button>
-      <button onclick="fastForward30Mins()" style="background:var(--sunset-amber); color:#000; border:none; border-radius:6px; padding:3px 8px; cursor:pointer; font-size:11px; font-weight:bold;">⚡ 30分提醒</button>
+    <div class="nav-tabs">
+      <button class="nav-tab-btn active" onclick="switchView('menu')">🌟 戴夫冒險營地</button>
+      <button class="nav-tab-btn" onclick="switchView('battle')">🎯 動態捕捉實機</button>
+      <button class="nav-tab-btn" onclick="switchView('pbr')">🎨 PBR 材質光影實驗室</button>
+      <button class="nav-tab-btn" onclick="switchView('journal')">📖 100種動物冒險筆記</button>
+      <button class="nav-tab-btn" onclick="switchView('shelter')">🏡 自然庇護所經營</button>
+      <button class="nav-tab-btn" onclick="switchView('workshop')">🛠️ 熊貓槍拆解工坊</button>
     </div>
   </div>
 
-  <!-- Bobo Speech Bubble -->
-  <div class="bobo-bubble" id="bobo-bubble">
-    <div style="font-size:24px;">🐾</div>
-    <div>
-      <div style="font-weight:bold; color:var(--leather-brown); font-size:11px;">小熊貓 波波</div>
-      <div id="bobo-text">歡迎來到野性冒險世界！今天想去哪座生態園區捕捉動物呢？</div>
-    </div>
-  </div>
+  <!-- Main Viewport Box -->
+  <div id="main-viewport">
 
-  <!-- Screen 1: Main Menu -->
-  <div class="screen active" id="screen-menu">
-    <div class="notebook-container">
-      <div class="menu-grid">
-        <!-- Dave profile left panel -->
-        <div class="profile-panel">
-          <div>
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-              <div style="font-size:32px; background:var(--bamboo-green); border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; border:2px solid var(--vintage-brass);">👓</div>
+    <!-- ==================== VIEW 1: DAVE CAMP ==================== -->
+    <div class="view-panel active" id="panel-menu">
+      <div class="camp-left">
+        <div>
+          <!-- Dave Profile -->
+          <div class="dave-card">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+              <svg width="56" height="56" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" fill="#4E342E" stroke="#C89D42" stroke-width="4"/>
+                <!-- Dave beard -->
+                <ellipse cx="50" cy="65" rx="26" ry="20" fill="#2E1B10"/>
+                <!-- Face -->
+                <circle cx="50" cy="45" r="22" fill="#F5CBA7"/>
+                <!-- Titanium glasses -->
+                <rect x="34" y="38" width="14" height="11" rx="2" fill="none" stroke="#37474F" stroke-width="3"/>
+                <rect x="52" y="38" width="14" height="11" rx="2" fill="none" stroke="#37474F" stroke-width="3"/>
+                <line x1="48" y1="43" x2="52" y2="43" stroke="#37474F" stroke-width="3"/>
+                <!-- Cap -->
+                <path d="M 28 35 C 28 20 72 20 72 35 Z" fill="#2E7D32"/>
+                <path d="M 25 35 Q 50 32 75 35 L 82 40 L 18 40 Z" fill="#1B5E20"/>
+              </svg>
               <div>
-                <div style="font-weight:bold; font-size:16px;">野生動物守護員 戴夫</div>
-                <div style="font-size:12px; color:var(--bamboo-green); font-weight:600;">等級 3 資深保育官</div>
+                <div style="font-weight:900; font-size:16px;">首席野生保育員 戴夫</div>
+                <div style="font-size:12px; color:#2E7D32; font-weight:700;">⭐ 等級 5 資深生境探險家</div>
               </div>
             </div>
-            <div style="background:var(--parchment-bg); padding:10px; border-radius:8px; border:1px solid var(--parchment-border); font-size:12px; line-height:1.8;">
-              <div>連續未捕獲次數: <span id="stat-failures" style="font-weight:bold; color:var(--danger-coral);">0</span></div>
-              <div>動態輔助(DDA): <span id="stat-dda" style="font-weight:bold; color:var(--bamboo-green);">正常難度</span></div>
-              <div>已收納庇護動物: <span id="stat-animals-count" style="font-weight:bold;">2</span> 隻</div>
+            <div style="font-size:12px; line-height:1.7; color:#444;">
+              <div>• 裝備狀態：熊貓槍 Mk-II (竹香彈夾 x12)</div>
+              <div>• 協同訓練：幼兒雙手抓握指力調適已開啟</div>
+              <div>• 動態難度(DDA)：<span style="color:#2E7D32; font-weight:bold;">智能寬容模式</span></div>
             </div>
-          </div>
-          <div style="background:#FFF9C4; padding:8px; border-radius:8px; font-size:11px; border:1px solid var(--sunset-amber);">
-            💡 波波提醒：在動物游標落入綠色甜蜜區時按下【壓制收線】，成功率最高！
           </div>
         </div>
 
-        <!-- Action panel -->
-        <div class="action-panel">
-          <div>
-            <div style="font-size:26px; font-weight:800; color:var(--leather-brown); font-family:serif;">野性捕捉大師：叢林與天空</div>
-            <div style="font-size:12px; color:var(--ink-grey); margin-bottom:14px;">WILD CATCHER: JUNGLE &amp; SKY · 潛水員戴夫風冒險筆記</div>
+        <div>
+          <!-- Bobo Floating Dialog -->
+          <div class="bobo-dialog">
+            <div style="font-weight:bold; color:#E65100; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+              <span>🐾 小熊貓波波導覽員</span>
+            </div>
+            <div>「戴夫叔叔！雷達偵測到濃霧高山出現了【台灣黑熊】與【大冠鷲】的活動軌跡！快拿起熊貓槍，左手穩住、右手捕捉吧！」</div>
           </div>
+        </div>
+      </div>
 
-          <button class="btn-expedition" onclick="startBattle()">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span style="font-size:28px;">🎯</span>
+      <div class="camp-right">
+        <div>
+          <div style="font-size:32px; font-weight:900; font-family:serif; color:var(--brass-glow); text-shadow:0 3px 8px rgba(0,0,0,0.6);">
+            野性捕捉大師：叢林與天空
+          </div>
+          <div style="font-size:14px; opacity:0.85; margin-top:4px; letter-spacing:1px;">
+            WILD CATCHER: JUNGLE &amp; SKY · 潛水員戴夫風冒險美學
+          </div>
+        </div>
+
+        <!-- Mode Buttons Grid -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <button class="btn-huge-action" onclick="switchView('battle')">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <span style="font-size:36px;">🎯</span>
               <div style="text-align:left;">
-                <div>出征探索野生生境</div>
-                <div style="font-size:12px; font-weight:normal; opacity:0.85;">持熊貓槍捕捉寫實動物，支援QTE動態甜蜜點</div>
+                <div style="font-size:22px;">即刻出征：動態捕捉野生生境</div>
+                <div style="font-size:13px; font-weight:normal; opacity:0.85;">持熊貓槍捕捉寫實動物 · 幼兒左右手協同訓練 QTE</div>
               </div>
             </div>
-            <span>出發 ▶</span>
+            <span style="font-size:24px;">出發 ▶</span>
           </button>
 
-          <div class="menu-sub-row">
-            <div class="card-btn" onclick="openJournal()">
-              <div style="font-weight:bold; font-size:14px;">📖 100種動物圖鑑</div>
-              <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">全量收錄台灣黑熊、石虎、金絲猴等PBR寫實檔案</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <div style="background:rgba(42,26,18,0.9); border:1.5px solid var(--brass); border-radius:12px; padding:14px; cursor:pointer;" onclick="switchView('pbr')">
+              <div style="font-weight:bold; font-size:15px; color:var(--brass-glow); margin-bottom:4px;">🎨 PBR 材質實驗室</div>
+              <div style="font-size:12px; opacity:0.8;">即時法線凹凸、粗糙度微光、菲涅爾背光驗證</div>
             </div>
-            <div class="card-btn" onclick="openShelter()">
-              <div style="font-weight:bold; font-size:14px;">🏡 自然生態庇護所</div>
-              <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">安置野生動物，賺取遊客門票升級裝備</div>
+            <div style="background:rgba(42,26,18,0.9); border:1.5px solid var(--brass); border-radius:12px; padding:14px; cursor:pointer;" onclick="switchView('journal')">
+              <div style="font-weight:bold; font-size:15px; color:var(--brass-glow); margin-bottom:4px;">📖 100種動物圖鑑</div>
+              <div style="font-size:12px; opacity:0.8;">全量真實科普檔案、注音標音、真人TTS語音</div>
             </div>
-            <div class="card-btn" onclick="openParentDashboard()" style="background:#EFE6CD; border-color:#5D4037;">
-              <div style="font-weight:bold; font-size:14px; color:#4A2E1B;">🛡️ 家長控制台</div>
-              <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">護眼排程與雙手精細發育成長紀錄</div>
+            <div style="background:rgba(42,26,18,0.9); border:1.5px solid var(--brass); border-radius:12px; padding:14px; cursor:pointer;" onclick="switchView('shelter')">
+              <div style="font-weight:bold; font-size:15px; color:var(--brass-glow); margin-bottom:4px;">🏡 自然生態庇護所</div>
+              <div style="font-size:12px; opacity:0.8;">漫步動物園區經營、遊客門票放置金幣收益</div>
             </div>
           </div>
         </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; opacity:0.7; border-top:1px solid rgba(255,255,255,0.15); padding-top:10px;">
+          <div>🛡️ 30分鐘護眼提醒：已啟用 · 護眼暖色調濾鏡隨時就緒</div>
+          <div>🏆 本地版本：v1.0.0 (雙重同步 Google Drive)</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Screen 2: Battle Screen -->
-  <div class="screen" id="screen-battle">
-    <canvas id="battle-canvas"></canvas>
-    <div class="battle-overlay">
-      <div class="battle-top">
-        <button onclick="backToMenu()" style="background:rgba(0,0,0,0.6); color:var(--vintage-brass); border:1px solid var(--vintage-brass); border-radius:8px; padding:6px 14px; cursor:pointer;">◀ 返回營地</button>
-        <div id="target-info-card" style="background:rgba(0,0,0,0.7); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:6px 14px; text-align:right;">
-          <div style="font-weight:bold; font-size:16px;" id="battle-target-name">台灣黑熊</div>
-          <div style="font-size:11px; color:#CCC;" id="battle-target-habitat">棲地：高山原始針闊葉林</div>
-          <div style="font-size:11px; color:var(--brass-highlight); margin-top:2px;">👐 雙手訓練：左手按住 · 右手點擊</div>
-        </div>
-      </div>
+    <!-- ==================== VIEW 2: LIVE JUNGLE BATTLE ==================== -->
+    <div class="view-panel" id="panel-battle">
+      <canvas id="jungle-canvas"></canvas>
 
-      <!-- QTE Bar -->
-      <div class="qte-control-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:bold; margin-bottom:4px;">
-          <span style="color:var(--bubble-cyan);">🌐 泡泡網收攏度: <span id="qte-progress-num">0%</span></span>
-          <span style="color:var(--brass-highlight); background:rgba(255,143,0,0.25); padding:2px 8px; border-radius:8px;">🌱 評級: <span id="bimanual-rank">探索小萌手</span></span>
-          <span style="color:var(--danger-coral);">⚠️ 警覺度: <span id="qte-tension-num">0%</span></span>
-        </div>
-        <div class="qte-bar-track">
-          <div class="qte-sweet-spot" id="qte-sweet-spot" style="left:35%; width:30%;"></div>
-          <div class="qte-cursor" id="qte-cursor" style="left:50%;"></div>
-        </div>
-        <!-- Bimanual Dual Wings for Toddlers -->
-        <div style="display:flex; gap:14px; margin-top:10px;">
-          <!-- Left Wing: Holding force -->
-          <button id="btn-left-hold"
-            onmousedown="leftHandPress(true)" onmouseup="leftHandPress(false)" onmouseleave="leftHandPress(false)"
-            ontouchstart="leftHandPress(true); event.preventDefault();" ontouchend="leftHandPress(false); event.preventDefault();"
-            style="flex:1; background:linear-gradient(180deg, #6D4C41, #3E2723); border:2.5px solid var(--parchment-border); color:white; border-radius:14px; padding:12px; cursor:pointer; font-size:13px; font-weight:bold; transition:all 0.1s;">
-            <div style="font-size:20px;">✋</div>
-            <div>左手【長按住】安撫</div>
-            <div style="font-size:10px; opacity:0.8; font-weight:normal;">指力持續施力 · 穩定游標</div>
+      <div class="battle-hud-overlay">
+        <!-- Top bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center;" class="hud-interactive">
+          <button onclick="switchView('menu')" style="background:rgba(0,0,0,0.7); color:var(--brass-glow); border:1.5px solid var(--brass); border-radius:10px; padding:8px 16px; cursor:pointer; font-weight:bold;">
+            ◀ 返回戴夫營地
           </button>
-          <!-- Right Wing: Precision rhythmic tapping -->
-          <button id="btn-right-tap" onclick="rightHandTap()"
-            style="flex:1; background:linear-gradient(180deg, #2E7D32, #1B5E20); border:2.5px solid var(--vintage-brass); color:white; border-radius:14px; padding:12px; cursor:pointer; font-size:13px; font-weight:bold; box-shadow:0 6px 14px rgba(0,0,0,0.3); transition:all 0.1s;">
-            <div style="font-size:20px;">👆</div>
-            <div>右手【節奏輕點】收網</div>
-            <div style="font-size:10px; opacity:0.8; font-weight:normal;">甜蜜點點擊 · 鍛鍊手指靈活</div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Screen 3: Journal Screen -->
-  <div class="screen" id="screen-journal">
-    <div class="notebook-container">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <div style="font-size:18px; font-weight:bold;">📖 100 種寫實野生動物圖鑑 (全量物種收錄)</div>
-        <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:4px 12px; cursor:pointer;">關閉</button>
-      </div>
-      <div class="journal-split">
-        <div class="journal-list" id="journal-list-items"></div>
-        <div class="journal-detail" id="journal-detail-panel">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-              <div>
-                <div style="font-size:13px; font-weight:bold; color:var(--sunset-amber);" id="jd-bopomofo">ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ</div>
-                <div style="font-size:22px; font-weight:bold;" id="jd-name">台灣黑熊</div>
-                <div style="font-size:12px; font-style:italic; color:var(--ink-grey);" id="jd-sci">Ursus thibetanus formosanus</div>
-              </div>
-              <div id="jd-badge" style="padding:4px 10px; border-radius:6px; font-size:12px; font-weight:bold; background:#FFF8E1; color:#E65100;">VU 易危 (黃燈)</div>
-            </div>
-            <div style="display:flex; gap:16px; margin-top:14px;">
-              <canvas id="journal-preview-canvas" width="160" height="160" style="background:#231914; border-radius:12px; border:1px solid var(--vintage-brass);"></canvas>
-              <div style="font-size:12px; line-height:1.7;">
-                <div>📍 棲息生境：<span id="jd-habitat">高山原始闊葉針葉林</span></div>
-                <div>☀️ 活動習性：<span id="jd-cycle">日行性</span></div>
-                <div>💰 庇護收益：<span id="jd-coins" style="font-weight:bold; color:var(--sunset-amber);">85</span> 竹幣/小時</div>
-                <div style="display:flex; gap:8px; margin-top:8px;">
-                  <button onclick="playSampleSound()" style="background:var(--bamboo-green); color:white; border:none; border-radius:6px; padding:5px 10px; cursor:pointer; font-size:11px;">🔊 真實叫聲</button>
-                  <button onclick="speakAnimalGuideTts()" style="background:var(--vintage-brass); color:var(--leather-dark); border:none; border-radius:6px; padding:5px 10px; cursor:pointer; font-size:11px; font-weight:bold;">🗣️ 波波語音導覽</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style="background:var(--parchment-bg); border:1px solid var(--parchment-border); border-radius:8px; padding:10px; font-size:12px; line-height:1.6;">
-            <div>💡 <strong>生物特性：</strong><span id="jd-fact">胸前有醒目的白色V字斑紋，善於爬樹和游泳！</span></div>
-            <div style="margin-top:4px;">🌱 <strong>生態地位：</strong><span id="jd-eco">台灣特有亞種，為亞洲黑熊分布於海島之特殊族群。</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 4: Shelter Park -->
-  <div class="screen" id="screen-shelter">
-    <div class="notebook-container">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div style="font-size:18px; font-weight:bold;">🏡 綠色野生生態庇護所</div>
-        <div style="display:flex; gap:8px;">
-          <button onclick="collectTicketCoins()" style="background:var(--bamboo-green); color:#FFF; border:none; border-radius:6px; padding:6px 14px; cursor:pointer; font-weight:bold;">💰 領取門票收益 (+<span id="shelter-income-num">180</span> 幣)</button>
-          <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:4px 12px; cursor:pointer;">關閉</button>
-        </div>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:1;">
-        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="font-weight:bold; font-size:15px;">🌴 熱帶雨林巨木區</div>
-            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">收容低地密林物種，石虎與紅毛猩猩在林間悠遊。</div>
-          </div>
-          <div style="font-size:12px; color:var(--bamboo-green); font-weight:bold;">已收容：石虎 (1/10) · 遊客滿意度 98%</div>
-        </div>
-        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="font-weight:bold; font-size:15px;">🌲 高山針葉與雲海區</div>
-            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">高海拔清冽空氣，台灣黑熊與水鹿享受自然微風。</div>
-          </div>
-          <div style="font-size:12px; color:var(--bamboo-green); font-weight:bold;">已收容：台灣黑熊、台灣水鹿 (2/8)</div>
-        </div>
-        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="font-weight:bold; font-size:15px;">🦅 晴空風洞猛禽區</div>
-            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">高聳通透的巨型風動網罩，大冠鷲振翅盤旋。</div>
-          </div>
-          <div style="font-size:12px; color:var(--sunset-amber);">容納量：0/8 · 產值 +100/h</div>
-        </div>
-        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="font-weight:bold; font-size:15px;">💧 清溪瀑布活水區</div>
-            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">16℃純淨冰冷溪水，供櫻花鉤吻鮭與水獺繁衍。</div>
-          </div>
-          <div style="font-size:12px; color:var(--sunset-amber);">容納量：0/8 · 產值 +150/h</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 5: Parent Dashboard -->
-  <div class="screen" id="screen-parent">
-    <div class="notebook-container">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div style="font-size:18px; font-weight:bold;">🛡️ 家長健康與指肌發育控制台</div>
-        <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:4px 12px; cursor:pointer;">關閉</button>
-      </div>
-      <div id="parent-lock-gate" style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:14px;">
-        <div style="font-size:16px; font-weight:bold; color:var(--leather-brown);">🔒 家長安全確認（防止幼兒誤觸）</div>
-        <div style="font-size:14px;">請計算以解鎖：3 + 5 = ？</div>
-        <div style="display:flex; gap:10px;">
-          <button onclick="checkParentLock(6)" style="padding:8px 18px; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;">6</button>
-          <button onclick="checkParentLock(7)" style="padding:8px 18px; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;">7</button>
-          <button onclick="checkParentLock(8)" style="padding:8px 18px; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; background:var(--bamboo-green); color:white;">8</button>
-          <button onclick="checkParentLock(9)" style="padding:8px 18px; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;">9</button>
-        </div>
-      </div>
-      <div id="parent-content-view" style="display:none; gap:14px; flex:1;">
-        <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
-          <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px;">
-            <div style="font-weight:bold; font-size:14px; color:var(--leather-brown);">🌱 幼兒雙手小肌肉發育成長指標</div>
-            <div style="font-size:12px; line-height:1.7; margin-top:6px;">
-              <div>• 左手持續施力持穩：<strong>良好 (平均 3.5 秒)</strong></div>
-              <div>• 右手節奏點擊敏捷度：<strong>高 (連擊率 89%)</strong></div>
-              <div>• 雙側協調整合成效：<strong style="color:var(--bamboo-green);">🌟 雙手協同大師</strong></div>
-            </div>
-          </div>
-          <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px;">
-            <div style="font-weight:bold; font-size:14px; color:var(--leather-brown);">⏱️ 護眼健康提醒間隔設定</div>
-            <div style="font-size:11px; color:var(--ink-grey); margin:6px 0;">連續遊玩達此時間，系統將自動啟動暖光並提醒休息：</div>
-            <div style="display:flex; gap:8px;">
-              <button onclick="setRestThresholdMinutes(15)" id="btn-rest-15" style="padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; background:#DDD;">15 分鐘</button>
-              <button onclick="setRestThresholdMinutes(20)" id="btn-rest-20" style="padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; background:#DDD;">20 分鐘</button>
-              <button onclick="setRestThresholdMinutes(30)" id="btn-rest-30" style="padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; background:var(--bamboo-green); color:white; font-weight:bold;">30 分鐘 (預設)</button>
-            </div>
-          </div>
-        </div>
-        <div style="flex:1; background:#F1F8E9; border:1.5px solid var(--bamboo-green); border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="font-weight:bold; font-size:14px; color:var(--bamboo-green);">📖 今日親子共學小任務</div>
-            <div style="font-size:12px; line-height:1.7; margin-top:8px;">
-              【認識台灣國寶活化石】<br>
-              請與孩子一同打開圖鑑，聽聽看「櫻花鉤吻鮭」為什麼只能生活在 16℃ 以下的高山清澈溪流？<br>
-              鼓勵孩子輕輕發音練習注音「ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ」，並討論保持乾淨水源對大自然有多重要！
-            </div>
-          </div>
-          <button onclick="backToMenu()" style="background:var(--bamboo-green); color:white; border:none; padding:8px; border-radius:6px; cursor:pointer; font-weight:bold;">完成共學，返回探險</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 6: High-Fidelity PBR Material & Lighting Inspector -->
-  <div class="screen" id="screen-pbr">
-    <div class="notebook-container">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div style="font-size:22px;">🎨</div>
-          <div>
-            <div style="font-size:18px; font-weight:bold; color:var(--leather-brown); font-family:serif;">PBR 寫實材質與動態光影即時檢視室 (Material Inspector)</div>
-            <div style="font-size:11px; color:var(--ink-grey);">支援 2K/4K ASTC 壓縮規格、Normal 法線凹凸微浮雕、Roughness 粗糙度高光反射與動態光源拖曳</div>
-          </div>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <button onclick="startBattle()" style="background:var(--bamboo-green); color:#FFF; border:none; border-radius:6px; padding:5px 12px; cursor:pointer; font-size:12px; font-weight:bold;">進入捕捉實戰 ▶</button>
-          <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:5px 12px; cursor:pointer; font-size:12px;">返回主選單</button>
-        </div>
-      </div>
-
-      <div style="display:flex; gap:16px; flex:1;">
-        <!-- Left PBR 3D Viewport with Light dragging -->
-        <div style="width:360px; background:#181513; border-radius:14px; border:2px solid var(--vintage-brass); padding:12px; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
-          <div style="display:flex; justify-content:space-between; align-items:center; color:#AAA; font-size:11px;">
-            <span>3D PBR 渲染視口 (支援滑鼠/觸控拖曳光照)</span>
-            <span id="pbr-fps-tag" style="color:var(--bamboo-light); font-weight:bold;">60.0 FPS</span>
+          <!-- Current Animal Selector -->
+          <div style="display:flex; align-items:center; gap:10px; background:rgba(0,0,0,0.75); border:1.5px solid var(--brass); border-radius:12px; padding:6px 16px;">
+            <span style="color:#FFF; font-size:13px; font-weight:bold;">野生目標物種：</span>
+            <select id="battle-species-select" onchange="onSelectBattleAnimal(this.value)" style="background:#22150F; color:var(--brass-glow); border:1px solid var(--brass); padding:4px 10px; border-radius:6px; font-weight:bold; cursor:pointer;">
+              <option value="formosan_black_bear">🐻 台灣黑熊 (高山冷杉)</option>
+              <option value="leopard_cat">🐆 台灣石虎 (雨林近郊)</option>
+              <option value="golden_snub_nosed_monkey">🐒 川金絲猴 (高山霧林)</option>
+              <option value="crested_serpent_eagle">🦅 大冠鷲 (高空巡弋)</option>
+              <option value="emerald_tree_frog">🐸 翡翠樹蛙 (清溪苔蘚)</option>
+            </select>
           </div>
 
-          <!-- The Canvas -->
-          <div style="flex:1; display:flex; align-items:center; justify-content:center; position:relative; cursor:crosshair;" id="pbr-canvas-container">
-            <canvas id="pbr-inspector-canvas" width="280" height="280" style="border-radius:12px;"></canvas>
-            <div style="position:absolute; bottom:6px; left:10px; font-size:10px; color:#888; background:rgba(0,0,0,0.6); padding:2px 8px; border-radius:4px; pointer-events:none;">
-              ☀️ 光源方位: <span id="pbr-light-label" style="color:var(--brass-highlight);">60° (東南向)</span>
-            </div>
-          </div>
-
-          <!-- Channel Selection Pills -->
-          <div style="display:flex; gap:6px; background:rgba(0,0,0,0.5); padding:6px; border-radius:8px; justify-content:space-between;">
-            <button class="pbr-chan-btn active" onclick="setPbrChannel('composite')" id="btn-chan-comp">全通道合成</button>
-            <button class="pbr-chan-btn" onclick="setPbrChannel('albedo')" id="btn-chan-albedo">Albedo 漫射</button>
-            <button class="pbr-chan-btn" onclick="setPbrChannel('normal')" id="btn-chan-normal">Normal 法線</button>
-            <button class="pbr-chan-btn" onclick="setPbrChannel('roughness')" id="btn-chan-rough">Roughness 粗糙</button>
+          <div style="background:rgba(0,0,0,0.75); border:1.5px solid var(--brass); border-radius:12px; padding:8px 16px; color:#FFF; text-align:right;">
+            <div style="font-weight:bold; font-size:14px; color:var(--brass-glow);" id="battle-animal-name">台灣黑熊 (ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ)</div>
+            <div style="font-size:11px; opacity:0.8;">👐 幼兒訓練：左手按住壓制 · 右手節奏點擊</div>
           </div>
         </div>
 
-        <!-- Right Controls & Material Ledger -->
-        <div style="flex:1; background:var(--parchment-card); border-radius:14px; border:1.5px solid var(--parchment-border); padding:14px; display:flex; flex-direction:column; justify-content:space-between; overflow-y:auto;">
-          <!-- Species Selector -->
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-              <span style="font-weight:bold; font-size:14px; color:var(--leather-brown);">選擇檢視之 100 種動物物種：</span>
-              <select id="pbr-species-select" onchange="onPbrSpeciesChange(this.value)" style="padding:4px 10px; border-radius:8px; border:1.5px solid var(--vintage-brass); background:var(--parchment-bg); font-weight:bold; color:var(--leather-dark); font-size:12px;">
-              </select>
-            </div>
+        <!-- Toddler Dual Wing Touch Controls -->
+        <div class="touch-wing-left hud-interactive" id="wing-left" onmousedown="handleLeftWing(true)" onmouseup="handleLeftWing(false)" ontouchstart="handleLeftWing(true)" ontouchend="handleLeftWing(false)">
+          <div style="font-size:34px;">✋</div>
+          <div style="font-size:14px; margin-top:4px;">左手按住</div>
+          <div style="font-size:11px; opacity:0.8;">緩速壓制 50%</div>
+        </div>
 
-            <!-- Material Specimen Information -->
-            <div style="background:var(--parchment-bg); border:1px solid var(--parchment-border); border-radius:10px; padding:10px; font-size:12px; line-height:1.7;">
-              <div style="display:flex; justify-content:space-between;">
-                <span><strong>物種名稱：</strong><span id="pbr-info-name">台灣黑熊</span> (<span id="pbr-info-bopomofo" style="color:var(--sunset-amber);">ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ</span>)</span>
-                <span id="pbr-info-grade" style="font-weight:bold; color:#E65100;">VU 易危 (黃燈)</span>
-              </div>
-              <div><strong>學名：</strong><span id="pbr-info-sci" style="font-style:italic; color:var(--ink-grey);">Ursus thibetanus formosanus</span></div>
-              <div><strong>PBR 貼圖規格：</strong>2048 x 2048 ASTC 4x4 紋理壓縮 · 法線切線空間微幾何</div>
-              <div><strong>生物特徵微浮雕：</strong><span id="pbr-info-feature">胸前白色V字領、濃密黑短毛微法線粗糙度、鼻吻部皮革光澤</span></div>
-            </div>
+        <div class="touch-wing-right hud-interactive" id="wing-right" onclick="handleRightWingTap()">
+          <div style="font-size:34px;">🎯</div>
+          <div style="font-size:14px; margin-top:4px;">右手點擊</div>
+          <div style="font-size:11px; opacity:0.8;">發射竹香泡泡</div>
+        </div>
+
+        <!-- QTE Bottom Cockpit -->
+        <div class="qte-cockpit hud-interactive">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:bold;">
+            <span style="color:var(--ocean-cyan);">🌐 夢幻泡泡網收攏：<span id="battle-progress-text">0%</span></span>
+            <span style="color:var(--brass-glow); background:rgba(200,157,66,0.25); padding:3px 10px; border-radius:8px;">
+              🌱 雙手合力評級：<span id="battle-rank-text">探索小萌手</span>
+            </span>
+            <span style="color:var(--danger-red);">⚠️ 掙脫警覺：<span id="battle-tension-text">0%</span></span>
           </div>
 
-          <!-- Interactive Sliders: Lighting & Shader Dynamics -->
-          <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
-            <div style="font-weight:bold; font-size:13px; color:var(--leather-brown);">🎛️ 光源與材質物理參數實時微調：</div>
-            
-            <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px;">
-              <span>光源水平旋轉角度 (Azimuth):</span>
-              <input type="range" min="0" max="360" value="60" id="slider-pbr-angle" oninput="onPbrSliderChange()" style="width:180px;">
-              <span id="val-pbr-angle" style="font-weight:bold; width:36px; text-align:right;">60°</span>
-            </div>
+          <!-- The Bar -->
+          <div class="qte-track">
+            <div class="qte-sweet-area" id="battle-sweet-spot" style="left:35%; width:30%;"></div>
+            <div class="qte-cursor-needle" id="battle-cursor" style="left:50%;"></div>
+          </div>
 
-            <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px;">
-              <span>法線凹凸強度 (Normal Depth):</span>
-              <input type="range" min="20" max="250" value="100" id="slider-pbr-normal" oninput="onPbrSliderChange()" style="width:180px;">
-              <span id="val-pbr-normal" style="font-weight:bold; width:36px; text-align:right;">1.0x</span>
-            </div>
-
-            <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px;">
-              <span>表面粗糙度 (Microfacet Roughness):</span>
-              <input type="range" min="10" max="90" value="45" id="slider-pbr-rough" oninput="onPbrSliderChange()" style="width:180px;">
-              <span id="val-pbr-rough" style="font-weight:bold; width:36px; text-align:right;">0.45</span>
-            </div>
-
-            <!-- Atmosphere Preset Buttons -->
-            <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
-              <span style="font-size:11px; font-weight:bold;">環境天候光：</span>
-              <button onclick="setPbrEnv('sunny')" class="pbr-env-btn active" id="btn-env-sunny">☀️ 晴空暖陽</button>
-              <button onclick="setPbrEnv('jungle')" class="pbr-env-btn" id="btn-env-jungle">🌴 雨林散射</button>
-              <button onclick="setPbrEnv('mist')" class="pbr-env-btn" id="btn-env-mist">🌫️ 高山雲霧</button>
-              <button onclick="setPbrEnv('night')" class="pbr-env-btn" id="btn-env-night">🌙 星夜幽光</button>
-            </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; opacity:0.8;">
+            <span>💡 提示：當指針游進綠色甜蜜區時，右手點擊可激發最大捕捉力道！</span>
+            <span id="battle-dda-indicator" style="color:#81C784;">DDA 動態調節：已就緒</span>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Rest Alert Modal -->
-  <div class="modal-overlay" id="rest-modal">
-    <div class="modal-box">
-      <div style="font-size:44px; margin-bottom:10px;">🌅</div>
-      <div style="font-size:20px; font-weight:bold; color:var(--leather-brown); font-family:serif;">🌿 波波的溫馨護眼提醒</div>
-      <div style="font-size:14px; margin:12px 0; color:var(--ink-black); line-height:1.6;">
-        「太陽要下山囉，讓眼睛休息一下，明天再來探索！」
+    <!-- ==================== VIEW 3: PBR SHADER & MATERIAL LAB ==================== -->
+    <div class="view-panel" id="panel-pbr">
+      <div class="pbr-sidebar">
+        <div>
+          <div style="font-weight:900; font-size:16px; color:var(--brass-glow); margin-bottom:4px;">🎨 PBR 寫實材質檢驗台</div>
+          <div style="font-size:11px; color:#90A4AE; line-height:1.4;">
+            檢視法線貼圖 (Normal Map)、粗糙度反射 (Roughness) 及菲涅爾輪廓背光。
+          </div>
+        </div>
+
+        <!-- Preset Models -->
+        <div>
+          <div style="font-size:12px; font-weight:bold; color:#CFD8DC; margin-bottom:6px;">材質預設 (Material Presets)</div>
+          <select id="pbr-preset-select" onchange="setPbrPreset(this.value)" style="width:100%; background:#252D36; color:#FFF; border:1px solid #3B4754; padding:8px; border-radius:6px; font-weight:bold; cursor:pointer;">
+            <option value="bear">🐻 台灣黑熊：毛流法線 + 粗糙吸光皮革</option>
+            <option value="leopard">🐆 台灣石虎：毛茸絨毛法線 + 斑點高反照率</option>
+            <option value="frog">🐸 翡翠樹蛙：顆粒突起法線 + 濕潤強高光</option>
+            <option value="eagle">🦅 大冠鷲：幾何重疊羽片 + 疏水金屬光澤</option>
+            <option value="bark">🌲 千年神木樹皮：深邃裂痕法線 + 苔蘚粗糙度</option>
+          </select>
+        </div>
+
+        <!-- Render Channels -->
+        <div>
+          <div style="font-size:12px; font-weight:bold; color:#CFD8DC; margin-bottom:6px;">著色通道分離 (Channel Split)</div>
+          <div class="channel-pill-row">
+            <button class="channel-pill active" onclick="setPbrChannel('composite')">完整複合渲染</button>
+            <button class="channel-pill" onclick="setPbrChannel('normal')">法線貼圖 (Normal)</button>
+            <button class="channel-pill" onclick="setPbrChannel('roughness')">粗糙度 (Roughness)</button>
+            <button class="channel-pill" onclick="setPbrChannel('albedo')">反照率底色 (Albedo)</button>
+            <button class="channel-pill" onclick="setPbrChannel('specular')">鏡面高光 (Specular)</button>
+            <button class="channel-pill" onclick="setPbrChannel('fresnel')">菲涅爾背光 (Fresnel)</button>
+          </div>
+        </div>
+
+        <!-- Interactive Sliders -->
+        <div style="display:flex; flex-direction:column; gap:12px; border-top:1px solid #2B333B; padding-top:12px;">
+          <div class="slider-control">
+            <div style="display:flex; justify-content:space-between;">
+              <span>光源強度 (Light Intensity):</span>
+              <span id="val-light-intensity" style="color:var(--brass-glow);">1.2x</span>
+            </div>
+            <input type="range" min="0.2" max="2.5" step="0.1" value="1.2" oninput="updatePbrSlider('intensity', this.value)">
+          </div>
+
+          <div class="slider-control">
+            <div style="display:flex; justify-content:space-between;">
+              <span>微表面粗糙度 (Roughness):</span>
+              <span id="val-roughness" style="color:var(--brass-glow);">0.45</span>
+            </div>
+            <input type="range" min="0.05" max="1.0" step="0.02" value="0.45" oninput="updatePbrSlider('roughness', this.value)">
+          </div>
+
+          <div class="slider-control">
+            <div style="display:flex; justify-content:space-between;">
+              <span>法線凹凸深度 (Normal Depth):</span>
+              <span id="val-normal-depth" style="color:var(--brass-glow);">1.8x</span>
+            </div>
+            <input type="range" min="0.2" max="3.0" step="0.1" value="1.8" oninput="updatePbrSlider('normalDepth', this.value)">
+          </div>
+
+          <div class="slider-control">
+            <div style="display:flex; justify-content:space-between;">
+              <span>環境光遮蔽 (Ambient Occlusion):</span>
+              <span id="val-ao" style="color:var(--brass-glow);">0.8</span>
+            </div>
+            <input type="range" min="0.0" max="1.0" step="0.05" value="0.8" oninput="updatePbrSlider('ao', this.value)">
+          </div>
+        </div>
+
+        <div style="font-size:11px; background:#252D36; padding:10px; border-radius:8px; color:#90A4AE; line-height:1.5;">
+          💡 <b>互動操作說明</b>：在右側畫布上<b>直接按住滑鼠左鍵拖曳</b>，即可自由改變 360° 動態太陽光源入射角，即時觀察微表面高光與法線凹凸陰影！
+        </div>
       </div>
-      <div style="background:#FFF8E1; border:1px solid var(--sunset-amber); border-radius:10px; padding:10px; font-size:12px; margin-bottom:18px; text-align:left;">
-        🌙 <strong>睡飽飽隔日登入獎勵已預約！</strong><br>
-        現在放下平板休息，下次登入即可獲贈 <strong>500 竹幣</strong> 與 <strong>10 顆金竹種子</strong>，並自動啟用護眼暖色模式！
-      </div>
-      <div style="display:flex; gap:12px;">
-        <button onclick="dismissRestModal(true)" style="flex:1; background:#EEE; border:1px solid #CCC; padding:10px; border-radius:8px; cursor:pointer;">開啟護眼色溫</button>
-        <button onclick="dismissRestModal(false)" style="flex:1; background:var(--bamboo-green); color:#FFF; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">好好休息 (預約獎勵)</button>
+
+      <!-- Stage & Draggable Light Canvas -->
+      <div class="pbr-stage">
+        <canvas id="pbr-canvas"></canvas>
+        <div style="position:absolute; bottom:16px; left:20px; background:rgba(0,0,0,0.7); padding:8px 16px; border-radius:8px; border:1px solid #37474F; font-size:12px; pointer-events:none;">
+          ☀️ 光源方位角: <span id="pbr-light-angle" style="color:var(--brass-glow); font-weight:bold;">45°</span> · 仰角: <span id="pbr-light-elev" style="color:var(--brass-glow); font-weight:bold;">30°</span>
+        </div>
       </div>
     </div>
+
+    <!-- ==================== VIEW 4: 100 ANIMALS ENCYCLOPEDIA ==================== -->
+    <div class="view-panel" id="panel-journal">
+      <div class="journal-header">
+        <div>
+          <div style="font-size:24px; font-weight:900; color:#3E2723; font-family:serif;">
+            📖 冒險圖鑑筆記：全量 100 種寫實動物
+          </div>
+          <div style="font-size:12px; color:var(--ink-muted);">
+            Dave's Adventure Field Guide · 含注音標注、生物學分類、生態棲地與中文語音導覽
+          </div>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="filter-tabs">
+          <button class="filter-btn active" onclick="filterAnimals('all', this)">全部 (100)</button>
+          <button class="filter-btn" onclick="filterAnimals('高山針葉林', this)">高山針葉林</button>
+          <button class="filter-btn" onclick="filterAnimals('熱帶雨林', this)">熱帶雨林</button>
+          <button class="filter-btn" onclick="filterAnimals('天空飛禽', this)">天空飛禽</button>
+          <button class="filter-btn" onclick="filterAnimals('溪流濕地', this)">溪流濕地</button>
+          <button class="filter-btn" onclick="filterAnimals('海濱島嶼', this)">海濱島嶼</button>
+        </div>
+      </div>
+
+      <!-- Grid of 100 Animals -->
+      <div class="animal-grid" id="animal-grid-container">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 5: SANCTUARY MANAGEMENT ==================== -->
+    <div class="view-panel" id="panel-shelter">
+      <canvas id="shelter-canvas"></canvas>
+      <div style="position:absolute; top:20px; left:24px; background:rgba(26,18,12,0.9); border:2px solid var(--brass); border-radius:14px; padding:12px 20px; color:#FFF; box-shadow:0 8px 25px rgba(0,0,0,0.5);">
+        <div style="font-weight:900; font-size:18px; color:var(--brass-glow);">🏡 戴夫自然生態庇護園區</div>
+        <div style="font-size:12px; opacity:0.85; margin-top:2px;">漫步動物安置所 · 遊客門票參觀累積金幣</div>
+        <div style="display:flex; gap:16px; margin-top:10px; font-size:13px;">
+          <div>💰 今日門票收益: <b style="color:#FFD54F;">+1,480 G</b></div>
+          <div>🐾 收容保育物種: <b style="color:#81C784;">18 / 100 種</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 6: PANDA GUN WORKSHOP ==================== -->
+    <div class="view-panel" id="panel-workshop">
+      <div style="width:360px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-size:22px; font-weight:bold; color:var(--brass-glow); border-bottom:1.5px solid rgba(255,255,255,0.2); padding-bottom:8px;">
+          🛠️ 熊貓槍 Mk-II 核心結構藍圖
+        </div>
+        <div style="font-size:12px; opacity:0.85; line-height:1.6;">
+          資深保育員戴夫專用非致命捕捉裝備，結合高抗壓青竹節管與蒸氣黃銅減震閥，專為兒童左右手觸控操作設計。
+        </div>
+
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:12px; font-size:12px; line-height:1.8;">
+          <div><b>① 竹節高壓射出管：</b>天然碳化毛竹強化，內置氣壓蓄力彈簧。</div>
+          <div><b>② 竹香霧化誘引噴嘴：</b>釋放清甜天然竹香，安撫野生動物情緒。</div>
+          <div><b>③ 夢幻泡泡網聚合倉：</b>高分子柔性氣泡網，溫和包覆不傷毛皮。</div>
+          <div><b>④ 左右手平衡握把：</b>防滑人體工學紋路，引導幼兒雙手正確用力。</div>
+          <div><b>⑤ 黃銅指針抗震壓力錶：</b>即時顯示收攏阻尼與 QTE 甜蜜點張力。</div>
+        </div>
+
+        <button style="background:linear-gradient(180deg, #388E3C, #1B5E20); color:#FFF; border:2px solid var(--brass); border-radius:10px; padding:12px; font-weight:bold; cursor:pointer;" onclick="alert('🔧 熊貓槍已升級至 Mk-III！泡泡網收攏速度提升 25%！')">
+          ⚡ 升級熊貓槍組件 (+25% 泡泡張力)
+        </button>
+      </div>
+
+      <div style="flex:1; border:2px dashed rgba(255,255,255,0.3); border-radius:14px; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+        <!-- High-res Panda Gun SVG Vector Blueprint -->
+        <svg width="680" height="420" viewBox="0 0 700 450">
+          <!-- Gun Stock (Wood & Leather) -->
+          <path d="M 80 320 C 120 280 200 290 280 270 L 260 380 C 180 390 100 370 80 320 Z" fill="#4E342E" stroke="#C89D42" stroke-width="3"/>
+          <line x1="120" y1="305" x2="230" y2="355" stroke="#3E2723" stroke-width="2" stroke-dasharray="4,4"/>
+
+          <!-- Bamboo Barrel (Green Segments) -->
+          <!-- Segment 1 -->
+          <rect x="280" y="240" width="110" height="45" rx="6" fill="#388E3C" stroke="#2E7D32" stroke-width="3"/>
+          <line x1="390" y1="235" x2="390" y2="290" stroke="#C89D42" stroke-width="6"/>
+          <!-- Segment 2 -->
+          <rect x="390" y="242" width="120" height="41" rx="6" fill="#43A047" stroke="#2E7D32" stroke-width="3"/>
+          <line x1="510" y1="237" x2="510" y2="288" stroke="#C89D42" stroke-width="6"/>
+          <!-- Segment 3 Muzzle -->
+          <rect x="510" y="244" width="100" height="37" rx="6" fill="#4CAF50" stroke="#2E7D32" stroke-width="3"/>
+          <!-- Bamboo Muzzle Flare -->
+          <ellipse cx="610" cy="262" rx="14" ry="24" fill="#1B5E20" stroke="#C89D42" stroke-width="3"/>
+
+          <!-- Bubble Energy Chamber (Cyan Glow) -->
+          <rect x="290" y="170" width="150" height="60" rx="16" fill="rgba(0,172,193,0.35)" stroke="#00E5FF" stroke-width="3"/>
+          <circle cx="320" cy="200" r="12" fill="rgba(255,255,255,0.7)"/>
+          <circle cx="370" cy="190" r="16" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="415" cy="205" r="9" fill="rgba(255,255,255,0.8)"/>
+
+          <!-- Steam Brass Pressure Gauge -->
+          <circle cx="230" cy="200" r="32" fill="#FFF8E1" stroke="#C89D42" stroke-width="5"/>
+          <circle cx="230" cy="200" r="28" fill="#FFFDE7" stroke="#8D6E63" stroke-width="1"/>
+          <!-- Needle -->
+          <line x1="230" y1="200" x2="245" y2="182" stroke="#D32F2F" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="230" cy="200" r="4" fill="#3E2723"/>
+
+          <!-- Dual Hand Grips -->
+          <!-- Grip 1 (Rear) -->
+          <rect x="210" y="270" width="35" height="85" rx="10" fill="#795548" stroke="#3E2723" stroke-width="3"/>
+          <!-- Grip 2 (Foregrip) -->
+          <rect x="430" y="285" width="30" height="75" rx="8" fill="#8D6E63" stroke="#3E2723" stroke-width="3"/>
+
+          <!-- Blueprint Labels -->
+          <text x="320" y="155" fill="#4DD0E1" font-size="13" font-family="monospace">③ 夢幻泡泡網聚合倉</text>
+          <text x="440" y="225" fill="#81C784" font-size="13" font-family="monospace">① 天然碳化竹節管</text>
+          <text x="140" y="180" fill="#FFE082" font-size="13" font-family="monospace">⑤ 黃銅抗震壓力錶</text>
+          <text x="450" y="390" fill="#FFCC80" font-size="13" font-family="monospace">④ 雙手平衡握把</text>
+        </svg>
+      </div>
+    </div>
+
   </div>
 
-</div>
+  <!-- Raw 100 Animal Data Store -->
+  <script>
+    const ALL_ANIMALS = [{"id": "formosan_black_bear", "name": "台灣黑熊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", "latin": "Ursus thibetanus formosanus", "status": "瀕危 (EN)", "badge": "danger", "habitat": "高山針葉林", "diet": "雜食性", "desc": "胸前擁有標誌性白色V字斑紋，毛皮濃密微帶油脂反光，善於攀爬高山神木，為台灣特有亞種猛獸。", "coins": 180, "texture": "fur_black"}, {"id": "leopard_cat", "name": "台灣石虎", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕˊ ㄏㄨˇ", "latin": "Prionailurus bengalensis chinensis", "status": "瀕危 (EN)", "badge": "danger", "habitat": "熱帶雨林", "diet": "肉食性", "desc": "雙耳後方帶有醒目白斑，體表佈滿如錢幣般的豹紋斑點，夜間雙眼具微光反射層，擅長夜間潛伏狩獵。", "coins": 160, "texture": "fur_spotted"}, {"id": "golden_snub_nosed_monkey", "name": "川金絲猴", "zhuyin": "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", "latin": "Rhinopithecus roxellana", "status": "珍貴 (VU)", "badge": "warning", "habitat": "高山針葉林", "diet": "植食性", "desc": "面部呈現夢幻淡天藍色，背披金黃如絲綢般的長毛，在晨光下呈現強烈的菲涅爾背光金輝，氣質優雅。", "coins": 150, "texture": "fur_golden"}, {"id": "crested_serpent_eagle", "name": "大冠鷲", "zhuyin": "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", "latin": "Spilornis cheela hoya", "status": "珍貴 (VU)", "badge": "warning", "habitat": "天空飛禽", "diet": "肉食性", "desc": "頭具黑白相間羽冠，展翼時羽緣呈現白斑鏈，羽片表面具疏水角質光澤，翱翔時發出嘹亮哨音。", "coins": 140, "texture": "feather_eagle"}, {"id": "emerald_tree_frog", "name": "翡翠樹蛙", "zhuyin": "ㄈㄟˇ ㄘㄨㄟˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus prasinatus", "status": "珍貴 (VU)", "badge": "warning", "habitat": "溪流濕地", "diet": "食蟲性", "desc": "全身翠綠如玉石，體表覆蓋濕潤微黏液膜，在光照下具極高 Specular 亮斑與顆粒感法線，趾端吸盤發達。", "coins": 120, "texture": "skin_wet_frog"}, {"id": "formosan_sika_deer", "name": "台灣梅花鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄟˊ ㄏㄨㄚ ㄌㄨˋ", "latin": "Cervus nippon taiouanus", "status": "一般 (LC)", "badge": "success", "habitat": "熱帶雨林", "diet": "草食性", "desc": "夏季毛皮呈紅褐色並點綴潔白梅花斑點，雄鹿角枝分叉優雅，質感堅硬微帶骨質漫反射。", "coins": 100, "texture": "fur_deer"}, {"id": "pangolin", "name": "穿山甲", "zhuyin": "ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", "latin": "Manis pentadactyla", "status": "極危 (CR)", "badge": "danger", "habitat": "熱帶雨林", "diet": "食蟻性", "desc": "全身覆蓋如古代鎧甲般的角質硬鱗，鱗片具規則菱形排列法線與微磨損高光，遇險縮成球狀防禦。", "coins": 200, "texture": "scales_pangolin"}, {"id": "mikado_pheasant", "name": "黑長尾雉 (帝雉)", "zhuyin": "ㄉㄧˋ ㄓˋ", "latin": "Syrmaticus mikado", "status": "珍貴 (VU)", "badge": "warning", "habitat": "高山針葉林", "diet": "雜食性", "desc": "雄鳥通體暗藍泛強烈金屬紫光，長尾羽具黑白交錯橫斑，被譽為迷霧中的高山黑武士。", "coins": 170, "texture": "feather_metallic"}, {"id": "swinhoes_pheasant", "name": "藍腹鷴", "zhuyin": "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", "latin": "Lophura swinhoii", "status": "珍貴 (VU)", "badge": "warning", "habitat": "熱帶雨林", "diet": "雜食性", "desc": "羽冠雪白，背部具鮮豔亮白斑與金屬暗藍羽翼，臉頰帶有鮮紅肉垂，林下漫步宛若山林隱士。", "coins": 150, "texture": "feather_metallic"}, {"id": "red_giant_flying_squirrel", "name": "大赤鼯鼠", "zhuyin": "ㄉㄚˋ ㄔˋ ㄨˊ ㄕㄨˇ", "latin": "Petaurista philippensis grandis", "status": "一般 (LC)", "badge": "success", "habitat": "熱帶雨林", "diet": "植食性", "desc": "體型如貓，前後肢間具寬大皮褶翼膜，夜晚在樹冠層間滑翔如飛毯，眼睛大而圓潤。", "coins": 90, "texture": "fur_soft"}, {"id": "species_11", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山針葉林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "台灣體型最大的原生草食性哺乳類，雄鹿具分叉角，長年於高山草坡與冷杉林中棲息。", "coins": 80, "texture": "fur_soft"}, {"id": "species_12", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "高山針葉林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "唯一台灣野生牛科動物，蹄部具特殊彈性肉墊，能在近90度高山懸崖峭壁奔馳。", "coins": 95, "texture": "fur_soft"}, {"id": "species_13", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "高山針葉林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "胸頸部披著亮黃色柔順毛皮，體格精壯靈活，獵捕時常成對合作，有高山小霸王之稱。", "coins": 110, "texture": "fur_soft"}, {"id": "species_14", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "溪流生態水質指標生物，毛質堅硬如鋼針帶有白斑，專長於溪谷石頭縫捕捉甲殼生物。", "coins": 125, "texture": "fur_soft"}, {"id": "species_15", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "夜行性靈巧獵手，身上有縱向深褐斑紋，尾巴具黑白相間環節，體表香腺具獨特氣息。", "coins": 140, "texture": "fur_soft"}, {"id": "species_16", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "鼻樑至額頭有一道清晰白斑，極善攀爬果樹，性格溫和帶有果香氣味。", "coins": 155, "texture": "fur_soft"}, {"id": "species_17", "name": "台灣野豬", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄧㄝˇ ㄓㄨ", "latin": "Sus scrofa taivanus", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "全身長滿粗糙剛毛與厚實脂肪層，幼豬體側有可愛褐色斑紋，嗅覺極為靈敏。", "coins": 170, "texture": "fur_soft"}, {"id": "species_18", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "台灣唯一野生靈長類，面頰裸露粉紅，具有靈活的五指與頰囊，智商極高且社會結構分明。", "coins": 185, "texture": "fur_soft"}, {"id": "species_19", "name": "高山白腹鼠", "zhuyin": "ㄍㄠ ㄕㄢ ㄅㄞˊ ㄈㄨˋ ㄕㄨˇ", "latin": "Niviventer culturatus", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "毛背柔軟偏黑褐，腹部如雪白，專食松子與冷杉嫩芽，高山營地常客。", "coins": 80, "texture": "fur_soft"}, {"id": "species_20", "name": "台灣森鼠", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄙㄣ ㄕㄨˇ", "latin": "Apodemus semotus", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "森林底層敏捷的小精靈，大眼圓耳，夜間靠敏銳觸鬚在枯枝落葉堆穿梭覓食。", "coins": 95, "texture": "fur_soft"}, {"id": "species_21", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪流濕地", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "台灣特有種，背部亮綠無斑，腹部淡黃，冬季會在泥洞內產下白色卵泡。", "coins": 110, "texture": "fur_soft"}, {"id": "species_22", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "大腿內側與腹側呈現鮮紅警示色，虹膜橘紅，叫聲似發出低沉喀喀敲木聲。", "coins": 125, "texture": "fur_soft"}, {"id": "species_23", "name": "諸羅樹蛙", "zhuyin": "ㄓㄨ ㄌㄨㄛˊ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus arvalis", "habitat": "溪流濕地", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "竹林小精靈，體色如嫩竹般翡翠綠，叫聲清脆如連發音階，僅分佈於雲嘉南農田竹林。", "coins": 140, "texture": "fur_soft"}, {"id": "species_24", "name": "盤古蟾蜍", "zhuyin": "ㄆㄢˊ ㄍㄨˇ ㄔㄢˊ ㄔㄨˊ", "latin": "Bufo bankorensis", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "皮膚具明顯角質疣粒法線，眼後耳後腺具防禦毒液，適應力強盛遍佈全台山野。", "coins": 155, "texture": "fur_soft"}, {"id": "species_25", "name": "拉都希氏赤蛙", "zhuyin": "ㄌㄚ ㄉㄨ ㄒㄧ ㄕˋ ㄔˋ ㄨㄚ", "latin": "Hylarana latouchii", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "背側褶厚實明顯，叫聲如綿羊般的咩咩聲，常在水溝旁聚集群聚鳴唱。", "coins": 170, "texture": "fur_soft"}, {"id": "species_26", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "天空飛禽", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "頭部有一對靈活聳立的角狀耳羽，雙眼黑亮深邃，是都會近郊最常見的夜行猛禽。", "coins": 185, "texture": "fur_soft"}, {"id": "species_27", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "天空飛禽", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "喙部鮮黃，體型小巧，常在濃霧高山夜間發出兩聲一組清脆空靈口哨鳴叫。", "coins": 80, "texture": "fur_soft"}, {"id": "species_28", "name": "褐林鴞", "zhuyin": "ㄏㄜˋ ㄌㄧㄣˊ ㄒㄧㄠ", "latin": "Strix leptogrammica", "habitat": "天空飛禽", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "台灣最大型的森林貓頭鷹，面盤深褐色，羽毛柔軟飛翔無聲，宛如黑夜守護神。", "coins": 95, "texture": "fur_soft"}, {"id": "species_29", "name": "灰林鴞", "zhuyin": "ㄏㄨㄟ ㄌㄧㄣˊ ㄒㄧㄠ", "latin": "Strix aluco", "habitat": "天空飛禽", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "中高海拔冷杉林霸主，胸腹部帶有深色縱斑，夜間雙眼具驚人的微光聚光力。", "coins": 110, "texture": "fur_soft"}, {"id": "species_30", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "天空飛禽", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "臉部羽毛細密特化如鱗片，不怕蜂螯叮咬，專門取食虎頭蜂蛹與野生蜜蠟。", "coins": 125, "texture": "fur_soft"}, {"id": "species_31", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "天空飛禽", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "紅寶石般鮮紅眼睛，羽翼黑白相稱，具備空中滯空定點懸停振翅的頂尖飛行技巧。", "coins": 140, "texture": "fur_soft"}, {"id": "species_32", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "天空飛禽", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "地球上俯衝速度最快的生物，俯衝時速可達380公里，羽毛緊繃符合流體力學。", "coins": 155, "texture": "fur_soft"}, {"id": "species_33", "name": "林雕", "zhuyin": "ㄌㄧㄣˊ ㄉㄧㄠ", "latin": "Ictinaetus malaiensis", "habitat": "天空飛禽", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "雙翼長大平直，在茂密森林樹冠層緩慢滑翔搜尋樹冠鳥巢，通體黑褐色帶霸氣。", "coins": 170, "texture": "fur_soft"}, {"id": "species_34", "name": "熊鷹 (赫氏角鷹)", "zhuyin": "ㄒㄩㄥˊ ㄧㄥ", "latin": "Nisaetus nipalensis", "habitat": "天空飛禽", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "台灣現存最強大日行性猛禽，羽冠威武，腳爪粗大如虎爪，能抓取山羊幼崽。", "coins": 185, "texture": "fur_soft"}, {"id": "species_35", "name": "魚鷹", "zhuyin": "ㄩˊ ㄧㄥ", "latin": "Pandion haliaetus", "habitat": "溪流濕地", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "專門俯衝入水抓魚的猛禽，腳趾有密集骨質逆刺，可牢固抓住滑溜魚鱗。", "coins": 80, "texture": "fur_soft"}, {"id": "species_36", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "羽色具強烈金屬青藍光澤與橙紅腹羽，宛如水面飛馳的藍色閃電，捉魚精準迅速。", "coins": 95, "texture": "fur_soft"}, {"id": "species_37", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "台灣特有種國鳥，碧藍羽身搭配朱紅嘴爪與黑白長尾羽，具家族群體巢邊幫手護巢性。", "coins": 110, "texture": "fur_soft"}, {"id": "species_38", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "身披綠色保護色，頭頸點綴黃、紅、藍、黑五色，喙厚重能在枯木啄出圓洞築巢。", "coins": 125, "texture": "fur_soft"}, {"id": "species_39", "name": "綠鳩", "zhuyin": "ㄌㄩˋ ㄐㄧㄡ", "latin": "Treron sieboldii", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "體毛呈現柔和橄欖綠色，雄鳥翼肩有紫紅斑，偏好在林冠高處啄食榕樹果實。", "coins": 140, "texture": "fur_soft"}, {"id": "species_40", "name": "紅頭山雀", "zhuyin": "ㄏㄨㄥˊ ㄊㄡˊ ㄕㄢ ㄑㄩㄝˋ", "latin": "Aegithalos concinnus", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "頭戴焦黃小紅帽，喉部黑斑似小領結，圓滾身軀活潑俏皮，外號小叮噹鳥。", "coins": 155, "texture": "fur_soft"}, {"id": "species_41", "name": "金翼白眉", "zhuyin": "ㄐㄧㄣ ㄧˋ ㄅㄞˊ ㄇㄟˊ", "latin": "Trochalopteron morrisonianum", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "玉山高海拔步道最親民鳥類，眼上下各有一道鮮明雪白眉斑，飛羽金黃耀眼。", "coins": 170, "texture": "fur_soft"}, {"id": "species_42", "name": "酒紅朱雀", "zhuyin": "ㄐㄧㄡˇ ㄏㄨㄥˊ ㄓㄨ ㄑㄩㄝˋ", "latin": "Carpodacus formosanus", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雄鳥全身宛如浸泡過醇厚紅葡萄酒，背部暗紅，在深綠冷杉林中格外醒目。", "coins": 185, "texture": "fur_soft"}, {"id": "species_43", "name": "栗背林鴝", "zhuyin": "ㄌㄧˋ ㄅㄟˋ ㄌㄧㄣˊ ㄑㄩˊ", "latin": "Tarsiger johnstoniae", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雄鳥胸前橫跨一道溫暖栗橙色項圈，喜在林緣岩石枝頭跳動展尾。", "coins": 80, "texture": "fur_soft"}, {"id": "species_44", "name": "黃山雀", "zhuyin": "ㄏㄨㄤˊ ㄕㄢ ㄑㄩㄝˋ", "latin": "Machlolophus holsti", "habitat": "高山針葉林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "台灣特有種，頭頂高聳黑色冠羽，通體鮮明檸檬黃，嗓音清脆婉轉動聽。", "coins": 95, "texture": "fur_soft"}, {"id": "species_45", "name": "冠羽畫眉", "zhuyin": "ㄍㄨㄢ ㄩˇ ㄏㄨㄚˋ ㄇㄟˊ", "latin": "Yuhina brunneiceps", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "頭戴尖翹咖啡色小鳳冠，叫聲如清脆甜美的「To-meet-you」，具罕見合作繁殖行為。", "coins": 110, "texture": "fur_soft"}, {"id": "species_46", "name": "白耳畫眉", "zhuyin": "ㄅㄞˊ ㄦˇ ㄏㄨㄚˋ ㄇㄟˊ", "latin": "Heterophasia auricularis", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "兩道雪白絲狀羽毛從眼後延伸如修長飄帶，鳴叫聲宏亮清澈貫穿山谷。", "coins": 125, "texture": "fur_soft"}, {"id": "species_47", "name": "藪鳥", "zhuyin": "ㄙㄡˇ ㄋㄧㄠˇ", "latin": "Liocichla steerii", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "眼下帶有一顆黃色美人痣，常在林下灌木灌叢跳躍，聲音響亮似「急～救兒」。", "coins": 140, "texture": "fur_soft"}, {"id": "species_48", "name": "紋翼畫眉", "zhuyin": "ㄨㄣˊ ㄧˋ ㄏㄨㄚˋ ㄇㄟˊ", "latin": "Actinodura morrisoniana", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雙翼與尾羽帶有精密如水波般的細緻橫斑，性情隱密常棲息樹冠上層。", "coins": 155, "texture": "fur_soft"}, {"id": "species_49", "name": "火冠戴菊", "zhuyin": "ㄏㄨㄛˇ ㄍㄨㄢ ㄉㄞˋ ㄐㄩˊ", "latin": "Regulus goodfellowi", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "台灣體型最小鳥類之一，頭頂具金黃夾鮮紅的冠羽如火炬，跳動極為敏捷。", "coins": 170, "texture": "fur_soft"}, {"id": "species_50", "name": "灰鷽", "zhuyin": "ㄏㄨㄟ ㄒㄩㄝˊ", "latin": "Pyrrhula erythaca", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "喙短而圓鈍堅固，專門啄碎堅硬高山植物毬果種子，羽毛呈現溫潤灰褐色。", "coins": 185, "texture": "fur_soft"}, {"id": "species_51", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流濕地", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "流線型身軀與密不透水的保暖油毛，四肢具全蹼，水下捕魚如同水中飛彈。", "coins": 80, "texture": "fur_soft"}, {"id": "species_52", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "溪流濕地", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "冰河孑遺珍貴國寶魚，體側具橢圓形暗色斑，成熟雄魚下顎彎曲如鉤，棲於低溫清澈七家灣溪。", "coins": 95, "texture": "fur_soft"}, {"id": "species_53", "name": "台灣鏟頜魚 (苦花)", "zhuyin": "ㄎㄨˇ ㄏㄨㄚ", "latin": "Onychostoma barbatulum", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "下顎具有如鏟子般銳利角質層，啃食石頭上矽藻時體側閃爍銀白光芒，稱水中螢火蟲。", "coins": 110, "texture": "fur_soft"}, {"id": "species_54", "name": "台灣石賓", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕˊ ㄅㄧㄣ", "latin": "Acrossocheilus paradoxus", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "體側具有約7條明顯黑橫帶，活潑好動善游於激流，是中上游清溪重要魚種。", "coins": 125, "texture": "fur_soft"}, {"id": "species_55", "name": "台灣細髫", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄒㄧˋ ㄊㄧㄠˊ", "latin": "Aphyocypris moltrechti", "habitat": "溪流濕地", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "台灣特有小型初級淡水魚，體色半透明，體側有一條青藍色亮麗縱紋。", "coins": 140, "texture": "fur_soft"}, {"id": "species_56", "name": "蓋斑鬥魚", "zhuyin": "ㄍㄞˋ ㄅㄢ ㄉㄡˋ ㄩˊ", "latin": "Macropodus opercularis", "habitat": "溪流濕地", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "鰓蓋後方有一顯著暗綠圓斑，雄魚色彩絢爛具長尾鰭，耐低氧且專捕孑孓。", "coins": 155, "texture": "fur_soft"}, {"id": "species_57", "name": "高身鏟頜魚", "zhuyin": "ㄍㄠ ㄕㄣ ㄔㄢˇ ㄏㄜˊ ㄩˊ", "latin": "Onychostoma alticorpus", "habitat": "溪流濕地", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "體高背拱呈菱形，鱗片光澤堅韌，生長於南部清涼湍急溪谷，保育價值極高。", "coins": 170, "texture": "fur_soft"}, {"id": "species_58", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "鼻端向上翹起如尖角，體背整齊排列灰褐色三角形斑紋，是原住民文化中的山林守護神。", "coins": 185, "texture": "fur_soft"}, {"id": "species_59", "name": "雨傘節", "zhuyin": "ㄩˇ ㄙㄢˇ ㄐㄧㄝˊ", "latin": "Bungarus multicinctus", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "黑白相間環節分明且背脊微高凸，鱗片極致平滑具漆器光澤，性情隱密羞澀。", "coins": 80, "texture": "fur_soft"}, {"id": "species_60", "name": "眼鏡蛇", "zhuyin": "ㄧㄢˇ ㄐㄧㄥˋ ㄕㄜˊ", "latin": "Naja atra", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "受驚時頸部膨大張開如扁平盾牌，背後呈現如眼鏡形狀的白紋印記。", "coins": 95, "texture": "fur_soft"}, {"id": "species_61", "name": "龜殼花", "zhuyin": "ㄍㄨㄟ ㄎㄜˊ ㄏㄨㄚ", "latin": "Protobothrops mucrosquamatus", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "頭呈明顯三角形，體表雜亂錯落棕褐龜裂斑塊，夜間依靠頰窩熱感應探測獵物。", "coins": 110, "texture": "fur_soft"}, {"id": "species_62", "name": "赤尾青竹絲", "zhuyin": "ㄔˋ ㄨㄟˇ ㄑㄧㄥ ㄓㄨˊ ㄙ", "latin": "Trimeresurus stejnegeri", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "通體鮮翠綠，尾端呈焦紅棕色，靜伏於溪旁樹枝宛若一片竹葉。", "coins": 125, "texture": "fur_soft"}, {"id": "species_63", "name": "錦蛇 (黑眉錦蛇)", "zhuyin": "ㄏㄟ ㄇㄟˊ ㄐㄧㄣˇ ㄕㄜˊ", "latin": "Elaphe taeniura friesi", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "眼睛後方有一道粗黑紋延伸如修長劍眉，背部前半段具黑橄欖斑塊，無毒且性情溫順。", "coins": 140, "texture": "fur_soft"}, {"id": "species_64", "name": "草花蛇", "zhuyin": "ㄘㄠˇ ㄏㄨㄚ ㄕㄜˊ", "latin": "Xenochrophis piscator", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "體背黃褐色並具棋盤格狀黑點，喜棲水田池塘，動作靈活極擅水性。", "coins": 155, "texture": "fur_soft"}, {"id": "species_65", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Diploderma swinhonis", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "體側具明亮黃色菱斑，喉部有白色斑塊，防衛時會連續做伏地挺身示威。", "coins": 170, "texture": "fur_soft"}, {"id": "species_66", "name": "黃口攀蜥", "zhuyin": "ㄏㄨㄤˊ ㄎㄡˇ ㄆㄢ ㄒㄧ", "latin": "Diploderma polygonatum", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "口腔內緣呈鮮豔金黃色，尾巴修長，主要分佈在台灣北部與東部低海拔林相。", "coins": 185, "texture": "fur_soft"}, {"id": "species_67", "name": "台灣草蜥", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄘㄠˇ ㄒㄧ", "latin": "Takydromus formosanus", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "尾巴長度可達身體兩倍以上，背部呈深褐色，常在草叢頂端曬太陽吸收熱量。", "coins": 80, "texture": "fur_soft"}, {"id": "species_68", "name": "麗紋石龍子", "zhuyin": "ㄌㄧˋ ㄨㄣˊ ㄕˊ ㄌㄨㄥˊ ㄗˇ", "latin": "Plestiodon elegans", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "幼蜥體背黑底飾有五條金黃縱紋，尾巴呈現亮麗寶石鈷藍色，隨年齡增長漸轉褐色。", "coins": 95, "texture": "fur_soft"}, {"id": "species_69", "name": "綠蠵龜", "zhuyin": "ㄌㄩˋ ㄒㄧ ㄍㄨㄟ", "latin": "Chelonia mydas", "habitat": "海濱島嶼", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "流線型甲殼覆蓋盾片，前肢特化為槳狀划水，長途洄游數千公里返回原生地產卵。", "coins": 110, "texture": "fur_soft"}, {"id": "species_70", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "熱帶雨林", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "台灣唯一陸棲箱龜，腹甲具有韌帶可完全閉合與背甲緊密貼合，防禦固若金湯。", "coins": 125, "texture": "fur_soft"}, {"id": "species_71", "name": "柴棺龜", "zhuyin": "ㄔㄞˊ ㄍㄨㄢ ㄍㄨㄟ", "latin": "Mauremys mutica", "habitat": "溪流濕地", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "頭部兩側有鮮黃色縱紋，喜在水塘淤泥與淺水邊緣棲息，雜食性且性情溫和。", "coins": 140, "texture": "fur_soft"}, {"id": "species_72", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高山針葉林", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "國寶級蝶類，後翅尾突特別寬大並貫穿兩條翅脈，中央有鮮紅如彎月之大型弦月斑。", "coins": 155, "texture": "fur_soft"}, {"id": "species_73", "name": "大紫蛺蝶", "zhuyin": "ㄉㄚˋ ㄗˇ ㄐㄧㄚˊ ㄉㄧㄝˊ", "latin": "Sasakia charonda formosana", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "雄蝶雙翅中央泛著神祕尊貴的絲絨紫光，飛行速度極快，具強烈領域攻擊性。", "coins": 170, "texture": "fur_soft"}, {"id": "species_74", "name": "曙鳳蝶", "zhuyin": "ㄕㄨˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Atrophaneura horishana", "habitat": "高山針葉林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "後翅下半部呈現如黎明曙光般的晨曦粉紅色，飛翔於中海拔山林輕盈曼妙。", "coins": 185, "texture": "fur_soft"}, {"id": "species_75", "name": "珠光鳳蝶", "zhuyin": "ㄓㄨ ㄍㄨㄤ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Troides magellanus", "habitat": "海濱島嶼", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "後翅金色斑塊在光線特定斜角照射下，會反射出如珍珠霓虹般粉紅藍綠金屬偏光。", "coins": 80, "texture": "fur_soft"}, {"id": "species_76", "name": "台灣長臂金龜", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄅㄧˋ ㄐㄧㄣ ㄍㄨㄟ", "latin": "Cheirotonus formosanus", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "雄蟲前腳特長超過體長，鞘翅黑褐點綴金黃斑紋，前胸背板呈現金屬銅綠光澤。", "coins": 95, "texture": "fur_soft"}, {"id": "species_77", "name": "大圓翅鍬形蟲", "zhuyin": "ㄉㄚˋ ㄩㄢˊ ㄔˋ ㄑㄧㄠ ㄒㄧㄥˊ ㄔㄨㄥˊ", "latin": "Neolucanus maximus", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "鞘翅漆黑反光如黑曜石，圓弧身型高雅，秋季出現於原始林林道枯木周圍。", "coins": 110, "texture": "fur_soft"}, {"id": "species_78", "name": "高砂深山鍬形蟲", "zhuyin": "ㄍㄠ ㄕㄚ ㄕㄣ ㄕㄢ ㄑㄧㄠ ㄒㄧㄥˊ ㄔㄨㄥˊ", "latin": "Lucanus maculifemoratus taiwanus", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "大顎具發達耳突與鋸齒齒列，全身密生金黃微絨毛，形態極富機械力學美感。", "coins": 125, "texture": "fur_soft"}, {"id": "species_79", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雄蟲頭頂長出壯觀雙叉鹿角狀巨角，力大無窮，鞘翅厚重泛深紅栗色光澤。", "coins": 140, "texture": "fur_soft"}, {"id": "species_80", "name": "霧社血斑天牛", "zhuyin": "ㄨˋ ㄕㄜˋ ㄒㄧㄝˇ ㄅㄢ ㄊㄧㄢ ㄋㄧㄡˊ", "latin": "Aeolesthes oenochrous", "habitat": "高山針葉林", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "全身覆蓋著鮮紅如絲絨般的亮眼紅毛，幼蟲專食瀕危台灣山櫻木，保育級夢幻甲蟲。", "coins": 155, "texture": "fur_soft"}, {"id": "species_81", "name": "彩虹吉丁蟲", "zhuyin": "ㄘㄞˇ ㄏㄨㄥˊ ㄐㄧˊ ㄉㄧㄥ ㄔㄨㄥˊ", "latin": "Chrysochroa fulgidissima", "habitat": "熱帶雨林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "鞘翅具有金屬翡翠綠底色並貫穿兩條紫紅金屬縱帶，陽光照射下光芒萬丈。", "coins": 170, "texture": "fur_soft"}, {"id": "species_82", "name": "渡邊氏東方蠟蟬", "zhuyin": "ㄉㄨˋ ㄅㄧㄢ ㄕˋ ㄉㄨㄥ ㄈㄤ ㄌㄚˋ ㄔㄢˊ", "latin": "Pyrops watanabei", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "頭部前方長出一根向上彎翹的黃球狀長吻，翅面有白色斑點，常聚集於烏桕樹幹。", "coins": 185, "texture": "fur_soft"}, {"id": "species_83", "name": "黑翅晦螢", "zhuyin": "ㄏㄟ ㄔˋ ㄏㄨㄟˋ ㄧㄥˊ", "latin": "Luciola cerata", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "春末夏初山區最常見螢火蟲，發出溫柔黃綠色閃爍光芒，織就漫山遍野綠色銀河。", "coins": 80, "texture": "fur_soft"}, {"id": "species_84", "name": "黃緣螢", "zhuyin": "ㄏㄨㄤˊ ㄩㄢˊ ㄧㄥˊ", "latin": "Aquatica ficta", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "水生螢火蟲，幼蟲棲息清澈梯田水圳捕食螺類，成蟲翅鞘邊緣呈鮮明黃色。", "coins": 95, "texture": "fur_soft"}, {"id": "species_85", "name": "山椒魚 (阿里山山椒魚)", "zhuyin": "ㄚ ㄌㄧˇ ㄕㄢ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Hynobius arisanensis", "habitat": "高山針葉林", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "冰河時期孑遺的珍稀兩棲類，後腳五趾，體表黑褐並散佈細微金斑，躲藏冷泉枯木下。", "coins": 110, "texture": "fur_soft"}, {"id": "species_86", "name": "觀霧山椒魚", "zhuyin": "ㄍㄨㄢ ㄨˋ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Hynobius guanwushanensis", "habitat": "高山針葉林", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "僅分佈於雪霸觀霧地區，體色深褐，皮膚極薄需依賴濕潤微氣候呼吸。", "coins": 125, "texture": "fur_soft"}, {"id": "species_87", "name": "南湖山椒魚", "zhuyin": "ㄋㄢˊ ㄏㄨˊ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Hynobius glacialis", "habitat": "高山針葉林", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "生活在海拔3000公尺以上南湖大山碎石坡，是台灣分佈海拔最高的兩棲動物。", "coins": 140, "texture": "fur_soft"}, {"id": "species_88", "name": "楚南氏山椒魚", "zhuyin": "ㄔㄨˇ ㄋㄢˊ ㄕˋ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Hynobius sonani", "habitat": "高山針葉林", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "後腳僅四趾，前腳亦四趾，適應嚴苛高山冰冷溪澗環境，數量極為稀少。", "coins": 155, "texture": "fur_soft"}, {"id": "species_89", "name": "台灣山鷓鴣 (深山竹雞)", "zhuyin": "ㄕㄣ ㄕㄢ ㄓㄨˊ ㄐㄧ", "latin": "Arborophila crudigularis", "habitat": "高山針葉林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "喉部黑白條紋如太極斑，胸羽暗灰，林間對鳴聲宏亮悠長，常在清晨霧氣中出沒。", "coins": 170, "texture": "fur_soft"}, {"id": "species_90", "name": "灰頭花翼", "zhuyin": "ㄏㄨㄟ ㄊㄡˊ ㄏㄨㄚ ㄧˋ", "latin": "Fulvetta cinereiceps", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "頭部淡灰，眼圈雪白如畫，性情溫馴，常成小群在高山杜鵑與箭竹叢穿梭。", "coins": 185, "texture": "fur_soft"}, {"id": "species_91", "name": "小剪尾", "zhuyin": "ㄒㄧㄠˇ ㄐㄧㄢˇ ㄨㄟˇ", "latin": "Enicurus scouleri", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "黑白分明的羽毛，短尾呈深叉狀，專門在激流瀑布的濕滑岩壁上啄食水生昆蟲。", "coins": 80, "texture": "fur_soft"}, {"id": "species_92", "name": "紫嘯鶇", "zhuyin": "ㄗˇ ㄒㄧㄠˋ ㄉㄨㄥ", "latin": "Myophonus insularis", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "全身披著深紫藍色羽毛，光線斜照泛強烈金屬光澤，叫聲如剎車尖銳聲響亮刺耳。", "coins": 95, "texture": "fur_soft"}, {"id": "species_93", "name": "白河烏", "zhuyin": "ㄅㄞˊ ㄏㄜˊ ㄨ", "latin": "Cinclus pallasii", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "全身深咖啡色，能在湍急冰冷溪水中潛水行走逆流捕捉石蠶幼蟲，水性極佳。", "coins": 110, "texture": "fur_soft"}, {"id": "species_94", "name": "鉛色水鶇", "zhuyin": "ㄑㄧㄢ ㄙㄜˋ ㄕㄨㄟˇ ㄉㄨㄥ", "latin": "Phoenicurus fuliginosus", "habitat": "溪流濕地", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雄鳥全身暗鉛藍色搭配鮮橘紅尾羽，停在溪石上不斷上下開闔尾羽宣示領域。", "coins": 125, "texture": "fur_soft"}, {"id": "species_95", "name": "栗尾鴝", "zhuyin": "ㄌㄧˋ ㄨㄟˇ ㄑㄩˊ", "latin": "Tarsiger chrysaeus", "habitat": "高山針葉林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雄鳥全身散發鮮明金黃色彩，眉紋鮮黃，喜愛在高海拔林緣落葉堆尋找甲蟲。", "coins": 140, "texture": "fur_soft"}, {"id": "species_96", "name": "金黃鼠耳蝠", "zhuyin": "ㄐㄧㄣ ㄏㄨㄤˊ ㄕㄨˇ ㄦˇ ㄈㄨˊ", "latin": "Myotis formosus", "habitat": "熱帶雨林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "全身覆蓋如黃金絲絨般鮮黃毛皮，耳廓黑黃對比，常於向陽樹葉間棲息倒掛。", "coins": 155, "texture": "fur_soft"}, {"id": "species_97", "name": "無尾葉鼻蝠", "zhuyin": "ㄨˊ ㄨㄟˇ ㄧㄝˋ ㄅㄧˊ ㄈㄨˊ", "latin": "Coelops frithii", "habitat": "熱帶雨林", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "鼻部特化成花瓣狀複雜肉質葉結構，無尾巴，能發出高頻超音波精密迴聲定位。", "coins": 170, "texture": "fur_soft"}, {"id": "species_98", "name": "東方白鸛", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄅㄞˊ ㄍㄨㄢˋ", "latin": "Ciconia boyciana", "habitat": "溪流濕地", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "大型涉禽，體羽純白，飛羽漆黑，眼周裸露緋紅，喙厚重烏黑，佇立濕地優雅非凡。", "coins": 185, "texture": "fur_soft"}, {"id": "species_99", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海濱島嶼", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "長喙扁平宛如中國樂器琵琶，黑臉黑腳，每年冬季跨海飛抵台南七股潟湖越冬。", "coins": 80, "texture": "fur_soft"}, {"id": "species_100", "name": "水雉", "zhuyin": "ㄕㄨㄟˇ ㄓˋ", "latin": "Hydrophasianus chirurgus", "habitat": "溪流濕地", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "腳趾極為修長，能漫步於菱角浮葉之上，金黃頸斑與修長黑尾，被譽為菱角田凌波仙子。", "coins": 95, "texture": "fur_soft"}];
+  </script>
 
-<script>
-// Complete 100 Realistic Fauna Dataset with Bopomofo (注音符號)
-const ALL_100_ANIMALS = [
-  { id: "formosan_black_bear", name: "台灣黑熊", bopomofo: "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", sci: "Ursus thibetanus formosanus", grade: "VU 易危 (黃燈)", color: "#1A1A1E", habitat: "高山原始闊葉針葉林", cycle: "日行性", coins: 85, fact: "胸前有醒目的白色V字斑紋，善於爬樹和游泳，嗅覺是獵犬數倍！", eco: "台灣特有亞種，為亞洲黑熊分布於海島之特殊族群。" },
-  { id: "leopard_cat", name: "石虎", bopomofo: "ㄕˊ ㄏㄨˇ", sci: "Prionailurus bengalensis chinensis", grade: "EN 瀕危 (紅燈)", color: "#C48A42", habitat: "低海拔淺山丘陵森林", cycle: "夜行性", coins: 110, fact: "耳後有黑底白斑、眼窩內側有兩條白色條紋，是台灣現存唯一本土貓科！", eco: "擅長夜間伏擊小型哺乳類與鳥類，棲地受淺山開發嚴重破碎化。" },
-  { id: "formosan_sambar", name: "台灣水鹿", bopomofo: "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", sci: "Rusa unicolor swinhoei", grade: "LC 無危 (綠燈)", color: "#6E4F32", habitat: "中央山脈高山草原與箭竹林", cycle: "晨昏出沒", coins: 45, fact: "台灣原生最大型草食動物，雄鹿擁有雄偉分叉的角，非常喜歡在水塘泡泥澡！", eco: "常成小群出現在近水草生地，具有磨角標記領域與反芻習性。" },
-  { id: "crested_serpent_eagle", name: "大冠鷲", bopomofo: "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", sci: "Spilornis cheela hoya", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "低海拔山區晴空與丘陵盤旋帶", cycle: "日行性", coins: 60, fact: "俗稱蛇鷹，後枕有發達羽冠，熱氣流旺盛時常在空中展翼翱翔發出悠遠鳴叫！", eco: "以蛇類、蜥蜴及小型脊椎動物為主要食物，是低海拔生態鏈頂級掠食猛禽。" },
-  { id: "collared_scops_owl", name: "領角鴞", bopomofo: "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", sci: "Otus lettia", grade: "LC 無危 (綠燈)", color: "#795548", habitat: "低中海拔次生林與城市綠帶", cycle: "夜行性", coins: 40, fact: "眼睛大而凝視，頭頂有一對角羽，夜晚常發出單調深沉的不──不叫聲！", eco: "羽毛表面具有特殊微結構消音絨毛，飛行無聲無息。" },
-  { id: "chinese_pangolin", name: "台灣穿山甲", bopomofo: "ㄊㄞˊ ㄨㄢ ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", sci: "Manis pentadactyla pentadactyla", grade: "CR 極危 (紅燈)", color: "#8D6E63", habitat: "淺山竹林與開闊泥土斜坡", cycle: "夜行性", coins: 95, fact: "渾身覆蓋硬質角蛋白鱗甲，受威脅時捲成堅硬球體，舌頭比身體還長！", eco: "專食白蟻與螞蟻，發達前爪擅長在斜坡挖掘長達數公尺的地洞。" },
-  { id: "formosan_landlocked_salmon", name: "櫻花鉤吻鮭", bopomofo: "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", sci: "Oncorhynchus masou formosanus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "高山七家灣溪冰冷溪澗 (16℃以下)", cycle: "日行性", coins: 150, fact: "冰河時期的活化石孑遺生物！因地殼隆起無法洄游大海，成為國寶陸封鮭！", eco: "對水質潔淨度與低水溫極度敏感，側線兩側有紫金色橢圓卵斑。" },
-  { id: "mikado_pheasant", name: "黑長尾雉 (帝雉)", bopomofo: "ㄉㄧˋ ㄓˊ", sci: "Syrmaticus mikado", grade: "NT 近危 (黃燈)", color: "#283593", habitat: "雲霧繚繞之海拔2000公尺針葉林", cycle: "晨昏出沒", coins: 100, fact: "千元大鈔上的國寶鳥！羽毛在陽光下泛出深沉紫藍光澤，長尾羽有白色橫斑！", eco: "又稱迷霧中的王者，偏好在大霧或細雨綿綿的天氣現身林緣取食草根。" },
-  { id: "swinhoe_pheasant", name: "藍腹鷴", bopomofo: "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", sci: "Lophura swinhoii", grade: "NT 近危 (黃燈)", color: "#1A237E", habitat: "原始天然闊葉林深密底層", cycle: "晨昏出沒", coins: 65, fact: "雄鳥通體金屬靛藍光澤，背部有一片純白菱形羽斑，雙腳宛如鮮紅珊瑚！", eco: "生性羞怯警覺，清晨與黃昏常在林道安靜翻找落葉層的草籽與昆蟲。" },
-  { id: "formosan_serow", name: "台灣長鬃山羊", bopomofo: "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", sci: "Capricornis swinhoei", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "陡峭裸露的高山岩壁崩塌地", cycle: "晨昏出沒", coins: 75, fact: "台灣唯一的野生牛科動物，蹄部肉墊極具彈性，能在近乎垂直的峭壁奔馳跳躍！", eco: "善於利用懸崖峭壁躲避天敵，具有舔食岩石鹽分礦物質的特殊習性。" },
-  { id: "formosan_macaque", name: "台灣獼猴", bopomofo: "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", sci: "Macaca cyclopis", grade: "LC 無危 (綠燈)", color: "#5D4037", habitat: "中低海拔森林岩石峭壁邊界", cycle: "日行性", coins: 48, fact: "頰囊能像口袋一樣塞入好幾顆野果慢慢咀嚼，尾巴粗短而圓鈍！", eco: "特有種群居社會，具有高智商階級協作與警戒鳴叫系統。" },
-  { id: "moltrecht_tree_frog", name: "莫氏樹蛙", bopomofo: "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", sci: "Zhangixalus moltrechti", grade: "LC 無危 (綠燈)", color: "#388E3C", habitat: "山區潮濕落葉積水與竹筒", cycle: "夜行性", coins: 38, fact: "指尖長有發達吸盤，眼睛虹膜鮮紅，大腿內側隱藏著亮橙紅色黑斑！", eco: "台灣分布最廣的綠色樹蛙，常打出泡沫卵塊保護蛙卵不受乾燥傷害。" },
-  { id: "taipei_tree_frog", name: "台北樹蛙", bopomofo: "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", sci: "Zhangixalus taipeianus", grade: "LC 無危 (綠燈)", color: "#43A047", habitat: "北部丘陵潮濕稻田與林緣泥塘", cycle: "夜行性", coins: 42, fact: "冬天繁殖的特殊樹蛙！雄蛙會在泥地挖洞築巢並發出咕嚕沉鳴！", eco: "體色可隨環境在深綠與黃綠間微調，背部皮膚光滑細緻。" },
-  { id: "formosan_blue_magpie", name: "台灣藍鵲", bopomofo: "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", sci: "Urocissa caerulea", grade: "LC 無危 (綠燈)", color: "#1565C0", habitat: "中低海拔闊葉林與林緣樹冠", cycle: "日行性", coins: 55, fact: "長尾陣列飛行如飛天藍色絲帶，黑頭紅嘴身披寶藍羽翼，生性勇敢護巢！", eco: "特有種群居鳥類，具有極罕見的『親族幫手制度』協助育幼。" },
-  { id: "eurasian_otter", name: "歐亞水獺", bopomofo: "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", sci: "Lutra lutra", grade: "NT 近危 (黃燈)", color: "#4E342E", habitat: "純淨天然溪流、池塘與近海礁岩", cycle: "夜行性", coins: 88, fact: "水下流線型身段游泳靈動如飛魚，皮毛每平方公分長有數萬根濃密防水毛！", eco: "夜行性頂級水域掠食者，主食魚蝦蟹類，排遺常含有甲殼碎屑並用以標記領域。" },
-  { id: "tawny_fish_owl", name: "黃魚鴞", bopomofo: "ㄏㄨㄤˊ ㄩˊ ㄒㄧㄠ", sci: "Ketupa flavipes", grade: "EN 瀕危 (紅燈)", color: "#8D6E63", habitat: "未受干擾的清澈山區溪流峽谷", cycle: "夜行性", coins: 120, fact: "台灣體型最大的貓頭鷹！腳趾下方長有防滑骨質突起，專門俯衝捕捉溪流大魚！", eco: "對水質與原始森林完整度要求極高，數量極稀少珍貴。" },
-  { id: "formosan_wild_boar", name: "台灣野豬", bopomofo: "ㄊㄞˊ ㄨㄢ ㄧㄝˇ ㄓㄨ", sci: "Sus scrofa taivanus", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "闊葉林下層與草叢灌木帶", cycle: "晨昏出沒", coins: 50, fact: "幼豬身上長有黃褐色條紋如行走的西瓜！成豬獠牙向上生長極具防衛力。", eco: "雜食性動物，以吻端翻拱泥土尋找根莖與昆蟲，促進土壤翻新通氣。" },
-  { id: "fairy_pitta", name: "八色鳥", bopomofo: "ㄅㄚ ㄙㄜˋ ㄋㄧㄠˇ", sci: "Pitta nympha", grade: "VU 易危 (黃燈)", color: "#00897B", habitat: "潮濕鬱閉的低海拔竹林與闊葉林底層", cycle: "日行性", coins: 78, fact: "宛如穿上彩虹羽衣的林間精靈！身上紅、綠、藍、黃等八種鮮豔色斑交織！", eco: "夏候鳥，以蚯蚓為主要食物，跳躍於落葉層發出清脆哨音。" },
-  { id: "formosan_salamander", name: "台灣山椒魚", bopomofo: "ㄊㄞˊ ㄨㄢ ㄕㄢ ㄐㄧㄠ ㄩˊ", sci: "Hynobius formosanus", grade: "EN 瀕危 (紅燈)", color: "#37474F", habitat: "海拔2000公尺以上潮濕石塊泥炭層", cycle: "夜行性", coins: 90, fact: "冰河孑遺的有尾兩棲類！具有四隻短小腳掌與細長尾巴，生性極度畏光！", eco: "生活在長年濕潤冷涼的高山冷杉林苔蘚下，體表分泌黏液維持呼吸。" },
-  { id: "swinhoe_tree_lizard", name: "斯文豪氏攀蜥", bopomofo: "ㄙ ㄨㄣˊ ㄏㄠˇ ㄕˋ ㄆㄢ ㄒㄧ", sci: "Diploderma swinhonis", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "低中海拔樹幹與竹竿向陽面", cycle: "日行性", coins: 36, fact: "威嚇敵人時會將喉部白色肉垂鼓起，連續做『伏地挺身』動作！", eco: "台灣特有種攀木蜥蜴，以小型昆蟲為主食，爪利擅於攀爬。" },
-  { id: "golden_snub_nosed_monkey", name: "川金絲猴", bopomofo: "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", sci: "Rhinopithecus roxellana", grade: "EN 瀕危 (紅燈)", color: "#E67E22", habitat: "高山溫帶針葉與落葉林冠", cycle: "日行性", coins: 80, fact: "仰鼻藍面、金絲毛皮披肩，耐寒力極高，能在白雪覆蓋的林海中輕盈跳躍！", eco: "社會結構複雜，以樹皮、地衣、嫩芽為食，受高山森林砍伐威脅。" },
-  { id: "indochinese_tiger", name: "印支虎", bopomofo: "ㄧㄣˋ ㄓ ㄏㄨˇ", sci: "Panthera tigris corbetti", grade: "CR 極危 (紅燈)", color: "#D35400", habitat: "濃密未受侵擾的原始密林", cycle: "晨昏出沒", coins: 220, fact: "頂級掠食之王！黑橙條紋如幽靈般融入密林光斑，掌力驚人且游泳技巧高超！", eco: "領域廣闊，仰賴大型鹿類與野豬維生，數量極其稀少罕見。" },
-  { id: "malayan_tapir", name: "馬來貘", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄇㄛˋ", sci: "Tapirus indicus", grade: "EN 瀕危 (紅燈)", color: "#2C3E50", habitat: "熱帶低地雨林與沼澤溪流畔", cycle: "夜行性", coins: 75, fact: "黑白兩截的障眼配色在月夜下會讓掠食者錯看成大石塊！長鼻能伸縮採食嫩枝。", eco: "體型沉重但擅長涉水，是雨林植物種子傳播的關鍵物種。" },
-  { id: "binturong", name: "熊狸", bopomofo: "ㄒㄩㄥˊ ㄌㄧˊ", sci: "Arctictis binturong", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "東南亞密集熱帶雨林高處樹冠", cycle: "夜行性", coins: 65, fact: "尾巴長有抓握肌肉能充當第五隻手！而且身上散發濃濃的剛出爐熱爆米花香味！", eco: "罕見的樹棲靈貓科夜行動物，在雨林中能消化無花果種子並助其萌芽。" },
-  { id: "bornean_orangutan", name: "婆羅洲紅毛猩猩", bopomofo: "ㄆㄛˊ ㄌㄨㄛˊ ㄓㄡ ㄏㄨㄥˊ ㄇㄠˊ ㄒㄧㄥ ㄒㄧㄥ", sci: "Pongo pygmaeus", grade: "CR 極危 (紅燈)", color: "#BF360C", habitat: "原始泥炭沼澤林與熱帶低地雨林", cycle: "日行性", coins: 130, fact: "雨林中的智者！每天傍晚會挑選堅固樹枝編織厚實舒適的睡床樹巢！", eco: "基因與人類有高達97%相似，因棕櫚油農園大面積開墾而瀕臨絕種危機。" },
-  { id: "proboscis_monkey", name: "長鼻猴", bopomofo: "ㄔㄤˊ ㄅㄧˊ ㄏㄡˊ", sci: "Nasalis larvatus", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "婆羅洲沿海紅樹林與河流下游森林", cycle: "日行性", coins: 95, fact: "成年雄猴有巨大的懸垂紅茄子狀大鼻子，游泳時趾間有微蹼，常在河中悠哉踩水渡河！", eco: "擁有特化的複雜發酵胃室，專食紅樹林酸性嫩葉，無法消化成熟甜水果。" },
-  { id: "rhinoceros_hornbill", name: "馬來犀鳥", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄒㄧ ㄋㄧㄠˇ", sci: "Buceros rhinoceros", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "參天大樹樹冠層與高空航道", cycle: "日行性", coins: 70, fact: "喙部上方長有如金色頭盔的巨大盔突，發聲時產生強大共鳴，羽翼拍擊聲如火車引擎！", eco: "終身一夫一妻制，繁殖期母鳥會用泥巴封在樹洞內僅留送食隙縫。" },
-  { id: "clouded_leopard", name: "雲豹", bopomofo: "ㄩㄣˊ ㄅㄠˋ", sci: "Neofelis nebulosa", grade: "VU 易危 (黃燈)", color: "#D7CCC8", habitat: "亞熱帶原始高鬱閉度森林", cycle: "夜行性", coins: 190, fact: "擁有相對於頭部比例世界最長的犬齒！腳踝關節可旋轉180度，能頭朝下倒立爬樹！", eco: "樹棲性極強的大型貓科，大塊雲狀黑斑在搖曳樹影中具備近乎完美的隱形擬態。" },
-  { id: "snow_leopard", name: "雪豹", bopomofo: "ㄒㄩㄝˇ ㄅㄠˋ", sci: "Panthera uncia", grade: "VU 易危 (黃燈)", color: "#ECEFF1", habitat: "高山雪線以上之峭壁與岩石荒漠", cycle: "晨昏出沒", coins: 210, fact: "雪山之王！毛茸茸長尾巴幾乎與身體等長，睡覺時能當圍巾包覆面部禦寒防風！", eco: "灰色煙狀花紋完全融入岩石陰影，腳掌寬大毛厚如同天然雪鞋。" },
-  { id: "asian_elephant", name: "亞洲象", bopomofo: "ㄧㄚˋ ㄓㄡ ㄒㄧㄤˋ", sci: "Elephas maximus", grade: "EN 瀕危 (紅燈)", color: "#455A64", habitat: "熱帶常綠闊葉林與開闊草生地", cycle: "日行性", coins: 180, fact: "陸地上第二大哺乳動物，象鼻內由四萬多條肌肉組成，既能拔起大樹亦能拾起花生！", eco: "母系社會大群集體行動，透過次聲波穿透數公里密林互相傳訊交流。" },
-  { id: "red_panda", name: "小熊貓 (紅熊貓)", bopomofo: "ㄒㄧㄠˇ ㄒㄩㄥˊ ㄇㄠ", sci: "Ailurus fulgens", grade: "EN 瀕危 (紅燈)", color: "#D84315", habitat: "溫帶竹林與針闊葉混交林", cycle: "晨昏出沒", coins: 60, fact: "助手波波的原型！長有一條毛茸茸的九節環狀紅褐色尾巴，站立舉手表示防衛！", eco: "以高山竹葉、嫩筍與野果為主食，第六趾偽拇指擅於抓握竹枝。" },
-  { id: "giant_panda", name: "大熊貓", bopomofo: "ㄉㄚˋ ㄒㄩㄥˊ ㄇㄠ", sci: "Ailuropoda melanoleuca", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "高山深谷繁茂的冷箭竹林", cycle: "日行性", coins: 100, fact: "黑白相間的國寶圓滾滾身材，每天花12小時以上專心咀嚼高纖維竹子！", eco: "肉食目演化而來的植食專家，具有特化的強大下顎咀嚼肌。" },
-  { id: "bengal_tiger", name: "孟加拉虎", bopomofo: "ㄇㄥˋ ㄐㄧㄚ ㄌㄚ ㄏㄨˇ", sci: "Panthera tigris tigris", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "紅樹林沼澤與常綠闊葉雨林", cycle: "晨昏出沒", coins: 230, fact: "世界上體型最雄壯的貓科掠食者之一，極其喜愛泡水游泳伏擊野鹿與水牛！", eco: "身上的條紋就像人類的指紋一樣獨一無二，是頂級生態庇護傘物種。" },
-  { id: "sun_bear", name: "馬來熊 (太陽熊)", bopomofo: "ㄇㄚˇ ㄌㄞˊ ㄒㄩㄥˊ", sci: "Helarctos malayanus", grade: "VU 易危 (黃燈)", color: "#263238", habitat: "低海拔常綠熱帶雨林高處", cycle: "夜行性", coins: 72, fact: "世界上體型最小的熊！胸前有金黃色月牙U型斑，長達25公分的舌頭專舔蜂蜜！", eco: "腳掌向內彎曲且長有銳利彎爪，極善於攀爬高聳的雨林巨木。" },
-  { id: "gharial", name: "恆河鱷 (長吻鱷)", bopomofo: "ㄏㄥˊ ㄏㄜˊ ㄜˋ", sci: "Gavialis gangeticus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "水流湍急水深且有開闊沙洲的大河", cycle: "日行性", coins: 115, fact: "長有如寶劍般細長狹窄的口鼻部與100多顆鋒利牙齒，專門側向揮掃捕魚！", eco: "成年雄鱷吻端有膨大的空心球狀突起，能在水下發出響亮求偶氣鳴。" },
-  { id: "toco_toucan", name: "托哥巨嘴鳥", bopomofo: "ㄊㄨㄛ ㄍㄜ ㄐㄩˋ ㄗㄨㄟˇ ㄋㄧㄠˇ", sci: "Ramphastos toco", grade: "LC 無危 (綠燈)", color: "#263238", habitat: "亞馬遜熱帶雨林高層樹冠", cycle: "日行性", coins: 55, fact: "鮮橙色大嘴長達20公分，但內部如同蜂巢骨骼結構，重量極輕還能當散熱器！", eco: "愛吃雨林無花果與小型昆蟲，透過鮮明色彩在茂密綠葉中識別同伴。" },
-  { id: "three_toed_sloth", name: "三趾樹懶", bopomofo: "ㄙㄢ ㄓˇ ㄕㄨˋ ㄌㄢˇ", sci: "Bradypus tridactylus", grade: "LC 無危 (綠燈)", color: "#616161", habitat: "潮濕常綠雨林枝椏", cycle: "日行性", coins: 35, fact: "代謝速度世界最慢！身上毛髮甚至長出共生藻類，是名副其實的行動植物園！", eco: "每週僅下樹一次排便，絕大部分時間倒掛在樹冠行光合保護色隱匿。" },
-  { id: "panther_chameleon", name: "七彩變色龍", bopomofo: "ㄑㄧ ㄘㄞˇ ㄅㄧㄢˋ ㄙㄜˋ ㄌㄨㄥˊ", sci: "Furcifer pardalis", grade: "LC 無危 (綠燈)", color: "#43A047", habitat: "林緣灌木叢與低矮藤蔓", cycle: "日行性", coins: 50, fact: "雙眼可各自獨立360度旋轉觀察！舌頭彈出速度比噴射戰鬥機起步還快！", eco: "利用皮膚下鳥嘌呤奈米晶體反射光線，改變體色表達情緒與調節體溫。" },
-  { id: "poison_dart_frog", name: "幽靈箭毒蛙", bopomofo: "ㄧㄡ ㄌㄧㄥˊ ㄐㄧㄢˋ ㄉㄨˊ ㄨㄚ", sci: "Epipedobates tricolor", grade: "VU 易危 (黃燈)", color: "#D81B60", habitat: "瀑布潮濕石縫與雨林落葉", cycle: "日行性", coins: 85, fact: "體型僅如大拇指指甲般精緻，身披警戒鮮紅黑紋，皮膚所含生物鹼能麻痺捕食者！", eco: "雄蛙會將孵化的蝌蚪背負至附生鳳梨科植物的蓄水葉鞘中撫育育幼。" },
-  { id: "green_iguana", name: "美洲鬣蜥", bopomofo: "ㄇㄟˇ ㄓㄡ ㄌㄧㄝˋ ㄒㄧ", sci: "Iguana iguana", grade: "LC 無危 (綠燈)", color: "#2E7D32", habitat: "河岸林冠近水枝幹", cycle: "日行性", coins: 45, fact: "擅長從十幾公尺高的樹枝跳入溪流潛水逃生，背部棘刺如恐龍般帥氣！", eco: "草食性爬蟲類，喜歡攀爬至日光充足的高處曬背獲取體溫。" },
-  { id: "ruffed_lemur", name: "白頸狐猴", bopomofo: "ㄅㄞˊ ㄐㄧㄥˇ ㄏㄨˊ ㄇㄡˊ", sci: "Varecia variegata", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "馬達加斯加東部高聳雨林林冠", cycle: "日行性", coins: 90, fact: "嗓音宏亮穿透整個山谷，脖子長有厚實的雪白毛領，是世界上唯一會做產巢的狐猴！", eco: "對花蜜與果實極具依賴性，是當地旅人蕉等巨型花卉的專屬授粉夥伴。" },
-  { id: "andean_condor", name: "安地斯神鷹", bopomofo: "ㄢ ㄉㄧˋ ㄙ ㄕㄣˊ ㄧㄥ", sci: "Vultur gryphus", grade: "VU 易危 (黃燈)", color: "#263238", habitat: "高山斷崖峭壁強勁熱氣流區", cycle: "日行性", coins: 110, fact: "翼展超過3.2公尺的巨大飛禽，能在空中幾乎不拍動翅膀盤旋滑翔數小時！", eco: "食腐性猛禽，是高山生態系中不可或缺的大自然清道夫與衛生守門員。" },
-  { id: "sword_billed_hummingbird", name: "刀嘴蜂鳥", bopomofo: "ㄉㄠ ㄗㄨㄟˇ ㄈㄥ ㄋㄧㄠˇ", sci: "Ensifera ensifera", grade: "LC 無危 (綠燈)", color: "#00897B", habitat: "安地斯山脈熱帶雲霧林花冠層", cycle: "日行性", coins: 105, fact: "鳥類界唯一鳥喙比全身軀幹還長的奇蹟物種！每秒拍翅可達80次，能在空中懸停倒退！", eco: "專門與超長筒狀的曼陀羅與西番蓮共生，是這些高山植物唯一的吸蜜授粉者。" },
-  { id: "jaguar", name: "美洲豹 (美洲虎)", bopomofo: "ㄇㄟˇ ㄓㄡ ㄅㄠˋ", sci: "Panthera onca", grade: "NT 近危 (黃燈)", color: "#FF8F00", habitat: "亞馬遜密集雨林河流沿岸", cycle: "晨昏出沒", coins: 215, fact: "咬合力冠絕所有大貓！能直接咬穿鱷魚厚皮與龜殼，熱愛游泳涉水獵食！", eco: "身上的玫瑰花斑中央還有一顆黑點，是美洲食物鏈最高級的雨林之王。" },
-  { id: "capybara", name: "水豚", bopomofo: "ㄕㄨㄟˇ ㄊㄨㄣˊ", sci: "Hydrochoerus hydrochaeris", grade: "LC 無危 (綠燈)", color: "#8D6E63", habitat: "南美洲茂密水草豐沛沼澤地", cycle: "晨昏出沒", coins: 45, fact: "動物界第一好脾氣交際草！半水生最大型齧齒動物，所有動物都愛坐在牠背上！", eco: "腳趾間有微蹼擅長游泳潛水，以水生植物和樹皮為食。" },
-  { id: "giant_anteater", name: "大食蟻獸", bopomofo: "ㄉㄚˋ ㄕˊ ㄧˇ ㄕㄡˋ", sci: "Myrmecophaga tridactyla", grade: "VU 易危 (黃燈)", color: "#5D4037", habitat: "疏林草原與潮濕沼澤林緣", cycle: "日行性", coins: 70, fact: "擁有長達60公分的彈性黏性舌頭，沒有牙齒，每分鐘吞嚥白蟻上百次！", eco: "巨大毛茸茸的尾巴睡覺時可當被子蓋住全身禦寒保暖。" },
-  { id: "scarlet_macaw", name: "五彩金剛鸚鵡", bopomofo: "ㄨˇ ㄘㄞˇ ㄐㄧㄣ ㄍㄤ ㄧㄥ ㄨˇ", sci: "Ara macao", grade: "LC 無危 (綠燈)", color: "#D32F2F", habitat: "低地熱帶雨林參天巨木樹冠", cycle: "日行性", coins: 62, fact: "身披鮮紅、金黃與亮藍三原色羽衣，喙部堅硬甚至能咬碎最堅硬的巴西堅果！", eco: "經常成群聚集在河流沿岸的黏土峭壁舔食泥土以中和果實毒素。" },
-  { id: "harpy_eagle", name: "角雕 (哈比鷹)", bopomofo: "ㄐㄧㄠˇ ㄉㄧㄠ", sci: "Harpia harpyja", grade: "VU 易危 (黃燈)", color: "#424242", habitat: "低地未受侵擾雨林樹冠上層", cycle: "日行性", coins: 170, fact: "猛禽界的肌肉重裝巨獸！後爪長度堪比大灰熊爪，能直接從樹冠抓走成年樹懶與猴子！", eco: "頭頂長有雙分叉聳立的冠羽，眼神凌厲威嚴震撼。" },
-  { id: "green_anaconda", name: "綠森蚺", bopomofo: "ㄌㄩˋ ㄙㄣ ㄖㄢˊ", sci: "Eunectes murinus", grade: "LC 無危 (綠燈)", color: "#33691E", habitat: "亞馬遜緩慢流動沼澤與支流", cycle: "夜行性", coins: 100, fact: "世界上體型最沉重的大型水蟒！能完全潛伏在水草中只露出鼻孔守候獵物！", eco: "水性極佳，藉由肌肉強大的纏繞力將水豚或凱門鱷窒息制伏。" },
-  { id: "basilisk_lizard", name: "雙冠蜥 (耶穌蜥蜴)", bopomofo: "ㄕㄨㄤ ㄍㄨㄢ ㄒㄧ", sci: "Basiliscus basiliscus", grade: "LC 無危 (綠燈)", color: "#388E3C", habitat: "近水低垂熱帶林木枝頭", cycle: "日行性", coins: 58, fact: "能在水面上用雙腳狂奔數公尺而不沉下去！腳趾有特化皮褶拍擊水面產生氣泡浮力！", eco: "遇到危險時從樹上躍入水面極速狂奔逃逸。" },
-  { id: "cheetah", name: "獵豹", bopomofo: "ㄌㄧㄝˋ ㄅㄠˋ", sci: "Acinonyx jubatus", grade: "VU 易危 (黃燈)", color: "#FFA000", habitat: "林緣稀樹草原與開闊視野平原", cycle: "日行性", coins: 120, fact: "陸地短跑速度極限之王！0至100公里加速僅需3秒，爪子無法收回如同跑鞋釘鞋！", eco: "眼角有黑色淚痕狀花紋吸收強烈陽光眩光，依賴極速追逐獵捕中小型羚羊。" },
-  { id: "serval", name: "藪貓", bopomofo: "ㄙㄡˇ ㄇㄠ", sci: "Leptailurus serval", grade: "LC 無危 (綠燈)", color: "#FFB300", habitat: "蘆葦沼澤與高草林緣地帶", cycle: "晨昏出沒", coins: 70, fact: "貓科界長腿名模！耳朵巨大如雷達天線，能躍入空中高達3公尺直接截擊飛鳥！", eco: "依賴極其敏銳的聽覺鎖定草叢中移動的鼠類，捕捉成功率高達50%以上。" },
-  { id: "african_lion", name: "非洲獅", bopomofo: "ㄈㄟ ㄓㄡ ㄕ", sci: "Panthera leo", grade: "VU 易危 (黃燈)", color: "#D87D24", habitat: "開闊稀樹草原與灌木林邊緣", cycle: "晨昏出沒", coins: 200, fact: "萬獸之王！唯一具有雌雄兩態與複雜群居社會結構的貓科動物，咆哮聲傳遍八公里！", eco: "母獅協同包夾圍獵斑馬角馬，雄獅長有濃密鬃毛捍衛領域。" },
-  { id: "black_rhinoceros", name: "黑犀牛", bopomofo: "ㄏㄟ ㄒㄧ ㄋㄧㄡˊ", sci: "Diceros bicornis", grade: "CR 極危 (紅燈)", color: "#616161", habitat: "多刺灌木林與稀樹草原", cycle: "晨昏出沒", coins: 175, fact: "具有靈活突出的抓握型上唇，專門捲取多刺灌木的嫩葉嫩枝！皮膚厚實如裝甲。", eco: "嗅覺與聽覺極佳但視力極差，受驚時會向目標猛烈衝撞。" },
-  { id: "hippopotamus", name: "河馬", bopomofo: "ㄏㄜˊ ㄇㄚˇ", sci: "Hippopotamus amphibius", grade: "VU 易危 (黃燈)", color: "#455A64", habitat: "水流平緩之淡水湖泊與河流", cycle: "夜行性", coins: 110, fact: "能張開高達150度的巨嘴！犬齒長達50公分，皮膚會分泌紅色天然防曬油血汗！", eco: "白天泡水降溫防曬，夜間爬上岸狂嗑數十公斤青草。" },
-  { id: "giraffe", name: "長頸鹿", bopomofo: "ㄔㄤˊ ㄐㄧㄥˇ ㄌㄨˋ", sci: "Giraffa camelopardalis", grade: "VU 易危 (黃燈)", color: "#FFA000", habitat: "金合歡茂盛開闊林地", cycle: "日行性", coins: 85, fact: "陸地上身材最高的動物！脖子長達2公尺但跟人類一樣只有7塊頸椎骨！", eco: "心臟重達11公斤以將血液泵上海拔高處的頭部，藍黑色長舌長達45公分。" },
-  { id: "mountain_gorilla", name: "山地大猩猩", bopomofo: "ㄕㄢ ㄉㄧˋ ㄉㄚˋ ㄒㄧㄥ ㄒㄧㄥ", sci: "Gorilla beringei beringei", grade: "EN 瀕危 (紅燈)", color: "#212121", habitat: "海拔2200至4000公尺高山雲霧林", cycle: "日行性", coins: 140, fact: "體格魁梧但生性溫和的素食紳士！成年領袖背部長有銀白色毛髮稱銀背！", eco: "以雙拳捶胸發出震耳回響表達威儀或喜悅，智力極高。" },
-  { id: "meerkat", name: "狐獴", bopomofo: "ㄏㄨˊ ㄇㄥˇ", sci: "Suricata suricatta", grade: "LC 無危 (綠燈)", color: "#A1887F", habitat: "乾燥開闊沙漠邊緣與沙質灌木林", cycle: "日行性", coins: 42, fact: "哨兵會用後腳直立眺望天空警戒老鷹！眼眶周圍黑圈如同天然太陽眼鏡防強光！", eco: "群體合作分工明確，甚至能免疫毒蠍的致命蠍毒。" },
-  { id: "honey_badger", name: "蜜獾 (平頭哥)", bopomofo: "ㄇㄧˋ ㄏㄨㄢ", sci: "Mellivora capensis", grade: "LC 無危 (綠燈)", color: "#424242", habitat: "乾旱灌木林與疏林草地", cycle: "夜行性", coins: 92, fact: "金氏世界紀錄最無所畏懼的動物！皮毛厚實鬆弛讓毒蛇利齒無從下嘴！", eco: "生性狂暴堅韌，喜食野蜂蜜與劇毒毒蛇，被蛇咬中睡一覺即可解毒醒來。" },
-  { id: "shoebill", name: "鯨頭鸛", bopomofo: "ㄐㄧㄥ ㄊㄡˊ ㄍㄨㄢˋ", sci: "Balaeniceps rex", grade: "VU 易危 (黃燈)", color: "#78909C", habitat: "熱帶中非大片紙莎草沼澤深處", cycle: "日行性", coins: 115, fact: "擁有一張如木靴般巨大的粗厚喙部！站在水草中如同雕像般一動不動數小時！", eco: "捕食時會以泰山壓頂之勢猛撲鱷魚幼崽與巨型肺魚，上下喙敲擊如機關槍！" },
-  { id: "african_wild_dog", name: "非洲野犬 (塗色狼)", bopomofo: "ㄈㄟ ㄓㄡ ㄧㄝˇ ㄑㄩㄢˇ", sci: "Lycaon pictus", grade: "EN 瀕危 (紅燈)", color: "#8D6E63", habitat: "開闊林緣平原與半乾旱林帶", cycle: "晨昏出沒", coins: 105, fact: "捕食成功率高達80%的戰術大師！身上斑駁花紋沒有兩隻相同，大圓耳朵如雷達！", eco: "社會結構極度友善互助，會將吞下的肉反芻餵食留守巢穴的老弱幼犬。" },
-  { id: "grey_crowned_crane", name: "灰冠鶴", bopomofo: "ㄏㄨㄟ ㄍㄨㄢ ㄏㄜˋ", sci: "Balearica regulorum", grade: "EN 瀕危 (紅燈)", color: "#546E7A", habitat: "近水濕地草甸與開闊沼澤", cycle: "日行性", coins: 68, fact: "頭頂長有一頂璀璨奪目的金色絲狀羽冠，跳起求偶舞時展翅旋轉優雅迷人！", eco: "少數能在樹枝上停棲做巢的鶴類，後趾長有抓握肌肉。" },
-  { id: "chameleon_jackson", name: "傑克森變色龍", bopomofo: "ㄐㄧㄝˊ ㄎㄜˋ ㄙㄣ ㄅㄧㄢˋ ㄙㄜˋ ㄌㄨㄥˊ", sci: "Trioceros jacksonii", grade: "LC 無危 (綠燈)", color: "#2E7D32", habitat: "東非高山涼爽森林樹冠", cycle: "日行性", coins: 48, fact: "雄性頭部長有三根帥氣的角如微縮版三角龍！卵胎生直接產下活跳跳小蜥蜴！", eco: "偏好涼爽濕潤的高山林帶，動作緩慢搖晃模擬被風吹動的樹葉。" },
-  { id: "african_grey_parrot", name: "非洲灰鸚鵡", bopomofo: "ㄈㄟ ㄓㄡ ㄏㄨㄟ ㄧㄥ ㄨˇ", sci: "Psittacus erithacus", grade: "EN 瀕危 (紅燈)", color: "#78909C", habitat: "低地潮濕雨林與油棕櫚林緣", cycle: "日行性", coins: 85, fact: "鳥類界智力天花板！理解力相當於5歲兒童，擁有鮮紅短尾與非凡的語言模仿能力！", eco: "社會性極強，透過多樣化的口哨聲、警報聲在茂密森林中交流協作。" },
-  { id: "okapi", name: "霍加皮 (森林長頸鹿)", bopomofo: "ㄏㄨㄛˋ ㄐㄧㄚ ㄆㄧˊ", sci: "Okapia johnstoni", grade: "EN 瀕危 (紅燈)", color: "#3E2723", habitat: "剛果濃密深邃剛果雨林底層", cycle: "日行性", coins: 125, fact: "神秘的林中斑馬化身！其實是長頸鹿在雨林唯一的現存近親，臀部有黑白斑馬條紋！", eco: "舌頭長達35公分甚至能舔洗自己的眼皮和耳朵，生性羞怯極度隱蔽。" },
-  { id: "gray_wolf", name: "灰狼", bopomofo: "ㄏㄨㄟ ㄌㄤˊ", sci: "Canis lupus", grade: "LC 無危 (綠燈)", color: "#78909C", habitat: "溫帶針葉林與高山荒原", cycle: "夜行性", coins: 85, fact: "團結就是力量！狼群具有嚴格紀律分工，夜幕低垂時的悠長狼嚎能傳達數公里！", eco: "長途奔馳耐力驚人，能跟蹤獵物長達數十公里直至其筋疲力盡。" },
-  { id: "moose", name: "駝鹿 (麋鹿王)", bopomofo: "ㄊㄨㄛˊ ㄌㄨˋ", sci: "Alces alces", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "寒溫帶針葉林湖沼與溪畔", cycle: "晨昏出沒", coins: 80, fact: "世界上體型最大的鹿！雄鹿長有一對巨大如鏟子般的掌狀雄角，鼻吻寬厚！", eco: "夏日極愛泡在湖泊深處潛水吃睡蓮水草，長腿在深雪中行走如履平地。" },
-  { id: "wolverine", name: "貂熊 (狼獾)", bopomofo: "ㄉㄧㄠ ㄒㄩㄥˊ", sci: "Gulo gulo", grade: "LC 無危 (綠燈)", color: "#2E1C0C", habitat: "寒溫帶泰加林與高山凍原", cycle: "夜行性", coins: 110, fact: "身形如小熊但戰鬥力破表！爪齒如鋼鐵，能在冰封雪原搶奪狼群與美洲獅的食物！", eco: "腳掌寬大毛厚如同天然雪鞋，厚實皮毛即使在零下40度也絕不結冰結霜。" },
-  { id: "siberian_tiger", name: "西伯利亞虎 (東北虎)", bopomofo: "ㄒㄧ ㄅㄛˊ ㄌㄧˋ ㄧㄚˇ ㄏㄨˇ", sci: "Panthera tigris altaica", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "高緯度針闊混交林與紅松雪林", cycle: "晨昏出沒", coins: 240, fact: "貓科家族最大王者！厚實金黃冬毛抵禦零下45度嚴寒，掌力驚人每步踏出王者霸氣！", eco: "領域可涵蓋上千平方公里，主要獵食野豬、馬鹿等大型有蹄類動物。" },
-  { id: "eurasian_lynx", name: "歐亞猞猁", bopomofo: "ㄡ ㄧㄚˋ ㄕㄜˋ ㄌㄧˋ", sci: "Lynx lynx", grade: "LC 無危 (綠燈)", color: "#BCAAA4", habitat: "深山密林針葉樹冠覆蓋帶", cycle: "晨昏出沒", coins: 85, fact: "耳朵尖端長有一撮黑色長毛宛如天線！尾巴短小圓鈍，雪地中悄無聲息伏擊野兔！", eco: "腳爪極度寬大均勻分散體重，能在齊膝深雪中奔馳跳躍如履平地。" },
-  { id: "brown_bear", name: "棕熊 (灰熊)", bopomofo: "ㄗㄨㄥ ㄒㄩㄥˊ", sci: "Ursus arctos", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "原始針葉林與高山草甸", cycle: "晨昏出沒", coins: 130, fact: "背部有強大的肌肉隆起賦予驚人拍擊力！秋天常守候在急流瀑布躍起截咬逆流鮭魚！", eco: "冬眠前狂吃累積厚達十幾公分皮下脂肪，嗅覺比獵犬靈敏七倍。" },
-  { id: "golden_eagle", name: "金鵰", bopomofo: "ㄐㄧㄣ ㄉㄧㄠ", sci: "Aquila chrysaetos", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "崇山峻嶺險峰斷崖晴空", cycle: "日行性", coins: 105, fact: "空中猛禽之霸！俯衝時速超過300公里！頭頸部在陽光下泛出華麗耀眼的金黃光澤！", eco: "雙爪力量巨大，能直接獵捕野兔、土撥鼠甚至從峭壁俯衝拖走幼羊。" },
-  { id: "peregrine_falcon", name: "遊隼", bopomofo: "ㄧㄡˊ ㄓㄨㄣˇ", sci: "Falco peregrinus", grade: "LC 無危 (綠燈)", color: "#455A64", habitat: "海邊峭壁與高山峽谷頂端晴空", cycle: "日行性", coins: 135, fact: "大自然俯衝極速冠軍！時速突破380公里如飛彈破空！利用銳利後爪在空中擊墜飛鳥！", eco: "鼻孔內有特殊骨質小錐體阻擋超高速俯衝時的強烈氣流灌入肺部。" },
-  { id: "great_grey_owl", name: "烏林鴞", bopomofo: "ㄨ ㄌㄧㄣˊ ㄒㄧㄠ", sci: "Strix nebulosa", grade: "LC 無危 (綠燈)", color: "#616161", habitat: "北方針葉林繁茂密林深處", cycle: "夜行性", coins: 78, fact: "臉盤巨大如雷達碗！即使在半公尺厚的厚雪下方，也能精準聽見田鼠微弱爬行聲！", eco: "全身覆蓋蓬鬆羽毛顯得體型龐大，無聲俯衝撞入雪層精準擒鼠。" },
-  { id: "beaver", name: "河狸 (大自然水壩工程師)", bopomofo: "ㄏㄜˊ ㄌㄧˊ", sci: "Castor fiber", grade: "LC 無危 (綠燈)", color: "#4E342E", habitat: "針葉林旁落葉樹木豐富的溪流河流", cycle: "夜行性", coins: 58, fact: "用鐵一般的橙色大門牙啃倒大樹，築起精巧的水壩與湖心島木屋水獺堡！", eco: "扁平如船槳的皮革尾巴不僅是游泳舵，遭遇危險時還會重重拍擊水面示警。" },
-  { id: "sable", name: "紫貂", bopomofo: "ㄗˇ ㄉㄧㄠ", sci: "Martes zibellina", grade: "VU 易危 (黃燈)", color: "#2E1C0C", habitat: "茂密原始針葉林古木倒木林下", cycle: "晨昏出沒", coins: 68, fact: "體型小巧身手敏捷如松鼠！毛色黑褐泛紫金光澤，在積雪深厚的樹幹上下穿梭！", eco: "擅長捕捉松鼠與雪兔，生性警惕在樹洞或石隙間築巢。" },
-  { id: "red_fox", name: "赤狐", bopomofo: "ㄔˋ ㄏㄨˊ", sci: "Vulpes vulpes", grade: "LC 無危 (綠燈)", color: "#D84315", habitat: "林緣草地灌木與山地開闊地帶", cycle: "晨昏出沒", coins: 52, fact: "聰明伶俐的大尾巴探險家！冬天在雪地中頭朝下扎入雪堆捕捉地底田鼠！", eco: "長有一身亮麗紅橙色毛皮與純白肚皮，大耳朵聽力極佳。" },
-  { id: "bald_eagle", name: "白頭海鵰", bopomofo: "ㄅㄞˊ ㄊㄡˊ ㄏㄞˇ ㄉㄧㄠ", sci: "Haliaeetus leucocephalus", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "近水森林湖畔與海岸晴空", cycle: "日行性", coins: 90, fact: "純白頭羽與純黃大鉤嘴形成強烈對比！雙翼展開超過2公尺，俯衝掠過水面截魚！", eco: "巨型巢穴常重達上千公斤，終身伴侶共同修補守護家園。" },
-  { id: "snowy_owl", name: "雪鴞 (北極白鴞)", bopomofo: "ㄒㄩㄝˇ ㄒㄧㄠ", sci: "Bubo scandiacus", grade: "VU 易危 (黃燈)", color: "#F5F5F5", habitat: "寒帶開闊無樹平原與岩石海岸", cycle: "日行性", coins: 95, fact: "哈利波特嘿美的原型！通體雪白點綴黑色斑點，眼睛金黃如寶石，極少數日行鴞！", eco: "專食北極旅鼠，厚密羽毛甚至覆蓋到腳趾爪尖抵禦刺骨暴風雪。" },
-  { id: "polar_bear", name: "北極熊", bopomofo: "ㄅㄟˇ ㄐㄧˊ ㄒㄩㄥˊ", sci: "Ursus maritimus", grade: "VU 易危 (黃燈)", color: "#FAFAFA", habitat: "極圈冰封浮冰邊緣與北冰洋海域", cycle: "日行性", coins: 225, fact: "世界最大陸生食肉動物！毛髮其實是透明中空的管狀結構，能將日光導入黑皮膚！", eco: "腳掌寬大布滿防滑微肉突，在浮冰間暢遊數十公里如同海中游魚。" },
-  { id: "giant_river_otter", name: "巨獺 (巨水獺)", bopomofo: "ㄐㄩˋ ㄊㄚˋ", sci: "Pteronura brasiliensis", grade: "EN 瀕危 (紅燈)", color: "#3E2723", habitat: "熱帶雨林慢流河流與森林清澈溪流", cycle: "日行性", coins: 110, fact: "水獺界的綠巨人！身長可達1.8公尺，成群活動被稱為『河中之狼』！", eco: "敢於集體圍攻驅趕黑凱門鱷，叫聲多達二十餘種社交語音。" },
-  { id: "chinese_giant_salamander", name: "大鯢 (娃娃魚)", bopomofo: "ㄉㄚˋ ㄋㄧˊ", sci: "Andrias davidianus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "高山清涼純淨溪流岩穴陰暗水質深潭", cycle: "夜行性", coins: 98, fact: "世界最大兩棲動物！長相古老如史前恐龍，夜晚發出的叫聲宛如幼兒啼哭！", eco: "肉質褶皺皮膚可直接在水中交換氧氣，對水質要求極高。" },
-  { id: "axolotl", name: "美西螈 (六角恐龍)", bopomofo: "ㄇㄟˇ ㄒㄧ ㄩㄢˊ", sci: "Ambystoma mexicanum", grade: "CR 極危 (紅燈)", color: "#F8BBD0", habitat: "高山古老湖泊潮濕水草沉水層", cycle: "夜行性", coins: 50, fact: "永遠長不大的水精靈！頭部兩側長有粉紅羽毛狀外鰓，終身維持幼態！", eco: "擁有極強的神奇肢體再生能力，即使心臟或大腦受損也能自行修復。" },
-  { id: "platypus", name: "鴨嘴獸", bopomofo: "ㄧㄚ ㄗㄨㄟˇ ㄕㄡˋ", sci: "Ornithorhynchus anatinus", grade: "NT 近危 (黃燈)", color: "#4E342E", habitat: "東澳純淨淡水溪流岸邊洞穴", cycle: "晨昏出沒", coins: 88, fact: "大自然的拼圖奇蹟！長有鴨子嘴、海狸尾與水獺腳，下蛋孵卵卻用乳汁餵奶！", eco: "雄性後腳長有毒刺，閉上眼睛在水底利用嘴喙電感受器尋找蝦蟹。" },
-  { id: "shoebill_stork", name: "鯨頭鸛幼鳥", bopomofo: "ㄐㄧㄥ ㄊㄡˊ ㄍㄨㄢˋ ㄧㄡˋ ㄋㄧㄠˇ", sci: "Balaeniceps rex juv", grade: "VU 易危 (黃燈)", color: "#78909C", habitat: "熱帶中非大片紙莎草沼澤深處", cycle: "日行性", coins: 60, fact: "呆萌的木靴嘴小寶寶，搖搖晃晃在沼澤學習抓魚，是雨林深處的國寶珍禽！", eco: "成長期依賴雙親反芻送水餵食，成年後展現霸氣獵手本色。" },
-  { id: "roseate_spoonbill", name: "粉紅琵琶鷺", bopomofo: "ㄈㄣˇ ㄏㄨㄥˊ ㄆㄧˊ ㄆㄚˊ ㄌㄨˋ", sci: "Platalea ajaja", grade: "LC 無危 (綠燈)", color: "#F48FB1", habitat: "紅樹林沼澤與潮間帶泥灘", cycle: "日行性", coins: 55, fact: "全身羽毛如玫瑰粉晶！長有扁平如湯匙琵琶狀的特殊長嘴在水中左右掃食！", eco: "食物中的甲殼素類胡蘿蔔素沉積在羽毛中，讓羽色愈加鮮豔粉嫩。" },
-  { id: "flamigo", name: "大紅鸛 (火烈鳥)", bopomofo: "ㄉㄚˋ ㄏㄨㄥˊ ㄍㄨㄢˋ", sci: "Phoenicopterus roseus", grade: "LC 無危 (綠燈)", color: "#FF8A80", habitat: "高鹽度鹼性湖泊與潟湖淺灘", cycle: "日行性", coins: 58, fact: "單腳站立的芭蕾名伶！彎曲特別的倒置濾食嘴在泥水中篩食螺旋藻與豐年蝦！", eco: "成千上萬隻同時在湖面展翅宛如燃燒的紅色火焰。" },
-  { id: "kingfisher", name: "普通翠鳥 (翡翠鳥)", bopomofo: "ㄆㄨˇ ㄊㄨㄥ ㄘㄨㄟˋ ㄋㄧㄠˇ", sci: "Alcedo atthis", grade: "LC 無危 (綠燈)", color: "#00ACC1", habitat: "水質清澈溪流池塘邊垂柳枝頭", cycle: "日行性", coins: 65, fact: "如同一顆藍寶石射向水面！以超流線型鳥喙扎入水中銜魚，新幹線車頭設計的靈感來源！", eco: "背部金屬翠藍羽毛會隨日光角度折射出不同璀璨光芒。" },
-  { id: "black_necked_crane", name: "黑頸鶴", bopomofo: "ㄏㄟ ㄐㄧㄥˇ ㄏㄜˋ", sci: "Grus nigricollis", grade: "NT 近危 (黃燈)", color: "#37474F", habitat: "高原湖泊沼澤與高山濕地", cycle: "日行性", coins: 95, fact: "世界上唯一生長繁殖於高原的珍稀鶴類！頸部上半段與飛羽純黑如墨染！", eco: "生性忠貞一夫一妻，在海拔4000公尺青藏高原湖泊優雅踱步。" },
-  { id: "chinese_alligator", name: "揚子鱷 (鼉)", bopomofo: "ㄧㄤˊ ㄗˇ ㄜˋ", sci: "Alligator sinensis", grade: "CR 極危 (紅燈)", color: "#4E342E", habitat: "低海拔溫和泥沼、池塘與蘆葦叢", cycle: "晨昏出沒", coins: 88, fact: "中國特有珍稀短吻鱷！身形小巧溫順，在泥灘挖掘深邃複雜的越冬洞穴！", eco: "具有厚實的骨板護甲，入冬後在洞穴中冬眠數月之久。" },
-  { id: "saltwater_crocodile", name: "灣鱷 (鹹水鱷)", bopomofo: "ㄨㄢ ㄜˋ", sci: "Crocodylus porosus", grade: "LC 無危 (綠燈)", color: "#263238", habitat: "河口紅樹林三角洲與近海灘塗", cycle: "晨昏出沒", coins: 220, fact: "現存體型最大爬行動物！體長可達6公尺，強大鹽腺讓牠能在遠洋汪洋中長途跋涉！", eco: "死亡翻滾能瞬間撕裂獵物，是熱帶水域無可匹敵的遠古頂級霸主。" },
-  { id: "mata_mata", name: "瑪塔蛇頸龜", bopomofo: "ㄇㄚˇ ㄊㄚˇ ㄕㄜˊ ㄐㄧㄥˇ ㄍㄨㄟ", sci: "Chelus fimbriata", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "亞馬遜落葉堆積沉澱的靜水黑水溪", cycle: "夜行性", coins: 52, fact: "水中落葉擬態大師！背甲如粗糙樹皮，長頸與吻部如吸管般伸縮產生負壓瞬間吸入魚蝦！", eco: "極少主動遊動，長年靜臥在水底落葉堆中伏擊經過的魚群。" },
-  { id: "giant_flying_fox", name: "大蝙蝠 (馬來大狐蝠)", bopomofo: "ㄉㄚˋ ㄅㄧㄢ ㄈㄨˊ", sci: "Pteropus vampyrus", grade: "EN 瀕危 (紅燈)", color: "#212121", habitat: "熱帶沿海紅樹林與茂密果樹林冠", cycle: "夜行性", coins: 75, fact: "翼展達到驚人的1.5公尺！長有一張像小狐狸般可愛的面孔，專吃水果與花蜜！", eco: "缺乏回聲定位，完全依賴大眼睛與靈敏嗅覺在夜間高空導航尋找成熟無花果。" },
-  { id: "snow_monkey", name: "日本雪猴 (溫泉獼猴)", bopomofo: "ㄖˋ ㄅㄣˇ ㄒㄩㄝˇ ㄏㄡˊ", sci: "Macaca fuscata", grade: "LC 無危 (綠燈)", color: "#A1887F", habitat: "白雪皚皚之高山森林與地熱溫泉區", cycle: "日行性", coins: 52, fact: "天下第一懂得享受！寒冬時臉頰通紅舒舒服服泡在冒著熱氣的天然露天溫泉裡！", eco: "具有極高智慧與文化傳播，會主動用溪水清洗甘薯泥沙。" },
-  { id: "albatross", name: "漂泊信天翁", bopomofo: "ㄆㄧㄠ ㄅㄛˊ ㄒㄧㄣˋ ㄊㄧㄢ ㄨㄥ", sci: "Diomedea exulans", grade: "VU 易危 (黃燈)", color: "#ECEFF1", habitat: "南冰洋狂風咆哮之無垠風暴海面上空", cycle: "日行性", coins: 120, fact: "地球上翼展最寬的巨鳥！雙翼伸展長達3.5公尺，能乘著海風在暴風中睡眠滑翔！", eco: "終其一生大部分時間都在浩瀚遠洋上空度過，唯有繁殖期才踏上陸地峭壁。" },
-  { id: "koala", name: "無尾熊 (考拉)", bopomofo: "ㄨˊ ㄨㄟˇ ㄒㄩㄥˊ", sci: "Phascolarctos cinereus", grade: "VU 易危 (黃燈)", color: "#78909C", habitat: "尤加利樹茂密桉樹林", cycle: "夜行性", coins: 48, fact: "每天睡足20小時的樹上睡美人！特化盲腸專門分解尤加利樹葉的毒素！", eco: "手掌長有雙分叉對生手指，抱樹極其牢固，毛茸茸圓耳朵萌翻全場。" },
-  { id: "red_kangaroo", name: "紅袋鼠", bopomofo: "ㄏㄨㄥˊ ㄉㄞˋ ㄕㄨˇ", sci: "Osphranter rufus", grade: "LC 無危 (綠燈)", color: "#BF360C", habitat: "開闊灌木叢生之乾旱半乾旱草原", cycle: "晨昏出沒", coins: 68, fact: "跳躍健將！後腿強大彈簧肌腱讓牠能以時速60公里跳躍前進，巨大尾巴充當第三條腿！", eco: "育兒袋內撫育幼仔，前胸肌肉發達擅長拳擊防禦。" },
-  { id: "tasmanian_devil", name: "袋獾 (塔斯馬尼亞惡魔)", bopomofo: "ㄉㄞˋ ㄏㄨㄢ", sci: "Sarcophilus harrisii", grade: "EN 瀕危 (紅燈)", color: "#212121", habitat: "沿海石楠灌叢與乾燥硬葉林", cycle: "夜行性", coins: 92, fact: "現存體型最大食肉有袋類！雖然體型如小狗，但相對體重咬合力超越斑鬣狗！", eco: "進食時發出令人毛骨悚然的嘶吼怪叫，耳朵遇興奮時會充血發紅。" },
-  { id: "emperor_penguin", name: "帝王企鵝", bopomofo: "ㄉㄧˋ ㄨㄤˊ ㄑㄧˋ ㄜˊ", sci: "Aptenodytes forsteri", grade: "NT 近危 (黃燈)", color: "#263238", habitat: "南極大陸極端酷寒之冰架與冰原", cycle: "日行性", coins: 95, fact: "極地父愛典範！雄企鵝在零下60度的暴風雪中將企鵝蛋放在腳背育兒褶緊貼孵化兩月！", eco: "四層重疊濃密防水羽毛如同天然太空衣，深潛極限超過500公尺。" },
-  { id: "kiwi_bird", name: "奇異鳥 (鷸鴕)", bopomofo: "ㄑㄧˊ ㄧˋ ㄋㄧㄠˇ", sci: "Apteryx mantelli", grade: "VU 易危 (黃燈)", color: "#5D4037", habitat: "溫帶亞熱帶原始落葉林深厚腐植層", cycle: "夜行性", coins: 65, fact: "紐西蘭國鳥！翅膀完全退化，鼻孔奇蹟般長在長喙尖端，嗅覺靈敏度鳥類第一！", eco: "所產的鳥蛋佔其體重的四分之一，是世界上蛋身比例最驚人的奇蹟之鳥。" }
-];
+  <!-- Main Application Logic -->
+  <script>
+    let currentView = 'menu';
 
-// Game State
-let gameState = {
-  coins: 1200,
-  ammo: 50,
-  incenseAmmo: 3,
-  consecutiveFailures: 0,
-  playSeconds: 0,
-  eyeCareActive: false,
-  targetAnimal: ALL_100_ANIMALS[0]
-};
+    function switchView(viewName) {
+      currentView = viewName;
+      // Switch top tabs
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.nav-tab-btn')).find(b => b.getAttribute('onclick').includes(viewName));
+      if (activeBtn) activeBtn.classList.add('active');
 
-// Play Time Timer loop
-setInterval(() => {
-  gameState.playSeconds++;
-  const m = Math.floor(gameState.playSeconds / 60);
-  const s = gameState.playSeconds % 60;
-  document.getElementById("hud-time").innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  if (gameState.playSeconds >= 1800) {
-    document.getElementById("rest-modal").classList.add("active");
-  }
-}, 1000);
+      // Switch panels
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('panel-' + viewName);
+      if (panel) panel.classList.add('active');
 
-function toggleEyeCare() {
-  gameState.eyeCareActive = !gameState.eyeCareActive;
-  document.getElementById("eye-care-filter").classList.toggle("active", gameState.eyeCareActive);
-}
-
-function fastForward30Mins() {
-  gameState.playSeconds = 1800;
-  document.getElementById("rest-modal").classList.add("active");
-}
-
-function dismissRestModal(enableWarm) {
-  document.getElementById("rest-modal").classList.remove("active");
-  if (enableWarm) {
-    gameState.eyeCareActive = true;
-    document.getElementById("eye-care-filter").classList.add("active");
-  }
-  setBoboSpeech("護眼暖光已啟用！祝戴夫探險順利～");
-}
-
-function setBoboSpeech(text) {
-  document.getElementById("bobo-text").innerText = text;
-}
-
-// Navigation
-function switchScreen(screenId) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(screenId).classList.add("active");
-}
-
-function backToMenu() {
-  stopBattleLoop();
-  switchScreen("screen-menu");
-}
-
-function openJournal() {
-  switchScreen("screen-journal");
-  renderJournalList();
-  selectJournalAnimal(0);
-}
-
-function openShelter() {
-  switchScreen("screen-shelter");
-}
-
-function collectTicketCoins() {
-  gameState.coins += 180;
-  document.getElementById("hud-coins").innerText = gameState.coins;
-  setBoboSpeech("門票收益 180 竹幣已入袋！");
-}
-
-// Battle & Dynamic QTE System
-let battleAnimId = null;
-let qte = {
-  cursor: 0.5,
-  velocity: 1.1,
-  sweetCenter: 0.5,
-  sweetWidth: 0.32,
-  progress: 0.0,
-  tension: 0.0,
-  inSweet: false,
-  leftHolding: false,
-  rightTaps: 0,
-  holdSeconds: 0,
-  squishX: 1.0,
-  squishY: 1.0
-};
-
-function startBattle() {
-  gameState.targetAnimal = ALL_100_ANIMALS[Math.floor(Math.random() * ALL_100_ANIMALS.length)];
-  document.getElementById("battle-target-name").innerText = gameState.targetAnimal.name;
-  document.getElementById("battle-target-habitat").innerText = "棲地：" + gameState.targetAnimal.habitat;
-
-  let ddaBonus = 0;
-  if (gameState.consecutiveFailures >= 3) ddaBonus = 0.20;
-  else if (gameState.consecutiveFailures >= 2) ddaBonus = 0.14;
-  else if (gameState.consecutiveFailures >= 1) ddaBonus = 0.08;
-
-  qte.sweetWidth = Math.min(0.60, 0.28 + ddaBonus);
-  qte.sweetCenter = 0.5;
-  qte.progress = 0.0;
-  qte.tension = 0.0;
-  qte.cursor = 0.5;
-  qte.leftHolding = false;
-  qte.rightTaps = 0;
-  qte.holdSeconds = 0;
-  qte.squishX = 1.0;
-  qte.squishY = 1.0;
-  qte.velocity = 1.15 * (gameState.consecutiveFailures > 0 ? 0.75 : 0.95);
-
-  const leftPct = (qte.sweetCenter - qte.sweetWidth / 2) * 100;
-  const widthPct = qte.sweetWidth * 100;
-  const sweetEl = document.getElementById("qte-sweet-spot");
-  sweetEl.style.left = leftPct + "%";
-  sweetEl.style.width = widthPct + "%";
-
-  updateBimanualRank();
-  switchScreen("screen-battle");
-  startBattleLoop();
-  setBoboSpeech(`發現【${gameState.targetAnimal.name}】！雙手並用：左手按住安撫、右手連點收網！`);
-}
-
-function startBattleLoop() {
-  const canvas = document.getElementById("battle-canvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = canvas.parentElement.clientWidth;
-  canvas.height = canvas.parentElement.clientHeight;
-
-  let time = 0;
-  function loop() {
-    time += 0.02;
-    if (qte.leftHolding) qte.holdSeconds += 0.02;
-
-    // Left hand holding slows struggle down by 50%!
-    const speed = qte.leftHolding ? qte.velocity * 0.5 : qte.velocity;
-    qte.cursor = 0.5 + (Math.sin(time * speed * 2.8) + Math.sin(time * speed * 1.4) * 0.3) * 0.36;
-    qte.cursor = Math.max(0.04, Math.min(0.96, qte.cursor));
-
-    // Sweet spot detection
-    const minS = qte.sweetCenter - qte.sweetWidth / 2;
-    const maxS = qte.sweetCenter + qte.sweetWidth / 2;
-    qte.inSweet = (qte.cursor >= minS && qte.cursor <= maxS);
-
-    // Update DOM cursor
-    const curEl = document.getElementById("qte-cursor");
-    curEl.style.left = (qte.cursor * 100) + "%";
-    curEl.classList.toggle("in-sweet", qte.inSweet);
-
-    // Tension management (Left holding prevents fast escape)
-    if (!qte.inSweet) qte.tension = Math.min(1.0, qte.tension + (qte.leftHolding ? 0.0004 : 0.0008));
-    else qte.tension = Math.max(0.0, qte.tension - 0.0006);
-
-    // Squish spring return
-    qte.squishX += (1.0 - qte.squishX) * 0.12;
-    qte.squishY += (1.0 - qte.squishY) * 0.12;
-
-    document.getElementById("qte-progress-num").innerText = Math.floor(qte.progress * 100) + "%";
-    document.getElementById("qte-tension-num").innerText = Math.floor(qte.tension * 100) + "%";
-
-    // Escape check
-    if (qte.tension >= 1.0) {
-      stopBattleLoop();
-      gameState.consecutiveFailures++;
-      updateDdaUi();
-      alert(`🍃 ${gameState.targetAnimal.name} 跑去休息了！波波拍拍手：小手指表現很棒，下次左手再按穩一點！`);
-      backToMenu();
-      return;
-    }
-
-    renderPbrAnimal(ctx, canvas.width, canvas.height, time, gameState.targetAnimal);
-    battleAnimId = requestAnimationFrame(loop);
-  }
-  battleAnimId = requestAnimationFrame(loop);
-}
-
-function stopBattleLoop() {
-  if (battleAnimId) {
-    cancelAnimationFrame(battleAnimId);
-    battleAnimId = null;
-  }
-}
-
-function leftHandPress(isHolding) {
-  qte.leftHolding = isHolding;
-  const btn = document.getElementById("btn-left-hold");
-  if (isHolding) {
-    if (navigator.vibrate) navigator.vibrate(25); // Haptic heartbeat vibration
-    if (btn) {
-      btn.style.transform = "scale(0.95)";
-      btn.style.borderColor = "var(--brass-highlight)";
-      btn.style.background = "linear-gradient(180deg, #8D6E63, #4E342E)";
-    }
-    qte.squishX = 1.08;
-    qte.squishY = 0.92;
-    setBoboSpeech("✋ 左手穩住氣場！動物動作變慢50%，右手趁現在點擊！");
-  } else {
-    if (btn) {
-      btn.style.transform = "scale(1)";
-      btn.style.borderColor = "var(--parchment-border)";
-      btn.style.background = "linear-gradient(180deg, #6D4C41, #3E2723)";
-    }
-  }
-  updateBimanualRank();
-}
-
-function rightHandTap() {
-  qte.rightTaps++;
-  const btn = document.getElementById("btn-right-tap");
-  if (btn) {
-    btn.style.transform = "scale(0.92)";
-    setTimeout(() => btn.style.transform = "scale(1)", 100);
-  }
-
-  // Bimanual power multiplier: +45% bonus when left hand is holding!
-  const bimanualMult = qte.leftHolding ? 1.45 : 1.0;
-
-  if (qte.inSweet) {
-    if (navigator.vibrate) navigator.vibrate(35); // Haptic sweet spot click
-    qte.progress += 0.18 * bimanualMult;
-    qte.tension = Math.max(0, qte.tension - 0.10);
-    qte.squishX = 0.88;
-    qte.squishY = 1.16; // Bouncy spring stretch
-    setBoboSpeech(qte.leftHolding ? "🌟 太強了！雙手合力！泡泡網收攏暴增 +45%！" : "🎯 命中甜蜜點！若左手同時按住效果更強喔！");
-
-    if (qte.progress >= 1.0) {
-      stopBattleLoop();
-      gameState.consecutiveFailures = 0;
-      updateDdaUi();
-      gameState.coins += gameState.targetAnimal.coins * 2;
-      document.getElementById("hud-coins").innerText = gameState.coins;
-      alert(`🎉 恭喜！成功捕獲【${gameState.targetAnimal.name}】！\n🏆 雙手協調評級：${document.getElementById("bimanual-rank").innerText}\n共達成 ${qte.rightTaps} 次節奏連擊！`);
-      backToMenu();
-    }
-  } else {
-    qte.tension += 0.05;
-    qte.squishX = 1.05;
-    qte.squishY = 0.95;
-    setBoboSpeech("👀 等游標游進綠色甜蜜區再點右手喔～");
-  }
-  updateBimanualRank();
-}
-
-function updateBimanualRank() {
-  const syncScore = (qte.holdSeconds * 0.2 + qte.rightTaps * 0.08);
-  let rank = "🐾 探索小萌手";
-  if (syncScore >= 1.5) rank = "🌟 雙手協同大師";
-  else if (syncScore >= 0.8) rank = "✨ 靈活指尖探險家";
-  else if (syncScore >= 0.3) rank = "🌱 雙手合力小能手";
-
-  const rankEl = document.getElementById("bimanual-rank");
-  if (rankEl) rankEl.innerText = rank;
-}
-
-function renderPbrAnimal(ctx, w, h, time, animal) {
-  ctx.clearRect(0, 0, w, h);
-
-  const cx = w / 2;
-  const cy = h / 2 - 30 + Math.sin(time * 2) * 8;
-  const radius = 95;
-
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(qte.squishX, qte.squishY);
-  ctx.translate(-cx, -cy);
-
-  // Dynamic light direction
-  const lx = Math.cos(time * 0.8) * 0.5;
-  const ly = Math.sin(time * 0.8) * 0.3;
-
-  // Ground shadow
-  ctx.beginPath();
-  ctx.ellipse(cx, cy + radius * 1.05, radius * 1.1, radius * 0.25, 0, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(0,0,0,0.45)";
-  ctx.fill();
-
-  // Diffuse PBR Shading
-  const grad = ctx.createRadialGradient(cx + lx * radius * 0.6, cy + ly * radius * 0.6, 10, cx, cy, radius * 1.2);
-  grad.addColorStop(0, "#FFF");
-  grad.addColorStop(0.2, animal.color);
-  grad.addColorStop(1, "#0A0A0A");
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Cook-Torrance Specular Highlight
-  ctx.beginPath();
-  ctx.arc(cx + lx * radius * 0.5, cy + ly * radius * 0.5, radius * 0.35, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.38)";
-  ctx.fill();
-
-  // Species mark (e.g. Bear White V)
-  if (animal.id === "formosan_black_bear") {
-    ctx.beginPath();
-    ctx.moveTo(cx - 35, cy);
-    ctx.lineTo(cx, cy + 35);
-    ctx.lineTo(cx + 35, cy);
-    ctx.lineTo(cx + 25, cy);
-    ctx.lineTo(cx, cy + 22);
-    ctx.lineTo(cx - 25, cy);
-    ctx.closePath();
-    ctx.fillStyle = "#F5F5F0";
-    ctx.fill();
-  }
-
-  // Bubble Net Ring
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius * 1.15, 0, Math.PI * 2);
-  ctx.strokeStyle = qte.leftHolding ? "rgba(255, 213, 122, 0.9)" : "rgba(0, 172, 193, 0.75)";
-  ctx.lineWidth = qte.leftHolding ? 6 : 4;
-  ctx.stroke();
-
-  ctx.restore();
-}
-
-function updateDdaUi() {
-  document.getElementById("stat-failures").innerText = gameState.consecutiveFailures;
-  const ddaText = gameState.consecutiveFailures >= 2 ? "波波特級輔助 (+12%甜蜜點)" :
-                  gameState.consecutiveFailures >= 1 ? "波波輔助 (+6%甜蜜點)" : "正常難度";
-  document.getElementById("stat-dda").innerText = ddaText;
-}
-
-// Journal Rendering
-function renderJournalList() {
-  const container = document.getElementById("journal-list-items");
-  container.innerHTML = "";
-  ALL_100_ANIMALS.forEach((a, i) => {
-    const item = document.createElement("div");
-    item.className = "journal-item" + (i === 0 ? " active" : "");
-    item.innerHTML = `<span>${a.name}</span><span style="font-size:10px; color:#888;">${a.grade.split(" ")[0]}</span>`;
-    item.onclick = () => {
-      document.querySelectorAll(".journal-item").forEach(el => el.classList.remove("active"));
-      item.classList.add("active");
-      selectJournalAnimal(i);
-    };
-    container.appendChild(item);
-  });
-}
-
-let currentSelectedJournalAnimal = ALL_100_ANIMALS[0];
-
-function selectJournalAnimal(idx) {
-  const a = ALL_100_ANIMALS[idx];
-  currentSelectedJournalAnimal = a;
-  document.getElementById("jd-bopomofo").innerText = a.bopomofo;
-  document.getElementById("jd-name").innerText = a.name;
-  document.getElementById("jd-sci").innerText = a.sci;
-  document.getElementById("jd-badge").innerText = a.grade;
-  document.getElementById("jd-habitat").innerText = a.habitat;
-  document.getElementById("jd-cycle").innerText = a.cycle;
-  document.getElementById("jd-coins").innerText = a.coins;
-  document.getElementById("jd-fact").innerText = a.fact;
-  document.getElementById("jd-eco").innerText = a.eco;
-
-  // Render thumbnail
-  const canvas = document.getElementById("journal-preview-canvas");
-  const ctx = canvas.getContext("2d");
-  renderPbrAnimal(ctx, 160, 160, 1.2, a);
-}
-
-function playSampleSound() {
-  alert("🔊 [真實叫聲播放] 呼嚕嚕~ 模擬野生動物自然原聲！");
-}
-
-function speakAnimalGuideTts() {
-  const text = `這是 ${currentSelectedJournalAnimal.name}。${currentSelectedJournalAnimal.fact}`;
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'zh-TW';
-    utterance.rate = 0.9;
-    utterance.pitch = 1.15;
-    window.speechSynthesis.speak(utterance);
-    setBoboSpeech(`波波正在朗讀：${currentSelectedJournalAnimal.name}`);
-  } else {
-    alert("🗣️ [語音導覽] " + text);
-  }
-}
-
-// Parent Dashboard Logic
-function openParentDashboard() {
-  document.getElementById("parent-lock-gate").style.display = "flex";
-  document.getElementById("parent-content-view").style.display = "none";
-  switchScreen("screen-parent");
-}
-
-function checkParentLock(ans) {
-  if (ans === 8) {
-    document.getElementById("parent-lock-gate").style.display = "none";
-    document.getElementById("parent-content-view").style.display = "flex";
-    setBoboSpeech("歡迎家長！可以在這裡查看孩子的小肌肉發育與調整護眼時間喔！");
-  } else {
-    alert("答案不正確，請再算算看喔！");
-  }
-}
-
-function setRestThresholdMinutes(mins) {
-  [15, 20, 30].forEach(m => {
-    const btn = document.getElementById("btn-rest-" + m);
-    if (m === mins) {
-      btn.style.background = "var(--bamboo-green)";
-      btn.style.color = "white";
-      btn.style.fontWeight = "bold";
-    } else {
-      btn.style.background = "#DDD";
-      btn.style.color = "#333";
-      btn.style.fontWeight = "normal";
-    }
-  });
-  setBoboSpeech(`護眼提醒時間已設定為 ${mins} 分鐘！`);
-}
-
-// Ergonomics: Canvas Blind Touch for Left-Half stabilization
-document.addEventListener("DOMContentLoaded", () => {
-  const battleCanvas = document.getElementById("battle-canvas");
-  if (battleCanvas) {
-    battleCanvas.addEventListener("mousedown", (e) => {
-      const rect = battleCanvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      // If clicked in left half (x < width / 2) and beyond 24px palm margin
-      if (x > 24 && x < rect.width * 0.48) {
-        leftHandPress(true);
+      if (viewName === 'battle') {
+        startBattleSimulation();
+      } else {
+        stopBattleSimulation();
       }
-    });
-    battleCanvas.addEventListener("mouseup", () => {
-      leftHandPress(false);
-    });
-  }
-});
 
-function playSampleSound() {
-  alert("🔊 [音效播放] 呼嚕嚕~ 仿真野生動物真實自然叫聲！");
-}
+      if (viewName === 'pbr') {
+        initPbrLab();
+      }
 
-// PBR Material Inspector State & Engine
-let pbrState = {
-  activeAnimal: ALL_100_ANIMALS[0],
-  channel: 'composite', // 'composite', 'albedo', 'normal', 'roughness'
-  angle: 60,
-  normalDepth: 1.0,
-  roughness: 0.45,
-  envMode: 'sunny',
-  isDraggingLight: false,
-  animId: null
-};
-
-function openPbrInspector() {
-  populatePbrDropdown();
-  switchScreen("screen-pbr");
-  setPbrAnimal(pbrState.activeAnimal.id);
-  startPbrInspectorLoop();
-  setBoboSpeech("歡迎來到 PBR 材質光影檢查室！拖曳滑鼠可以360度改變陽光照射角度喔！");
-}
-
-function populatePbrDropdown() {
-  const sel = document.getElementById("pbr-species-select");
-  if (!sel || sel.children.length > 0) return;
-  ALL_100_ANIMALS.forEach(a => {
-    const opt = document.createElement("option");
-    opt.value = a.id;
-    opt.innerText = `${a.name} (${a.grade.split(" ")[0]})`;
-    sel.appendChild(opt);
-  });
-}
-
-function onPbrSpeciesChange(id) {
-  const found = ALL_100_ANIMALS.find(a => a.id === id);
-  if (found) {
-    pbrState.activeAnimal = found;
-    updatePbrCardInfo(found);
-  }
-}
-
-function setPbrAnimal(id) {
-  const found = ALL_100_ANIMALS.find(a => a.id === id);
-  if (found) {
-    pbrState.activeAnimal = found;
-    const sel = document.getElementById("pbr-species-select");
-    if (sel) sel.value = id;
-    updatePbrCardInfo(found);
-  }
-}
-
-function updatePbrCardInfo(a) {
-  document.getElementById("pbr-info-name").innerText = a.name;
-  document.getElementById("pbr-info-bopomofo").innerText = a.bopomofo;
-  document.getElementById("pbr-info-sci").innerText = a.sci;
-  document.getElementById("pbr-info-grade").innerText = a.grade;
-  document.getElementById("pbr-info-feature").innerText = `${a.fact} 表面微浮雕與原生毛皮反光。`;
-}
-
-function setPbrChannel(chan) {
-  pbrState.channel = chan;
-  document.querySelectorAll(".pbr-chan-btn").forEach(b => b.classList.remove("active"));
-  const btn = document.getElementById(`btn-chan-${chan.slice(0, 4)}`);
-  if (btn) btn.classList.add("active");
-  if (chan === 'composite') document.getElementById("btn-chan-comp").classList.add("active");
-  setBoboSpeech(`已切換為：【${chan.toUpperCase()}】通道檢視模式！`);
-}
-
-function onPbrSliderChange() {
-  pbrState.angle = parseInt(document.getElementById("slider-pbr-angle").value);
-  pbrState.normalDepth = parseInt(document.getElementById("slider-pbr-normal").value) / 100;
-  pbrState.roughness = parseInt(document.getElementById("slider-pbr-rough").value) / 100;
-
-  document.getElementById("val-pbr-angle").innerText = pbrState.angle + "°";
-  document.getElementById("val-pbr-normal").innerText = pbrState.normalDepth.toFixed(1) + "x";
-  document.getElementById("val-pbr-rough").innerText = pbrState.roughness.toFixed(2);
-  document.getElementById("pbr-light-label").innerText = `${pbrState.angle}° (${getCompassDir(pbrState.angle)})`;
-}
-
-function getCompassDir(deg) {
-  if (deg >= 337.5 || deg < 22.5) return "正北";
-  if (deg >= 22.5 && deg < 67.5) return "東北";
-  if (deg >= 67.5 && deg < 112.5) return "正東";
-  if (deg >= 112.5 && deg < 157.5) return "東南";
-  if (deg >= 157.5 && deg < 202.5) return "正南";
-  if (deg >= 202.5 && deg < 247.5) return "西南";
-  if (deg >= 247.5 && deg < 292.5) return "正西";
-  return "西北";
-}
-
-function setPbrEnv(env) {
-  pbrState.envMode = env;
-  document.querySelectorAll(".pbr-env-btn").forEach(b => b.classList.remove("active"));
-  document.getElementById(`btn-env-${env}`).classList.add("active");
-}
-
-function startPbrInspectorLoop() {
-  if (pbrState.animId) cancelAnimationFrame(pbrState.animId);
-  const canvas = document.getElementById("pbr-inspector-canvas");
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-
-  // Mouse / Touch light dragging
-  const container = document.getElementById("pbr-canvas-container");
-  if (container && !container.dataset.bound) {
-    container.dataset.bound = "true";
-    function handleDrag(e) {
-      if (!pbrState.isDraggingLight) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = (e.clientX || (e.touches && e.touches[0].clientX)) - (rect.left + rect.width / 2);
-      const y = (e.clientY || (e.touches && e.touches[0].clientY)) - (rect.top + rect.height / 2);
-      let deg = Math.atan2(y, x) * (180 / Math.PI);
-      if (deg < 0) deg += 360;
-      pbrState.angle = Math.round(deg);
-      const slider = document.getElementById("slider-pbr-angle");
-      if (slider) slider.value = pbrState.angle;
-      onPbrSliderChange();
+      if (viewName === 'shelter') {
+        startShelterSimulation();
+      }
     }
-    container.addEventListener("mousedown", (e) => { pbrState.isDraggingLight = true; handleDrag(e); });
-    window.addEventListener("mousemove", handleDrag);
-    window.addEventListener("mouseup", () => { pbrState.isDraggingLight = false; });
-    container.addEventListener("touchstart", (e) => { pbrState.isDraggingLight = true; handleDrag(e); });
-    window.addEventListener("touchmove", handleDrag);
-    window.addEventListener("touchend", () => { pbrState.isDraggingLight = false; });
-  }
 
-  let time = 0;
-  function pbrLoop() {
-    time += 0.02;
-    renderPbrInspectorCanvas(ctx, canvas.width, canvas.height, time);
-    pbrState.animId = requestAnimationFrame(pbrLoop);
-  }
-  pbrState.animId = requestAnimationFrame(pbrLoop);
-}
+    // ========================================================
+    // BATTLE SIMULATION & TODDLER QTE
+    // ========================================================
+    let battleAnimId = null;
+    let battleTarget = ALL_ANIMALS[0];
+    const qte = {
+      cursor: 0.5,
+      speed: 1.0,
+      sweetCenter: 0.5,
+      sweetWidth: 0.28,
+      leftHolding: false,
+      holdSeconds: 0,
+      rightTaps: 0,
+      progress: 0.0,
+      tension: 0.0,
+      squishX: 1.0,
+      squishY: 1.0,
+      failures: 0
+    };
 
-function renderPbrInspectorCanvas(ctx, w, h, time) {
-  ctx.clearRect(0, 0, w, h);
+    function onSelectBattleAnimal(animalId) {
+      const found = ALL_ANIMALS.find(a => a.id === animalId);
+      if (found) {
+        battleTarget = found;
+        document.getElementById('battle-animal-name').innerText = found.name + " (" + found.zhuyin + ")";
+        qte.progress = 0;
+        qte.tension = 0;
+      }
+    }
 
-  const cx = w / 2;
-  const cy = h / 2;
-  const radius = 105;
-  const a = pbrState.activeAnimal;
+    function handleLeftWing(holding) {
+      qte.leftHolding = holding;
+      const wing = document.getElementById('wing-left');
+      if (holding) {
+        wing.classList.add('holding');
+        if (navigator.vibrate) navigator.vibrate(20);
+        qte.squishX = 1.06;
+        qte.squishY = 0.94;
+      } else {
+        wing.classList.remove('holding');
+      }
+    }
 
-  // Directional Light Vector
-  const rad = pbrState.angle * (Math.PI / 180);
-  const lx = Math.cos(rad);
-  const ly = Math.sin(rad);
+    function handleRightWingTap() {
+      qte.rightTaps++;
+      const wing = document.getElementById('wing-right');
+      wing.style.transform = 'scale(0.9)';
+      setTimeout(() => wing.style.transform = 'scale(1)', 90);
 
-  if (pbrState.channel === 'albedo') {
-    // Albedo Pass: Flat diffuse color + species iconic markings
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.fillStyle = a.color;
-    ctx.fill();
+      const minS = qte.sweetCenter - qte.sweetWidth / 2;
+      const maxS = qte.sweetCenter + qte.sweetWidth / 2;
+      const inSweet = (qte.cursor >= minS && qte.cursor <= maxS);
 
-    renderSpeciesIconicPattern(ctx, cx, cy, radius, a.id, false);
-    return;
-  }
+      // Left holding gives +45% bonus capture power
+      const mult = qte.leftHolding ? 1.45 : 1.0;
 
-  if (pbrState.channel === 'normal') {
-    // Normal Map Pass: RGB colored tangent space normal vector (128, 128, 255 baseline)
-    const normGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, radius);
-    normGrad.addColorStop(0, "#8080FF");
-    normGrad.addColorStop(0.7, "#7A7AFF");
-    normGrad.addColorStop(1, "#6666CC");
+      if (inSweet) {
+        if (navigator.vibrate) navigator.vibrate(35);
+        qte.progress += 0.16 * mult;
+        qte.tension = Math.max(0, qte.tension - 0.08);
+        qte.squishX = 0.90;
+        qte.squishY = 1.15;
 
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.fillStyle = normGrad;
-    ctx.fill();
+        if (qte.progress >= 1.0) {
+          alert(`🎉 恭喜！成功捕獲【${battleTarget.name}】！\n雙手協同評級：${document.getElementById('battle-rank-text').innerText}\n共獲得門票收入 +${battleTarget.coins * 2} G！`);
+          qte.progress = 0;
+          qte.tension = 0;
+          qte.failures = 0;
+          updateDdaUi();
+        }
+      } else {
+        qte.tension += 0.06;
+        qte.squishX = 1.04;
+        qte.squishY = 0.96;
+      }
+      updateBimanualRank();
+    }
 
-    // Render micro-relief tangent bump contours
-    ctx.strokeStyle = "rgba(255, 128, 255, 0.4)";
-    ctx.lineWidth = 3 * pbrState.normalDepth;
-    ctx.stroke();
-    return;
-  }
+    function updateBimanualRank() {
+      const score = qte.holdSeconds * 0.25 + qte.rightTaps * 0.08;
+      let rank = "🐾 探索小萌手";
+      if (score >= 1.5) rank = "🌟 雙手協同大師";
+      else if (score >= 0.8) rank = "✨ 靈活指尖探險家";
+      else if (score >= 0.3) rank = "🌱 雙手合力小能手";
+      document.getElementById('battle-rank-text').innerText = rank;
+    }
 
-  if (pbrState.channel === 'roughness') {
-    // Roughness Pass: Greyscale map (black = glossy mirror, white = totally rough matte)
-    const greyVal = Math.round(pbrState.roughness * 255);
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgb(${greyVal},${greyVal},${greyVal})`;
-    ctx.fill();
+    function updateDdaUi() {
+      // Dynamic difficulty adjustment for toddlers
+      if (qte.failures >= 2) {
+        qte.sweetWidth = 0.42; // widen sweet spot
+        document.getElementById('battle-dda-indicator').innerText = "DDA 模式：甜蜜點大幅放寬 (+50%)";
+        document.getElementById('battle-dda-indicator').style.color = "#FFD54F";
+      } else {
+        qte.sweetWidth = 0.28;
+        document.getElementById('battle-dda-indicator').innerText = "DDA 模式：正常難度";
+        document.getElementById('battle-dda-indicator').style.color = "#81C784";
+      }
+      const sweetEl = document.getElementById('battle-sweet-spot');
+      if (sweetEl) sweetEl.style.width = (qte.sweetWidth * 100) + '%';
+    }
 
-    // Specular highlight spot inverse
-    ctx.beginPath();
-    ctx.arc(cx + lx * radius * 0.45, cy + ly * radius * 0.45, radius * 0.35, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    ctx.fill();
-    return;
-  }
+    function startBattleSimulation() {
+      stopBattleSimulation();
+      const canvas = document.getElementById('jungle-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
 
-  // Full PBR Composite Pass
-  // 1. Ambient Occlusion Ground Shadow
-  ctx.beginPath();
-  ctx.ellipse(cx, cy + radius * 1.05, radius * 1.15, radius * 0.22, 0, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-  ctx.fill();
+      let t = 0;
+      function loop() {
+        t += 0.02;
+        if (qte.leftHolding) qte.holdSeconds += 0.02;
 
-  // 2. Diffuse Lambertian Shading with dynamic light angle & environment tint
-  const lightCenterOffset = {
-    x: cx + lx * radius * 0.5,
-    y: cy + ly * radius * 0.5
-  };
+        // Left holding slows struggle by 50%
+        const curSpeed = qte.leftHolding ? qte.speed * 0.5 : qte.speed;
+        qte.cursor = 0.5 + (Math.sin(t * curSpeed * 2.5) + Math.sin(t * curSpeed * 1.2) * 0.3) * 0.38;
+        qte.cursor = Math.max(0.04, Math.min(0.96, qte.cursor));
 
-  const envTint = pbrState.envMode === 'jungle' ? "#81C784" :
-                  pbrState.envMode === 'mist' ? "#B0BEC5" :
-                  pbrState.envMode === 'night' ? "#4FC3F7" : "#FFF9C4";
+        // Sweet spot slow drift
+        qte.sweetCenter = 0.5 + Math.sin(t * 0.4) * 0.15;
+        const sweetEl = document.getElementById('battle-sweet-spot');
+        if (sweetEl) sweetEl.style.left = ((qte.sweetCenter - qte.sweetWidth / 2) * 100) + '%';
 
-  const pbrGrad = ctx.createRadialGradient(
-    lightCenterOffset.x, lightCenterOffset.y, 10,
-    cx, cy, radius * 1.25
-  );
-  pbrGrad.addColorStop(0, envTint);
-  pbrGrad.addColorStop(0.25, a.color);
-  pbrGrad.addColorStop(1, "#08080A");
+        // Update cursor DOM
+        const curEl = document.getElementById('battle-cursor');
+        if (curEl) curEl.style.left = (qte.cursor * 100) + '%';
 
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.fillStyle = pbrGrad;
-  ctx.fill();
+        // Natural tension increase if not holding
+        if (!qte.leftHolding) qte.tension = Math.min(1.0, qte.tension + 0.0006);
+        else qte.tension = Math.max(0.0, qte.tension - 0.0004);
 
-  // 3. Normal Map Surface Relief Perturbation
-  renderSpeciesIconicPattern(ctx, cx, cy, radius, a.id, true);
+        // Squish spring return
+        qte.squishX += (1.0 - qte.squishX) * 0.1;
+        qte.squishY += (1.0 - qte.squishY) * 0.1;
 
-  // 4. Microfacet Specular Lobe (Cook-Torrance reflection)
-  const specRoughSize = radius * (0.2 + (1.0 - pbrState.roughness) * 0.35);
-  const specAlpha = (1.0 - pbrState.roughness) * 0.75;
-  const specGrad = ctx.createRadialGradient(
-    lightCenterOffset.x, lightCenterOffset.y, 2,
-    lightCenterOffset.x, lightCenterOffset.y, specRoughSize
-  );
-  specGrad.addColorStop(0, `rgba(255, 255, 255, ${specAlpha})`);
-  specGrad.addColorStop(0.4, `rgba(255, 255, 255, ${specAlpha * 0.3})`);
-  specGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+        document.getElementById('battle-progress-text').innerText = Math.floor(qte.progress * 100) + '%';
+        document.getElementById('battle-tension-text').innerText = Math.floor(qte.tension * 100) + '%';
 
-  ctx.beginPath();
-  ctx.arc(lightCenterOffset.x, lightCenterOffset.y, specRoughSize, 0, Math.PI * 2);
-  ctx.fillStyle = specGrad;
-  ctx.fill();
+        if (qte.tension >= 1.0) {
+          qte.failures++;
+          updateDdaUi();
+          alert(`🍃 ${battleTarget.name} 趁機跑回樹林休息了！\n波波提醒：下次左手要記得持續按住喔！`);
+          qte.tension = 0;
+          qte.progress = 0;
+        }
 
-  // 5. Fresnel Rim Light (Atmospheric Back-scatter)
-  const rimColor = pbrState.envMode === 'night' ? "rgba(129, 212, 250, 0.45)" : "rgba(255, 255, 255, 0.25)";
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.strokeStyle = rimColor;
-  ctx.lineWidth = 3.5;
-  ctx.stroke();
+        // Draw Canvas Parallax Jungle and Animal
+        drawBattleScene(ctx, canvas.width, canvas.height, t);
 
-  // Draw light indicator directional arrow
-  ctx.beginPath();
-  ctx.moveTo(lightCenterOffset.x, lightCenterOffset.y);
-  ctx.lineTo(lightCenterOffset.x - lx * 24, lightCenterOffset.y - ly * 24);
-  ctx.strokeStyle = "rgba(255, 213, 122, 0.85)";
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
-}
+        battleAnimId = requestAnimationFrame(loop);
+      }
+      battleAnimId = requestAnimationFrame(loop);
+    }
 
-function renderSpeciesIconicPattern(ctx, cx, cy, radius, id, isComposite) {
-  if (id === "formosan_black_bear") {
-    ctx.beginPath();
-    ctx.moveTo(cx - 38, cy - 5);
-    ctx.lineTo(cx, cy + 38);
-    ctx.lineTo(cx + 38, cy - 5);
-    ctx.lineTo(cx + 28, cy - 5);
-    ctx.lineTo(cx, cy + 24);
-    ctx.lineTo(cx - 28, cy - 5);
-    ctx.closePath();
-    ctx.fillStyle = isComposite ? "rgba(245, 245, 240, 0.95)" : "#F5F5F0";
-    ctx.fill();
-  } else if (id === "leopard_cat") {
-    const spotCol = isComposite ? "rgba(46, 28, 12, 0.85)" : "#2E1C0C";
-    [[-30, -25], [20, -15], [-15, 25], [35, 20], [0, -5]].forEach(([ox, oy]) => {
+    function stopBattleSimulation() {
+      if (battleAnimId) {
+        cancelAnimationFrame(battleAnimId);
+        battleAnimId = null;
+      }
+    }
+
+    function drawBattleScene(ctx, w, h, t) {
+      ctx.clearRect(0, 0, w, h);
+
+      // Sky gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+      skyGrad.addColorStop(0, '#102A27');
+      skyGrad.addColorStop(0.5, '#1A4D3E');
+      skyGrad.addColorStop(1, '#0C1C17');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // God rays
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for (let i = -2; i < 6; i++) {
+        ctx.beginPath();
+        ctx.moveTo(w * 0.4 + i * 180 + Math.sin(t + i) * 30, 0);
+        ctx.lineTo(w * 0.1 + i * 260, h);
+        ctx.lineTo(w * 0.2 + i * 260, h);
+        ctx.closePath();
+        ctx.fillStyle = '#FFE082';
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Distant Forest Layer
+      ctx.fillStyle = '#133026';
+      for (let x = 0; x < w; x += 90) {
+        const treeH = 260 + Math.sin(x * 0.02) * 60;
+        ctx.beginPath();
+        ctx.moveTo(x, h);
+        ctx.lineTo(x + 45, h - treeH);
+        ctx.lineTo(x + 90, h);
+        ctx.fill();
+      }
+
+      // Midground Trees & Vines
+      ctx.fillStyle = '#0D211A';
+      ctx.fillRect(0, h - 140, w, 140);
+
+      // Animated Tree Leaves
+      ctx.fillStyle = '#1E4633';
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        const lx = (i * 260 + Math.sin(t * 0.8 + i) * 15) % (w + 100) - 50;
+        ctx.arc(lx, 60 + Math.sin(t + i) * 10, 80, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Animal in Center (High Detail Drawing)
+      const cx = w / 2;
+      const cy = h / 2 - 20 + Math.sin(t * 2) * 6;
+      drawRealisticAnimal(ctx, cx, cy, battleTarget, qte.squishX, qte.squishY, t);
+
+      // Bubble Net Around Target
+      if (qte.progress > 0.05) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, 140, 0, Math.PI * 2);
+        ctx.strokeStyle = qte.leftHolding ? 'rgba(255, 213, 122, 0.9)' : 'rgba(0, 229, 255, 0.8)';
+        ctx.lineWidth = 4;
+        ctx.setLineDash([12, 8]);
+        ctx.stroke();
+
+        ctx.fillStyle = qte.leftHolding ? 'rgba(255, 213, 122, 0.15)' : 'rgba(0, 229, 255, 0.12)';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // First-person Panda Gun in Hands (Bottom Right)
+      drawFirstPersonPandaGun(ctx, w, h, t);
+    }
+
+    function drawRealisticAnimal(ctx, cx, cy, animal, sqX, sqY, t) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(sqX, sqY);
+      ctx.translate(-cx, -cy);
+
+      // Ground Shadow
       ctx.beginPath();
-      ctx.arc(cx + ox, cy + oy, 8, 0, Math.PI * 2);
-      ctx.fillStyle = spotCol;
+      ctx.ellipse(cx, cy + 120, 110, 25, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
       ctx.fill();
-    });
-  } else if (id === "formosan_landlocked_salmon") {
-    const pinkGrad = ctx.createLinearGradient(cx - 50, cy, cx + 50, cy);
-    pinkGrad.addColorStop(0, "rgba(255, 128, 171, 0.8)");
-    pinkGrad.addColorStop(0.5, "rgba(234, 128, 252, 0.8)");
-    pinkGrad.addColorStop(1, "rgba(128, 216, 255, 0.8)");
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, radius * 0.7, radius * 0.2, 0, 0, Math.PI * 2);
-    ctx.fillStyle = pinkGrad;
-    ctx.fill();
-  }
-}
 
-</script>
+      if (animal.id === 'formosan_black_bear') {
+        // Bear Body
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 95, 80, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#1C1A19';
+        ctx.fill();
+
+        // Fur Highlights
+        ctx.beginPath();
+        ctx.arc(cx - 30, cy - 25, 45, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        ctx.fill();
+
+        // White V Crescent on Chest
+        ctx.beginPath();
+        ctx.moveTo(cx - 42, cy - 5);
+        ctx.lineTo(cx, cy + 42);
+        ctx.lineTo(cx + 42, cy - 5);
+        ctx.lineTo(cx + 28, cy - 5);
+        ctx.lineTo(cx, cy + 24);
+        ctx.lineTo(cx - 28, cy - 5);
+        ctx.closePath();
+        ctx.fillStyle = '#F5F5F0';
+        ctx.fill();
+
+        // Bear Ears
+        ctx.beginPath();
+        ctx.arc(cx - 55, cy - 75, 24, 0, Math.PI * 2);
+        ctx.arc(cx + 55, cy - 75, 24, 0, Math.PI * 2);
+        ctx.fillStyle = '#141212';
+        ctx.fill();
+
+        // Bear Head & Muzzle
+        ctx.beginPath();
+        ctx.arc(cx, cy - 45, 48, 0, Math.PI * 2);
+        ctx.fillStyle = '#22201E';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.ellipse(cx, cy - 35, 26, 18, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#BCAAA4';
+        ctx.fill();
+
+        // Wet Nose
+        ctx.beginPath();
+        ctx.ellipse(cx, cy - 42, 10, 7, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#0E0D0D';
+        ctx.fill();
+
+        // Eyes
+        ctx.beginPath();
+        ctx.arc(cx - 18, cy - 55, 4.5, 0, Math.PI * 2);
+        ctx.arc(cx + 18, cy - 55, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFD54F';
+        ctx.fill();
+      } else if (animal.id === 'leopard_cat') {
+        // Leopard Cat
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 75, 55, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#C89658';
+        ctx.fill();
+
+        // Spots
+        ctx.fillStyle = '#3E2723';
+        const spots = [[-30, -10], [0, 5], [35, -15], [-20, 20], [25, 22]];
+        spots.forEach(sp => {
+          ctx.beginPath();
+          ctx.arc(cx + sp[0], cy + sp[1], 8, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Head & Ears
+        ctx.beginPath();
+        ctx.arc(cx, cy - 40, 36, 0, Math.PI * 2);
+        ctx.fillStyle = '#C89658';
+        ctx.fill();
+
+        // White Ear Patches
+        ctx.beginPath();
+        ctx.moveTo(cx - 30, cy - 65);
+        ctx.lineTo(cx - 15, cy - 40);
+        ctx.lineTo(cx - 40, cy - 40);
+        ctx.fillStyle = '#FFF';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(cx + 30, cy - 65);
+        ctx.lineTo(cx + 15, cy - 40);
+        ctx.lineTo(cx + 40, cy - 40);
+        ctx.fill();
+
+        // Green Glowing Eyes
+        ctx.beginPath();
+        ctx.arc(cx - 14, cy - 42, 5, 0, Math.PI * 2);
+        ctx.arc(cx + 14, cy - 42, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#76FF03';
+        ctx.fill();
+      } else if (animal.id === 'emerald_tree_frog') {
+        // Frog (Emerald Translucent Skin)
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 70, 50, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#00E676';
+        ctx.fill();
+
+        // Gloss Specular Highlight
+        ctx.beginPath();
+        ctx.ellipse(cx - 20, cy - 15, 35, 12, -0.2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fill();
+
+        // Gold Eyes
+        ctx.beginPath();
+        ctx.arc(cx - 28, cy - 40, 16, 0, Math.PI * 2);
+        ctx.arc(cx + 28, cy - 40, 16, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFD700';
+        ctx.fill();
+
+        // Slit pupils
+        ctx.fillStyle = '#111';
+        ctx.fillRect(cx - 30, cy - 46, 4, 12);
+        ctx.fillRect(cx + 26, cy - 46, 4, 12);
+      } else {
+        // Generic Majestic Wildlife
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 80, 60, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#8D6E63';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy - 45, 38, 0, Math.PI * 2);
+        ctx.fillStyle = '#6D4C41';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx - 14, cy - 48, 5, 0, Math.PI * 2);
+        ctx.arc(cx + 14, cy - 48, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFF';
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawFirstPersonPandaGun(ctx, w, h, t) {
+      const gunX = w - 240 + Math.sin(t * 1.5) * 6;
+      const gunY = h - 160 + Math.cos(t * 1.5) * 5;
+
+      ctx.save();
+      ctx.translate(gunX, gunY);
+
+      // Bamboo Gun Barrel
+      ctx.fillStyle = '#388E3C';
+      ctx.strokeStyle = '#C89D42';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.rect(-100, 30, 220, 48);
+      ctx.fill();
+      ctx.stroke();
+
+      // Brass Rings
+      ctx.fillStyle = '#C89D42';
+      ctx.fillRect(-20, 26, 14, 56);
+      ctx.fillRect(60, 26, 14, 56);
+
+      // Glowing Bubble Tube
+      ctx.fillStyle = 'rgba(0, 229, 255, 0.45)';
+      ctx.strokeStyle = '#00ACC1';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-80, -20, 160, 40, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      // Muzzle Flare / Idle Vapor
+      ctx.beginPath();
+      ctx.arc(-105, 54, 16 + Math.sin(t * 4) * 4, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(129, 199, 132, 0.4)';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // ========================================================
+    // PBR SHADER & LIGHTING LAB LOGIC
+    // ========================================================
+    const pbrState = {
+      preset: 'bear',
+      channel: 'composite',
+      lightAngle: 45, // degrees azimuth
+      lightElev: 30,  // degrees elevation
+      intensity: 1.2,
+      roughness: 0.45,
+      normalDepth: 1.8,
+      ao: 0.8,
+      dragging: false
+    };
+
+    function setPbrPreset(val) {
+      pbrState.preset = val;
+      if (val === 'frog') pbrState.roughness = 0.08;
+      else if (val === 'bear') pbrState.roughness = 0.55;
+      else if (val === 'leopard') pbrState.roughness = 0.40;
+      else if (val === 'eagle') pbrState.roughness = 0.25;
+      else if (val === 'bark') pbrState.roughness = 0.85;
+
+      document.getElementById('val-roughness').innerText = pbrState.roughness;
+      renderPbrCanvas();
+    }
+
+    function setPbrChannel(chan) {
+      pbrState.channel = chan;
+      document.querySelectorAll('.channel-pill').forEach(b => b.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.channel-pill')).find(b => b.getAttribute('onclick').includes(chan));
+      if (activeBtn) activeBtn.classList.add('active');
+      renderPbrCanvas();
+    }
+
+    function updatePbrSlider(prop, val) {
+      pbrState[prop] = parseFloat(val);
+      if (prop === 'intensity') document.getElementById('val-light-intensity').innerText = val + 'x';
+      if (prop === 'roughness') document.getElementById('val-roughness').innerText = val;
+      if (prop === 'normalDepth') document.getElementById('val-normal-depth').innerText = val + 'x';
+      if (prop === 'ao') document.getElementById('val-ao').innerText = val;
+      renderPbrCanvas();
+    }
+
+    function initPbrLab() {
+      const canvas = document.getElementById('pbr-canvas');
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      canvas.onmousedown = (e) => {
+        pbrState.dragging = true;
+        updateLightFromMouse(e, canvas);
+      };
+      window.onmousemove = (e) => {
+        if (pbrState.dragging) updateLightFromMouse(e, canvas);
+      };
+      window.onmouseup = () => pbrState.dragging = false;
+
+      renderPbrCanvas();
+    }
+
+    function updateLightFromMouse(e, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left - rect.width / 2;
+      const my = e.clientY - rect.top - rect.height / 2;
+
+      pbrState.lightAngle = Math.floor((Math.atan2(my, mx) * 180 / Math.PI + 360) % 360);
+      const dist = Math.min(1.0, Math.hypot(mx, my) / (rect.width * 0.4));
+      pbrState.lightElev = Math.floor((1.0 - dist) * 75);
+
+      document.getElementById('pbr-light-angle').innerText = pbrState.lightAngle + '°';
+      document.getElementById('pbr-light-elev').innerText = pbrState.lightElev + '°';
+      renderPbrCanvas();
+    }
+
+    function renderPbrCanvas() {
+      const canvas = document.getElementById('pbr-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = 170;
+
+      // Light vector in 3D
+      const radA = pbrState.lightAngle * Math.PI / 180;
+      const radE = pbrState.lightElev * Math.PI / 180;
+      const lx = Math.cos(radA) * Math.cos(radE);
+      const ly = Math.sin(radA) * Math.cos(radE);
+      const lz = Math.sin(radE);
+
+      // Draw Sphere Pixel Shader (High Performance Procedural)
+      const imgData = ctx.createImageData(radius * 2, radius * 2);
+      const data = imgData.data;
+
+      // Base diffuse color depending on preset
+      let baseR = 30, baseG = 26, baseB = 24; // Bear
+      if (pbrState.preset === 'leopard') { baseR = 195; baseG = 140; baseB = 80; }
+      if (pbrState.preset === 'frog') { baseR = 10; baseG = 210; baseB = 90; }
+      if (pbrState.preset === 'eagle') { baseR = 70; baseG = 55; baseB = 40; }
+      if (pbrState.preset === 'bark') { baseR = 85; baseG = 55; baseB = 30; }
+
+      const depth = pbrState.normalDepth;
+      const roughness = pbrState.roughness;
+
+      for (let y = 0; y < radius * 2; y++) {
+        for (let x = 0; x < radius * 2; x++) {
+          const dx = (x - radius) / radius;
+          const dy = (y - radius) / radius;
+          const distSq = dx * dx + dy * dy;
+
+          const idx = (y * radius * 2 + x) * 4;
+
+          if (distSq <= 1.0) {
+            const dz = Math.sqrt(1.0 - distSq);
+
+            // Procedural Normal perturbation (Fur / Scales / Wet bumps)
+            let bump = 0;
+            if (pbrState.preset === 'bear') {
+              bump = Math.sin(dx * 85) * Math.cos(dy * 85) * 0.25;
+            } else if (pbrState.preset === 'frog') {
+              bump = Math.sin(dx * 40) * Math.sin(dy * 40) * 0.15;
+            } else if (pbrState.preset === 'bark') {
+              bump = (Math.sin(dy * 30 + Math.sin(dx * 15)) * 0.45);
+            } else {
+              bump = Math.sin(dx * 60) * 0.2;
+            }
+
+            let nx = dx + bump * depth;
+            let ny = dy + bump * depth;
+            let nz = dz;
+            const nLen = Math.hypot(nx, ny, nz);
+            nx /= nLen; ny /= nLen; nz /= nLen;
+
+            // Diffuse: N dot L
+            const nDotL = Math.max(0.0, nx * lx + ny * ly + nz * lz);
+
+            // Specular: Blinn-Phong (N dot H)
+            const hx = lx; const hy = ly; const hz = lz + 1.0;
+            const hLen = Math.hypot(hx, hy, hz);
+            const nDotH = Math.max(0.0, (nx * hx + ny * hy + nz * hz) / hLen);
+            const shininess = (1.0 - roughness) * 128 + 4;
+            const spec = Math.pow(nDotH, shininess) * (1.0 - roughness * 0.6);
+
+            // Fresnel: pow(1 - N dot V, 3)
+            const nDotV = Math.max(0.0, nz);
+            const fresnel = Math.pow(1.0 - nDotV, 3.0);
+
+            // Ambient Occlusion
+            const ao = (1.0 - distSq * 0.4) * pbrState.ao;
+
+            let outR = 0, outG = 0, outB = 0;
+
+            if (pbrState.channel === 'composite') {
+              outR = (baseR * nDotL * pbrState.intensity + spec * 220 + fresnel * 90) * ao;
+              outG = (baseG * nDotL * pbrState.intensity + spec * 220 + fresnel * 90) * ao;
+              outB = (baseB * nDotL * pbrState.intensity + spec * 220 + fresnel * 90) * ao;
+            } else if (pbrState.channel === 'normal') {
+              outR = (nx * 0.5 + 0.5) * 255;
+              outG = (ny * 0.5 + 0.5) * 255;
+              outB = (nz * 0.5 + 0.5) * 255;
+            } else if (pbrState.channel === 'roughness') {
+              const rVal = roughness * 255;
+              outR = rVal; outG = rVal; outB = rVal;
+            } else if (pbrState.channel === 'albedo') {
+              outR = baseR; outG = baseG; outB = baseB;
+            } else if (pbrState.channel === 'specular') {
+              const sVal = spec * 255;
+              outR = sVal; outG = sVal; outB = sVal;
+            } else if (pbrState.channel === 'fresnel') {
+              const fVal = fresnel * 255;
+              outR = fVal; outG = fVal; outB = fVal;
+            }
+
+            data[idx] = Math.min(255, Math.max(0, outR));
+            data[idx + 1] = Math.min(255, Math.max(0, outG));
+            data[idx + 2] = Math.min(255, Math.max(0, outB));
+            data[idx + 3] = 255;
+          } else {
+            data[idx + 3] = 0; // Transparent
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, cx - radius, cy - radius);
+
+      // Light Orb Visualization
+      const lightOrbX = cx + lx * radius * 1.35;
+      const lightOrbY = cy + ly * radius * 1.35;
+      ctx.beginPath();
+      ctx.arc(lightOrbX, lightOrbY, 14, 0, Math.PI * 2);
+      ctx.fillStyle = '#FFE082';
+      ctx.shadowColor = '#FFD54F';
+      ctx.shadowBlur = 18;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.beginPath();
+      ctx.arc(lightOrbX, lightOrbY, 14, 0, Math.PI * 2);
+      ctx.strokeStyle = '#FFF';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Light direction line
+      ctx.beginPath();
+      ctx.moveTo(lightOrbX, lightOrbY);
+      ctx.lineTo(cx, cy);
+      ctx.strokeStyle = 'rgba(255, 224, 130, 0.35)';
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // ========================================================
+    // 100 ANIMALS JOURNAL LOGIC
+    // ========================================================
+    function populateAnimalJournal(items) {
+      const container = document.getElementById('animal-grid-container');
+      container.innerHTML = '';
+
+      items.forEach(a => {
+        const card = document.createElement('div');
+        card.className = 'animal-polaroid';
+        card.onclick = () => showAnimalDetail(a);
+
+        let badgeColor = '#4CAF50';
+        if (a.badge === 'warning') badgeColor = '#FF9800';
+        if (a.badge === 'danger') badgeColor = '#F44336';
+
+        card.innerHTML = `
+          <div class="polaroid-img-box">
+            <svg width="60" height="60" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="${badgeColor}" opacity="0.2"/>
+              <text x="50" y="58" font-size="34" text-anchor="middle">🐾</text>
+            </svg>
+            <span style="position:absolute; top:6px; right:6px; background:${badgeColor}; color:#FFF; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:4px;">
+              ${a.status}
+            </span>
+          </div>
+          <div style="margin-top:8px;">
+            <div style="font-weight:900; font-size:14px; color:#2E1D13;">${a.name}</div>
+            <div style="font-size:11px; color:#8D6E63; font-weight:600;">${a.zhuyin}</div>
+            <div style="font-size:10px; color:#757575; font-style:italic; margin-top:2px;">${a.latin}</div>
+            <div style="margin-top:6px; font-size:11px; color:#388E3C; font-weight:bold;">
+              📍 ${a.habitat} · 💰 門票 +${a.coins}G
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterAnimals(habitat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (habitat === 'all') {
+        populateAnimalJournal(ALL_ANIMALS);
+      } else {
+        const filtered = ALL_ANIMALS.filter(a => a.habitat === habitat);
+        populateAnimalJournal(filtered);
+      }
+    }
+
+    function showAnimalDetail(animal) {
+      // Play Audio call simulator
+      playSynthesizedAnimalCall(animal);
+
+      alert(`📖【戴夫手繪冒險手帳】\n物種名：${animal.name} (${animal.zhuyin})\n學名：${animal.latin}\n保育評級：${animal.status}\n生態棲地：${animal.habitat}\n食性：${animal.diet}\n\n🌿 生態觀察備忘錄：\n${animal.desc}\n\n💰 庇護所每日參觀效益：+${animal.coins} G`);
+
+      // Try browser Speech Synthesis TTS
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(`${animal.name}，棲息於${animal.habitat}。${animal.desc}`);
+        utter.lang = 'zh-TW';
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function playSynthesizedAnimalCall(animal) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        let freq = 440;
+        if (animal.habitat === '天空飛禽') freq = 1200;
+        else if (animal.habitat === '溪流濕地') freq = 320;
+        else if (animal.id === 'formosan_black_bear') freq = 120;
+
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, ctx.currentTime + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.7, ctx.currentTime + 0.35);
+
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.4);
+      } catch (e) {}
+    }
+
+    // ========================================================
+    // SANCTUARY SIMULATION
+    // ========================================================
+    let shelterAnimId = null;
+    function startShelterSimulation() {
+      if (shelterAnimId) cancelAnimationFrame(shelterAnimId);
+      const canvas = document.getElementById('shelter-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      const wanderingAnimals = [
+        { x: 180, y: 320, vx: 0.6, name: '🐻 台灣黑熊' },
+        { x: 420, y: 260, vx: -0.8, name: '🐆 台灣石虎' },
+        { x: 650, y: 380, vx: 0.5, name: '🦌 梅花鹿' },
+        { x: 860, y: 290, vx: -0.4, name: '🐒 金絲猴' },
+      ];
+
+      function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Grass Meadow
+        ctx.fillStyle = '#2E4C2E';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Water Stream
+        ctx.beginPath();
+        ctx.moveTo(0, 200);
+        ctx.bezierCurveTo(300, 150, 600, 260, canvas.width, 220);
+        ctx.lineWidth = 60;
+        ctx.strokeStyle = '#1E3A4C';
+        ctx.stroke();
+
+        // Wooden Boardwalk
+        ctx.fillStyle = '#8D6E63';
+        ctx.fillRect(0, canvas.height - 80, canvas.width, 40);
+
+        // Wandering Animals
+        wanderingAnimals.forEach(a => {
+          a.x += a.vx;
+          if (a.x < 100 || a.x > canvas.width - 120) a.vx *= -1;
+
+          ctx.font = '28px sans-serif';
+          ctx.fillText(a.name.split(' ')[0], a.x, a.y);
+          ctx.font = '12px sans-serif';
+          ctx.fillStyle = '#FFF';
+          ctx.fillText(a.name.split(' ')[1], a.x - 5, a.y + 20);
+        });
+
+        // Visitors Walking on Boardwalk
+        ctx.font = '24px sans-serif';
+        ctx.fillText('👨‍👩‍👧', 220, canvas.height - 50);
+        ctx.fillText('🧒', 540, canvas.height - 50);
+
+        // Floating Coin Drops
+        ctx.fillStyle = '#FFD54F';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText('+15 G 🪙', 240, canvas.height - 90);
+        ctx.fillText('+20 G 🪙', 560, canvas.height - 90);
+
+        shelterAnimId = requestAnimationFrame(loop);
+      }
+      shelterAnimId = requestAnimationFrame(loop);
+    }
+
+    // Initial Execution
+    window.onload = () => {
+      populateAnimalJournal(ALL_ANIMALS);
+    };
+  </script>
 </body>
 </html>
