@@ -34,6 +34,7 @@ data class AnimalEntity(
     @PrimaryKey
     val id: String,
     val name: String,
+    val bopomofoName: String = "",
     val scientificName: String,
     val habitat: HabitatType,
     val habitatName: String,
@@ -55,4 +56,43 @@ data class AnimalEntity(
     val isCaptured: Boolean = false,
     val captureCount: Int = 0,
     val isInShelter: Boolean = false
-)
+) {
+    fun getFullBopomofo(): String {
+        if (bopomofoName.isNotEmpty()) return bopomofoName
+        return when (id) {
+            "formosan_black_bear" -> "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ"
+            "leopard_cat" -> "ㄕˊ ㄏㄨˇ"
+            "formosan_sambar" -> "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ"
+            "crested_serpent_eagle" -> "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ"
+            "collared_scops_owl" -> "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ"
+            "chinese_pangolin" -> "ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ"
+            "golden_snub_nosed_monkey" -> "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ"
+            "formosan_landlocked_salmon" -> "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ"
+            "indochinese_tiger" -> "ㄧㄣˋ ㄓ ㄏㄨˇ"
+            "malayan_tapir" -> "ㄇㄚˇ ㄌㄞˊ ㄇㄛˋ"
+            "toco_toucan" -> "ㄊㄨㄛ ㄍㄜ ㄐㄩˋ ㄗㄨㄟˇ ㄋㄧㄠˇ"
+            "three_toed_sloth" -> "ㄙㄢ ㄓˇ ㄕㄨˋ ㄌㄢˇ"
+            "panther_chameleon" -> "ㄑㄧ ㄘㄞˇ ㄅㄧㄢˋ ㄙㄜˋ ㄌㄨㄥˊ"
+            "poison_dart_frog" -> "ㄧㄡ ㄌㄧㄥˊ ㄐㄧㄢˋ ㄉㄨˊ ㄨㄚ"
+            "rhinoceros_hornbill" -> "ㄇㄚˇ ㄌㄞˊ ㄒㄧ ㄋㄧㄠˇ"
+            "bornean_orangutan" -> "ㄆㄛˊ ㄌㄨㄛˊ ㄓㄡ ㄏㄨㄥˊ ㄇㄠˊ ㄒㄧㄥ ㄒㄧㄥ"
+            "green_iguana" -> "ㄇㄟˇ ㄓㄡ ㄌㄧㄝˋ ㄒㄧ"
+            "ruffed_lemur" -> "ㄅㄞˊ ㄐㄧㄥˇ ㄏㄨˊ ㄇㄡˊ"
+            "formosan_macaque" -> "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ"
+            "swinhoe_pheasant" -> "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ"
+            "mikado_pheasant" -> "ㄉㄧˋ ㄓˊ"
+            "moltrecht_tree_frog" -> "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ"
+            "eurasian_otter" -> "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ"
+            "asian_elephant" -> "ㄧㄚˋ ㄓㄡ ㄒㄧㄤˋ"
+            "clouded_leopard" -> "ㄩㄣˊ ㄅㄠˋ"
+            "cheetah" -> "ㄌㄧㄝˋ ㄅㄠˋ"
+            "andean_condor" -> "ㄢ ㄉㄧˋ ㄙ ㄕㄣˊ ㄧㄥ"
+            "snow_leopard" -> "ㄒㄩㄝˇ ㄅㄠˋ"
+            "serval" -> "ㄙㄡˇ ㄇㄠ"
+            "binturong" -> "ㄒㄩㄥˊ ㄌㄧˊ"
+            "proboscis_monkey" -> "ㄔㄤˊ ㄅㄧˊ ㄏㄡˊ"
+            "sword_billed_hummingbird" -> "ㄉㄠ ㄗㄨㄟˇ ㄈㄥ ㄋㄧㄠˇ"
+            else -> ""
+        }
+    }
+}

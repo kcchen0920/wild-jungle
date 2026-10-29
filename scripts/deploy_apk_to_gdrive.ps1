@@ -1,24 +1,35 @@
 # Deploy APK to Google Drive Kids Directory
-param(
-    [string]$TargetDir = "G:\我的雲端硬碟\kids"
-)
+Write-Host ">>> Starting APK deployment to Google Drive..." -ForegroundColor Cyan
 
-Write-Host ">>> Starting APK deployment to Google Drive: $TargetDir" -ForegroundColor Cyan
+$rootDirs = Get-ChildItem -Path "G:\" -Directory -ErrorAction SilentlyContinue
 
-if (-not (Test-Path $TargetDir)) {
-    Write-Host "Creating target directory: $TargetDir" -ForegroundColor Yellow
-    New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
+if ($rootDirs.Count -gt 0) {
+    $driveFolder = $rootDirs | Where-Object { $_.Name -like "*硬碟*" -or $_.Name -like "*Drive*" } | Select-Object -First 1
+    if (-not $driveFolder) {
+        $driveFolder = $rootDirs[0]
+    }
+    $targetDir = Join-Path $driveFolder.FullName "kids"
+} else {
+    $targetDir = "G:\kids"
+}
+
+if (-not (Test-Path $targetDir)) {
+    New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
 }
 
 $apkOutputs = Get-ChildItem -Path "wild_catcher_project\app\build\outputs\apk" -Filter "*.apk" -Recurse -ErrorAction SilentlyContinue
 
 if ($apkOutputs.Count -eq 0) {
-    Write-Host "No APK found in build outputs. Checking root build..." -ForegroundColor Yellow
+    Write-Host "No APK found in build outputs." -ForegroundColor Yellow
 } else {
     foreach ($apk in $apkOutputs) {
-        $destPath = Join-Path $TargetDir $apk.Name
-        Copy-Item -Path $apk.FullName -Destination $destPath -Force
-        Write-Host "✓ Deployed $($apk.Name) -> $destPath" -ForegroundColor Green
+        $destDebug = Join-Path $targetDir "wild_catcher-debug.apk"
+        $destRelease = Join-Path $targetDir "wild_catcher-v1.0.0.apk"
+        Copy-Item -Path $apk.FullName -Destination $destDebug -Force
+        Copy-Item -Path $apk.FullName -Destination $destRelease -Force
+        Write-Host "Deployed APK successfully to:" -ForegroundColor Green
+        Write-Host "  -> $destDebug" -ForegroundColor Green
+        Write-Host "  -> $destRelease" -ForegroundColor Green
     }
 }
 

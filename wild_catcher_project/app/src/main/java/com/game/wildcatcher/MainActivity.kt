@@ -73,7 +73,8 @@ fun MainGameContainer(
                     onOpenJournal = { viewModel.navigateTo(ScreenState.JOURNAL_ENCYCLOPEDIA) },
                     onOpenShop = { viewModel.navigateTo(ScreenState.UPGRADE_SHOP) },
                     onTriggerQuiz = { viewModel.triggerEcoQuiz() },
-                    onSimulateThirtyMinutes = { viewModel.simulateThirtyMinutes() }
+                    onSimulateThirtyMinutes = { viewModel.simulateThirtyMinutes() },
+                    onOpenParentDashboard = { viewModel.navigateTo(ScreenState.PARENT_DASHBOARD) }
                 )
             }
             ScreenState.CAPTURE_BATTLE -> {
@@ -109,6 +110,9 @@ fun MainGameContainer(
                     onPlayAnimalSound = { soundKey ->
                         viewModel.soundManager.playSound(com.game.wildcatcher.audio.SoundEffect.SWEET_SPOT_HIT)
                     },
+                    onSpeakGuide = { animal ->
+                        viewModel.speakAnimalGuide(animal)
+                    },
                     onBack = { viewModel.navigateTo(ScreenState.MAIN_MENU) }
                 )
             }
@@ -116,6 +120,16 @@ fun MainGameContainer(
                 UpgradeShopScreen(
                     profile = profile ?: com.game.wildcatcher.data.model.PlayerProfile(),
                     onUpgradeItem = { id, cost -> viewModel.upgradeItem(id, cost) },
+                    onBack = { viewModel.navigateTo(ScreenState.MAIN_MENU) }
+                )
+            }
+            ScreenState.PARENT_DASHBOARD -> {
+                val threshold by viewModel.restThresholdMinutes.collectAsState()
+                ParentDashboardScreen(
+                    currentRestThresholdMinutes = threshold,
+                    onRestThresholdChanged = { viewModel.setRestThreshold(it) },
+                    totalPlayMinutes = (profile?.totalActiveSeconds ?: 0L) / 60,
+                    consecutiveCaptures = profile?.totalCaptures ?: 0,
                     onBack = { viewModel.navigateTo(ScreenState.MAIN_MENU) }
                 )
             }

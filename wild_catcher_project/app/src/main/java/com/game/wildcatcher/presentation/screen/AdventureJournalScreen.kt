@@ -30,6 +30,7 @@ import com.game.wildcatcher.presentation.theme.*
 fun AdventureJournalScreen(
     animals: List<AnimalEntity>,
     onPlayAnimalSound: (String) -> Unit,
+    onSpeakGuide: (AnimalEntity) -> Unit = {},
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -202,6 +203,14 @@ fun AdventureJournalScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column {
+                                if (curr.getFullBopomofo().isNotEmpty()) {
+                                    Text(
+                                        text = curr.getFullBopomofo(),
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = SunsetAmber
+                                    )
+                                }
                                 Text(
                                     text = curr.name,
                                     style = WildTypography.headlineMedium.copy(
@@ -289,14 +298,26 @@ fun AdventureJournalScreen(
 
                                 Spacer(modifier = Modifier.height(4.dp))
 
-                                // Play Sound Button
-                                Button(
-                                    onClick = { onPlayAnimalSound(curr.callSoundName) },
-                                    colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
-                                    shape = RoundedCornerShape(8.dp),
-                                    modifier = Modifier.height(36.dp)
-                                ) {
-                                    Text("🔊 聆聽真實野生叫聲", fontSize = 11.sp)
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    // Play Sound Button
+                                    Button(
+                                        onClick = { onPlayAnimalSound(curr.callSoundName) },
+                                        colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.height(36.dp)
+                                    ) {
+                                        Text("🔊 真實叫聲", fontSize = 11.sp)
+                                    }
+
+                                    // TTS Voice Guide
+                                    Button(
+                                        onClick = { onSpeakGuide(curr) },
+                                        colors = ButtonDefaults.buttonColors(containerColor = VintageBrass),
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.height(36.dp)
+                                    ) {
+                                        Text("🗣️ 波波語音導覽", fontSize = 11.sp, color = LeatherDark, fontWeight = FontWeight.Bold)
+                                    }
                                 }
                             }
                         }

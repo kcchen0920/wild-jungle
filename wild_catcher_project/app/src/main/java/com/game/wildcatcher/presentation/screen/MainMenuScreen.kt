@@ -30,6 +30,7 @@ fun MainMenuScreen(
     onOpenShop: () -> Unit,
     onTriggerQuiz: () -> Unit,
     onSimulateThirtyMinutes: () -> Unit,
+    onOpenParentDashboard: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -162,13 +163,26 @@ fun MainMenuScreen(
                         }
                     }
 
-                    // Bottom fast health test button
-                    OutlinedButton(
-                        onClick = onSimulateThirtyMinutes,
+                    // Bottom actions: Fast health test & Parent Dashboard
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("⚡ 測試 30分鐘護眼提醒機制", fontSize = 11.sp, color = LeatherDark)
+                        OutlinedButton(
+                            onClick = onSimulateThirtyMinutes,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("⚡ 測試護眼提醒", fontSize = 11.sp, color = LeatherDark)
+                        }
+                        Button(
+                            onClick = onOpenParentDashboard,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("🛡️ 家長控制台", fontSize = 11.sp, color = Color.White)
+                        }
                     }
                 }
 

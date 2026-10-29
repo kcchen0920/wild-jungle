@@ -22,7 +22,8 @@ enum class ScreenState {
     CAPTURE_BATTLE,
     SHELTER_PARK,
     JOURNAL_ENCYCLOPEDIA,
-    UPGRADE_SHOP
+    UPGRADE_SHOP,
+    PARENT_DASHBOARD
 }
 
 class WildViewModel(application: Application) : AndroidViewModel(application) {
@@ -35,9 +36,14 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
     )
 
     val soundManager = SoundManager(application)
-    val playTimeManager = PlayTimeManager(thresholdSeconds = 30 * 60L)
+    val hapticManager = com.game.wildcatcher.audio.HapticManager(application)
+    val ttsManager = com.game.wildcatcher.audio.TtsVoiceManager(application)
+    var playTimeManager = PlayTimeManager(thresholdSeconds = 30 * 60L)
     val weatherEngine = WeatherDayNightEngine()
     val shelterEngine = ShelterEconomyEngine()
+
+    private val _restThresholdMinutes = MutableStateFlow(30)
+    val restThresholdMinutes: StateFlow<Int> = _restThresholdMinutes.asStateFlow()
 
     private val _currentScreen = MutableStateFlow(ScreenState.MAIN_MENU)
     val currentScreen: StateFlow<ScreenState> = _currentScreen.asStateFlow()
@@ -174,8 +180,19 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
         soundManager.playSound(SoundEffect.BOBO_ALERT_VOICE)
     }
 
+    fun setRestThreshold(minutes: Int) {
+        _restThresholdMinutes.value = minutes
+        playTimeManager = PlayTimeManager(thresholdSeconds = minutes * 60L)
+        _boboSpeech.value = "護眼提醒時間已更新為 ${minutes} 分鐘！"
+    }
+
+    fun speakAnimalGuide(animal: AnimalEntity) {
+        ttsManager.speakAnimalGuide(animal.name, animal.getFullBopomofo(), animal.funFact)
+    }
+
     override fun onCleared() {
         super.onCleared()
         soundManager.release()
+        ttsManager.release()
     }
 }
