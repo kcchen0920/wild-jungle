@@ -79,3 +79,27 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
 }
+
+// Automatically deploy generated APK to Google Drive kids directory
+tasks.register("deployApkToGoogleDrive") {
+    group = "distribution"
+    description = "Copies generated APK to G:/我的雲端硬碟/kids"
+    doLast {
+        val targetDir = File("G:/我的雲端硬碟/kids")
+        if (targetDir.exists()) {
+            val apkDir = File(layout.buildDirectory.asFile.get(), "outputs/apk")
+            if (apkDir.exists()) {
+                apkDir.walkTopDown().filter { it.extension == "apk" }.forEach { apkFile ->
+                    val destFile = File(targetDir, apkFile.name)
+                    apkFile.copyTo(destFile, overwrite = true)
+                    println(">> [Google Drive Sync] Deployed ${apkFile.name} -> ${destFile.absolutePath}")
+                }
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.findByName("assembleDebug")?.finalizedBy("deployApkToGoogleDrive")
+    tasks.findByName("assembleRelease")?.finalizedBy("deployApkToGoogleDrive")
+}

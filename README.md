@@ -79,6 +79,7 @@ wild_catcher_preview.html
 
 1. **Android 平板設備執行**
    - 於 Android Studio 開啟 `wild_catcher_project`，在 Android 橫向平板上點擊 Run。
+   - **Google 雲端硬碟 APK 安裝**：產出的最新 APK 會自動同步部署至 `G:\我的雲端硬碟\kids\wild_catcher-debug.apk` 與 `wild_catcher-v1.0.0.apk`，平板可直接由雲端下載安裝。
 2. **瀏覽器雙手操作即時驗證**
    - 雙擊開啟 `wild_catcher_preview.html`：
      - 左側按鈕【長按住】測試左手持續施力穩定游標（游標晃動速度立即降低 50%）。
