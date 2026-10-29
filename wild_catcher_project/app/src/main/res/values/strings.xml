@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">野性捕捉大師</string>
+    <string name="app_subtitle">Wild Catcher: Jungle &amp; Sky</string>
+    <string name="character_bobo_name">小熊貓 波波</string>
+    <string name="rest_reminder_title">🌿 波波的溫馨護眼提醒</string>
+    <string name="rest_reminder_msg">太陽要下山囉，讓眼睛休息一下，明天再來探索！</string>
+    <string name="rest_reward_title">🌙 睡飽飽隔日登入獎勵已就緒！</string>
+    <string name="rest_reward_desc">休息後精力充沛，竹香彈儲備 +100，金幣產出效率提高 1.5 倍！</string>
+</resources>

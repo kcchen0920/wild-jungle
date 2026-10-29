@@ -1,0 +1,14 @@
+<resources>
+    <!-- Dave the Diver Leather & Parchment Palette -->
+    <color name="leather_dark">#2B1B17</color>
+    <color name="leather_brown">#4A2E1B</color>
+    <color name="parchment_bg">#F7F2E4</color>
+    <color name="parchment_yellow">#EFE5CB</color>
+    <color name="ink_black">#1F2421</color>
+    <color name="brass_gold">#C89D42</color>
+    <color name="bamboo_green">#2E7D32</color>
+    <color name="bamboo_light">#81C784</color>
+    <color name="bubble_cyan">#26C6DA</color>
+    <color name="sunset_warm">#FFA726</color>
+    <color name="alert_red">#D32F2F</color>
+</resources>

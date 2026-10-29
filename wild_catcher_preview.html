@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>野性捕捉大師 (Wild Catcher: Jungle & Sky) - 平板橫向模擬體驗</title>
+<style>
+  :root {
+    --leather-dark: #2B1B17;
+    --leather-brown: #4A2E1B;
+    --parchment-bg: #F7F2E4;
+    --parchment-card: #EFE6CD;
+    --parchment-border: #D6C8A8;
+    --vintage-brass: #C89D42;
+    --brass-highlight: #FFD57A;
+    --bamboo-green: #2E7D32;
+    --bamboo-light: #81C784;
+    --ink-black: #1F2421;
+    --ink-grey: #5A5852;
+    --bubble-cyan: #00ACC1;
+    --sunset-amber: #FF8F00;
+    --danger-coral: #D32F2F;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+  body {
+    background: #120B08;
+    color: var(--ink-black);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  /* Forced Landscape 16:10 Tablet Canvas Frame */
+  #tablet-wrapper {
+    width: 960px;
+    height: 600px;
+    background: linear-gradient(135deg, #3A2315, #1B0F0A);
+    border: 5px solid var(--vintage-brass);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 15px rgba(200,157,66,0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  #eye-care-filter {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 168, 52, 0.18);
+    pointer-events: none;
+    z-index: 99;
+    display: none;
+    transition: opacity 0.5s ease;
+  }
+  #eye-care-filter.active { display: block; }
+  
+  /* Top Tablet Status Bar */
+  .hud-header {
+    height: 44px;
+    background: rgba(43, 27, 23, 0.95);
+    border-bottom: 2px solid var(--vintage-brass);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    color: #FFF;
+    font-size: 13px;
+    z-index: 10;
+  }
+  .hud-stats { display: flex; gap: 16px; align-items: center; }
+  .hud-badge { background: #3E2723; padding: 3px 10px; border-radius: 12px; border: 1px solid var(--vintage-brass); }
+
+  /* Screens */
+  .screen {
+    flex: 1;
+    display: none;
+    position: relative;
+    padding: 16px;
+    background: var(--parchment-bg);
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* Notebook Dave Style Frame */
+  .notebook-container {
+    flex: 1;
+    background: var(--parchment-bg);
+    border: 2px solid var(--parchment-border);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.04);
+  }
+
+  /* Main Menu Screen */
+  .menu-grid {
+    display: flex;
+    gap: 18px;
+    flex: 1;
+  }
+  .profile-panel {
+    width: 320px;
+    background: var(--parchment-card);
+    border: 1.5px solid var(--parchment-border);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .action-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .btn-expedition {
+    background: linear-gradient(180deg, #388E3C, #1B5E20);
+    color: white;
+    border: 2px solid var(--vintage-brass);
+    padding: 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.1s, filter 0.1s;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  }
+  .btn-expedition:hover { filter: brightness(1.1); transform: translateY(-2px); }
+  .menu-sub-row { display: flex; gap: 12px; }
+  .card-btn {
+    flex: 1;
+    background: var(--parchment-card);
+    border: 1.5px solid var(--vintage-brass);
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .card-btn:hover { background: #E8DDBF; transform: translateY(-2px); }
+
+  /* Battle Screen */
+  #battle-screen {
+    background: linear-gradient(180deg, #1D3557, #0B192C);
+    color: white;
+    position: relative;
+  }
+  #battle-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+  .battle-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px;
+    z-index: 5;
+  }
+  .battle-top { display: flex; justify-content: space-between; align-items: center; pointer-events: auto; }
+  .qte-control-panel {
+    background: rgba(30, 20, 16, 0.94);
+    border: 2px solid var(--vintage-brass);
+    border-radius: 18px;
+    padding: 14px 20px;
+    width: 680px;
+    margin: 0 auto;
+    pointer-events: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
+  .qte-bar-track {
+    height: 38px;
+    background: #111;
+    border-radius: 19px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.2);
+    margin: 10px 0;
+  }
+  .qte-sweet-spot {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    background: rgba(46, 125, 50, 0.75);
+    border: 2px solid var(--brass-highlight);
+    border-radius: 16px;
+    box-shadow: 0 0 12px rgba(129, 199, 132, 0.8);
+    transition: width 0.3s;
+  }
+  .qte-cursor {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    top: 5px;
+    transform: translateX(-50%);
+    background: #FFF;
+    border: 3px solid var(--danger-coral);
+    box-shadow: 0 0 10px rgba(255,255,255,0.9);
+  }
+  .qte-cursor.in-sweet { border-color: var(--brass-highlight); background: #FFF; box-shadow: 0 0 16px #FFD57A; }
+  .btn-reel {
+    background: var(--bamboo-green);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    flex: 1;
+  }
+  .btn-incense {
+    background: #5D4037;
+    color: white;
+    padding: 12px 18px;
+    border: 1px solid var(--vintage-brass);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  /* Journal Screen */
+  .journal-split { display: flex; gap: 16px; height: 100%; }
+  .journal-list {
+    width: 260px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--parchment-card);
+    border-radius: 10px;
+    padding: 8px;
+  }
+  .journal-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    border: 1px solid transparent;
+  }
+  .journal-item.active { background: rgba(200, 157, 66, 0.25); border-color: var(--vintage-brass); font-weight: bold; }
+  .journal-detail {
+    flex: 1;
+    background: var(--parchment-card);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Assistant Bobo Bubble */
+  .bobo-bubble {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background: var(--parchment-card);
+    border: 2px solid var(--vintage-brass);
+    border-radius: 16px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    z-index: 20;
+    max-width: 320px;
+  }
+
+  /* Rest Modal */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box {
+    width: 500px;
+    background: var(--parchment-bg);
+    border: 3px solid var(--vintage-brass);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+  }
+</style>
+</head>
+<body>
+
+<div id="tablet-wrapper">
+  <!-- Warm Eye-Care Filter -->
+  <div id="eye-care-filter"></div>
+
+  <!-- HUD Bar -->
+  <div class="hud-header">
+    <div style="font-weight:bold; color:var(--brass-highlight);">🎋 野性捕捉大師 (Wild Catcher)</div>
+    <div class="hud-stats">
+      <div class="hud-badge">💰 竹幣: <span id="hud-coins" style="color:var(--brass-highlight);">1200</span></div>
+      <div class="hud-badge">🌐 泡泡彈: <span id="hud-ammo">50</span>/100</div>
+      <div class="hud-badge">⏱️ 遊玩時長: <span id="hud-time">00:00</span></div>
+      <button onclick="toggleEyeCare()" style="background:#5D4037; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:2px 8px; cursor:pointer; font-size:11px;">護眼切換</button>
+      <button onclick="fastForward30Mins()" style="background:var(--sunset-amber); color:#000; border:none; border-radius:6px; padding:2px 8px; cursor:pointer; font-size:11px; font-weight:bold;">⚡ 觸發30分提醒</button>
+    </div>
+  </div>
+
+  <!-- Bobo Speech Bubble -->
+  <div class="bobo-bubble" id="bobo-bubble">
+    <div style="font-size:24px;">🐾</div>
+    <div>
+      <div style="font-weight:bold; color:var(--leather-brown); font-size:11px;">小熊貓 波波</div>
+      <div id="bobo-text">歡迎來到野性冒險世界！今天想去哪座生態園區捕捉動物呢？</div>
+    </div>
+  </div>
+
+  <!-- Screen 1: Main Menu -->
+  <div class="screen active" id="screen-menu">
+    <div class="notebook-container">
+      <div class="menu-grid">
+        <!-- Dave profile left panel -->
+        <div class="profile-panel">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div style="font-size:32px; background:var(--bamboo-green); border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; border:2px solid var(--vintage-brass);">👓</div>
+              <div>
+                <div style="font-weight:bold; font-size:16px;">野生動物守護員 戴夫</div>
+                <div style="font-size:12px; color:var(--bamboo-green); font-weight:600;">等級 3 資深保育官</div>
+              </div>
+            </div>
+            <div style="background:var(--parchment-bg); padding:10px; border-radius:8px; border:1px solid var(--parchment-border); font-size:12px; line-height:1.8;">
+              <div>連續未捕獲次數: <span id="stat-failures" style="font-weight:bold; color:var(--danger-coral);">0</span></div>
+              <div>動態輔助(DDA): <span id="stat-dda" style="font-weight:bold; color:var(--bamboo-green);">正常難度</span></div>
+              <div>已收納庇護動物: <span id="stat-animals-count" style="font-weight:bold;">2</span> 隻</div>
+            </div>
+          </div>
+          <div style="background:#FFF9C4; padding:8px; border-radius:8px; font-size:11px; border:1px solid var(--sunset-amber);">
+            💡 波波提醒：在動物游標落入綠色甜蜜區時按下【壓制收線】，成功率最高！
+          </div>
+        </div>
+
+        <!-- Action panel -->
+        <div class="action-panel">
+          <div>
+            <div style="font-size:26px; font-weight:800; color:var(--leather-brown); font-family:serif;">野性捕捉大師：叢林與天空</div>
+            <div style="font-size:12px; color:var(--ink-grey); margin-bottom:14px;">WILD CATCHER: JUNGLE &amp; SKY · 潛水員戴夫風冒險筆記</div>
+          </div>
+
+          <button class="btn-expedition" onclick="startBattle()">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:28px;">🎯</span>
+              <div style="text-align:left;">
+                <div>出征探索野生生境</div>
+                <div style="font-size:12px; font-weight:normal; opacity:0.85;">持熊貓槍捕捉寫實動物，支援QTE動態甜蜜點</div>
+              </div>
+            </div>
+            <span>出發 ▶</span>
+          </button>
+
+          <div class="menu-sub-row">
+            <div class="card-btn" onclick="openJournal()">
+              <div style="font-weight:bold; font-size:14px;">📖 32種動物圖鑑</div>
+              <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">全量收錄台灣黑熊、石虎、金絲猴等PBR寫實檔案</div>
+            </div>
+            <div class="card-btn" onclick="openShelter()">
+              <div style="font-weight:bold; font-size:14px;">🏡 自然生態庇護所</div>
+              <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">安置野生動物，賺取遊客門票升級裝備</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Battle Screen -->
+  <div class="screen" id="screen-battle">
+    <canvas id="battle-canvas"></canvas>
+    <div class="battle-overlay">
+      <div class="battle-top">
+        <button onclick="backToMenu()" style="background:rgba(0,0,0,0.6); color:var(--vintage-brass); border:1px solid var(--vintage-brass); border-radius:8px; padding:6px 14px; cursor:pointer;">◀ 返回營地</button>
+        <div id="target-info-card" style="background:rgba(0,0,0,0.7); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:6px 14px; text-align:right;">
+          <div style="font-weight:bold; font-size:16px;" id="battle-target-name">台灣黑熊</div>
+          <div style="font-size:11px; color:#CCC;" id="battle-target-habitat">棲地：高山原始針闊葉林</div>
+        </div>
+      </div>
+
+      <!-- QTE Bar -->
+      <div class="qte-control-panel">
+        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;">
+          <span style="color:var(--bubble-cyan);">🌐 泡泡網收攏度: <span id="qte-progress-num">0%</span></span>
+          <span style="color:var(--danger-coral);">⚠️ 掙脫警戒度: <span id="qte-tension-num">0%</span></span>
+        </div>
+        <div class="qte-bar-track">
+          <div class="qte-sweet-spot" id="qte-sweet-spot" style="left:35%; width:30%;"></div>
+          <div class="qte-cursor" id="qte-cursor" style="left:50%;"></div>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:8px;">
+          <button class="btn-incense" onclick="useIncenseDart()">🎋 竹香安撫彈 (<span id="incense-count">3</span>)</button>
+          <button class="btn-reel" id="btn-reel" onclick="reelCapture()">⚡ 壓制收線！(點擊綠色區)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Journal Screen -->
+  <div class="screen" id="screen-journal">
+    <div class="notebook-container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="font-size:18px; font-weight:bold;">📖 32 種寫實野生動物圖鑑 (全量物種收錄)</div>
+        <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:4px 12px; cursor:pointer;">關閉</button>
+      </div>
+      <div class="journal-split">
+        <div class="journal-list" id="journal-list-items"></div>
+        <div class="journal-detail" id="journal-detail-panel">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div style="font-size:22px; font-weight:bold;" id="jd-name">台灣黑熊</div>
+                <div style="font-size:12px; font-style:italic; color:var(--ink-grey);" id="jd-sci">Ursus thibetanus formosanus</div>
+              </div>
+              <div id="jd-badge" style="padding:4px 10px; border-radius:6px; font-size:12px; font-weight:bold; background:#FFF8E1; color:#E65100;">VU 易危 (黃燈)</div>
+            </div>
+            <div style="display:flex; gap:16px; margin-top:14px;">
+              <canvas id="journal-preview-canvas" width="160" height="160" style="background:#231914; border-radius:12px; border:1px solid var(--vintage-brass);"></canvas>
+              <div style="font-size:12px; line-height:1.7;">
+                <div>📍 棲息生境：<span id="jd-habitat">高山原始闊葉針葉林</span></div>
+                <div>☀️ 活動習性：<span id="jd-cycle">日行性</span></div>
+                <div>💰 庇護收益：<span id="jd-coins" style="font-weight:bold; color:var(--sunset-amber);">85</span> 竹幣/小時</div>
+                <button onclick="playSampleSound()" style="margin-top:10px; background:var(--bamboo-green); color:white; border:none; border-radius:6px; padding:6px 14px; cursor:pointer; font-size:12px;">🔊 播放真實叫聲</button>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--parchment-bg); border:1px solid var(--parchment-border); border-radius:8px; padding:10px; font-size:12px; line-height:1.6;">
+            <div>💡 <strong>生物特性：</strong><span id="jd-fact">胸前有醒目的白色V字斑紋，善於爬樹和游泳！</span></div>
+            <div style="margin-top:4px;">🌱 <strong>生態地位：</strong><span id="jd-eco">台灣特有亞種，為亞洲黑熊分布於海島之特殊族群。</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Shelter Park -->
+  <div class="screen" id="screen-shelter">
+    <div class="notebook-container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-size:18px; font-weight:bold;">🏡 綠色野生生態庇護所</div>
+        <div style="display:flex; gap:8px;">
+          <button onclick="collectTicketCoins()" style="background:var(--bamboo-green); color:#FFF; border:none; border-radius:6px; padding:6px 14px; cursor:pointer; font-weight:bold;">💰 領取門票收益 (+<span id="shelter-income-num">180</span> 幣)</button>
+          <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:4px 12px; cursor:pointer;">關閉</button>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:1;">
+        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-weight:bold; font-size:15px;">🌴 熱帶雨林巨木區</div>
+            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">收容低地密林物種，石虎與紅毛猩猩在林間悠遊。</div>
+          </div>
+          <div style="font-size:12px; color:var(--bamboo-green); font-weight:bold;">已收容：石虎 (1/10) · 遊客滿意度 98%</div>
+        </div>
+        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-weight:bold; font-size:15px;">🌲 高山針葉與雲海區</div>
+            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">高海拔清冽空氣，台灣黑熊與水鹿享受自然微風。</div>
+          </div>
+          <div style="font-size:12px; color:var(--bamboo-green); font-weight:bold;">已收容：台灣黑熊、台灣水鹿 (2/8)</div>
+        </div>
+        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-weight:bold; font-size:15px;">🦅 晴空風洞猛禽區</div>
+            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">高聳通透的巨型風動網罩，大冠鷲振翅盤旋。</div>
+          </div>
+          <div style="font-size:12px; color:var(--sunset-amber);">容納量：0/8 · 產值 +100/h</div>
+        </div>
+        <div style="background:var(--parchment-card); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-weight:bold; font-size:15px;">💧 清溪瀑布活水區</div>
+            <div style="font-size:11px; color:var(--ink-grey); margin-top:4px;">16℃純淨冰冷溪水，供櫻花鉤吻鮭與水獺繁衍。</div>
+          </div>
+          <div style="font-size:12px; color:var(--sunset-amber);">容納量：0/8 · 產值 +150/h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rest Alert Modal -->
+  <div class="modal-overlay" id="rest-modal">
+    <div class="modal-box">
+      <div style="font-size:44px; margin-bottom:10px;">🌅</div>
+      <div style="font-size:20px; font-weight:bold; color:var(--leather-brown); font-family:serif;">🌿 波波的溫馨護眼提醒</div>
+      <div style="font-size:14px; margin:12px 0; color:var(--ink-black); line-height:1.6;">
+        「太陽要下山囉，讓眼睛休息一下，明天再來探索！」
+      </div>
+      <div style="background:#FFF8E1; border:1px solid var(--sunset-amber); border-radius:10px; padding:10px; font-size:12px; margin-bottom:18px; text-align:left;">
+        🌙 <strong>睡飽飽隔日登入獎勵已預約！</strong><br>
+        現在放下平板休息，下次登入即可獲贈 <strong>500 竹幣</strong> 與 <strong>10 顆金竹種子</strong>，並自動啟用護眼暖色模式！
+      </div>
+      <div style="display:flex; gap:12px;">
+        <button onclick="dismissRestModal(true)" style="flex:1; background:#EEE; border:1px solid #CCC; padding:10px; border-radius:8px; cursor:pointer;">開啟護眼色溫</button>
+        <button onclick="dismissRestModal(false)" style="flex:1; background:var(--bamboo-green); color:#FFF; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">好好休息 (預約獎勵)</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Complete 32 Realistic Fauna Dataset
+const ALL_32_ANIMALS = [
+  { id: "formosan_black_bear", name: "台灣黑熊", sci: "Ursus thibetanus formosanus", grade: "VU 易危 (黃燈)", color: "#1A1A1E", habitat: "高山原始闊葉針葉林", cycle: "日行性", coins: 85, fact: "胸前有醒目的白色V字斑紋，善於爬樹和游泳！", eco: "台灣特有亞種，為亞洲黑熊分布於海島之特殊族群。" },
+  { id: "leopard_cat", name: "石虎", sci: "Prionailurus bengalensis chinensis", grade: "EN 瀕危 (紅燈)", color: "#C48A42", habitat: "低海拔淺山丘陵森林", cycle: "夜行性", coins: 110, fact: "耳後有黑底白斑，是台灣現存唯一的本土原生野生貓科！", eco: "擅長夜間伏擊小型哺乳類，受淺山開發嚴重威脅。" },
+  { id: "formosan_sambar", name: "台灣水鹿", sci: "Rusa unicolor swinhoei", grade: "LC 無危 (綠燈)", color: "#6E4F32", habitat: "中央山脈高山草原與箭竹林", cycle: "晨昏出沒", coins: 45, fact: "台灣原生最大型草食動物，雄鹿有分叉雄角，喜歡泡泥澡！", eco: "常成群出現在近水草生地，具有磨角標記領域習性。" },
+  { id: "crested_serpent_eagle", name: "大冠鷲", sci: "Spilornis cheela hoya", grade: "LC 無危 (綠燈)", color: "#3E2723", habitat: "低海拔山區晴空盤旋帶", cycle: "日行性", coins: 60, fact: "俗稱蛇鷹，後枕有發達羽冠，熱氣流旺盛時常展翅翱翔！", eco: "以蛇類與蜥蜴為主食，是低海拔生態鏈頂級猛禽。" },
+  { id: "collared_scops_owl", name: "領角鴞", sci: "Otus lettia", grade: "LC 無危 (綠燈)", color: "#795548", habitat: "低中海拔次生林與城市綠帶", cycle: "夜行性", coins: 40, fact: "眼睛大而凝視，頭頂有一對角羽，夜晚常發出不──不叫聲！", eco: "羽毛表面具有消音絨毛，飛行無聲無息。" },
+  { id: "chinese_pangolin", name: "穿山甲", sci: "Manis pentadactyla", grade: "CR 極危 (紅燈)", color: "#8D6E63", habitat: "淺山竹林與開闊斜坡", cycle: "夜行性", coins: 95, fact: "渾身覆蓋硬質角蛋白鱗甲，受威脅時捲成堅硬球體！", eco: "專食白蟻與螞蟻，發達前爪擅長挖掘數公尺深洞。" },
+  { id: "golden_snub_nosed_monkey", name: "川金絲猴", sci: "Rhinopithecus roxellana", grade: "EN 瀕危 (紅燈)", color: "#E67E22", habitat: "高山溫帶針葉與落葉林冠", cycle: "日行性", coins: 80, fact: "仰鼻藍面、金絲毛皮披肩，耐寒力極高！", eco: "社會結構複雜，以樹皮、地衣與嫩芽為食。" },
+  { id: "formosan_landlocked_salmon", name: "櫻花鉤吻鮭", sci: "Oncorhynchus masou formosanus", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "高山冰冷溪澗 (16℃以下)", cycle: "日行性", coins: 150, fact: "冰河時期的活化石孑遺生物！地殼隆起而成為陸封型鮭魚！", eco: "對水質潔淨度與低水溫極度敏感，側線有紫金色斑。" },
+  { id: "indochinese_tiger", name: "印支虎", sci: "Panthera tigris corbetti", grade: "CR 極危 (紅燈)", color: "#D35400", habitat: "濃密未受侵擾的原始密林", cycle: "晨昏出沒", coins: 220, fact: "頂級掠食之王！黑橙條紋如幽靈般融入密林光斑！", eco: "領域廣闊，仰賴大型鹿類與野豬維生。" },
+  { id: "malayan_tapir", name: "馬來貘", sci: "Tapirus indicus", grade: "EN 瀕危 (紅燈)", color: "#2C3E50", habitat: "熱帶低地雨林與沼澤溪畔", cycle: "夜行性", coins: 75, fact: "黑白兩截障眼配色讓掠食者錯看成大石塊！長鼻能伸縮。", eco: "體型沉重但擅長涉水，是雨林植物種子傳播關鍵物種。" },
+  { id: "toco_toucan", name: "托哥巨嘴鳥", sci: "Ramphastos toco", grade: "LC 無危 (綠燈)", color: "#263238", habitat: "熱帶雨林高層樹冠", cycle: "日行性", coins: 55, fact: "大嘴雖然長達20公分，但內部如同蜂巢骨骼結構，重量極輕！", eco: "愛吃雨林無花果與小型昆蟲，透過鮮明色彩識別同伴。" },
+  { id: "three_toed_sloth", name: "三趾樹懶", sci: "Bradypus tridactylus", grade: "LC 無危 (綠燈)", color: "#616161", habitat: "潮濕常綠雨林枝椏", cycle: "日行性", coins: 35, fact: "代謝速度世界最慢！身上毛髮甚至長出共生藻類！", eco: "每週僅下樹一次排便，絕大部分時間倒掛在樹冠隱匿。" },
+  { id: "panther_chameleon", name: "七彩變色龍", sci: "Furcifer pardalis", grade: "LC 無危 (綠燈)", color: "#43A047", habitat: "林緣灌木叢與低矮藤蔓", cycle: "日行性", coins: 50, fact: "雙眼可各自獨立360度旋轉觀察！舌頭彈出速度快如閃電！", eco: "利用皮膚下鳥嘌呤奈米晶體反射光線改變體色。" },
+  { id: "poison_dart_frog", name: "幽靈箭毒蛙", sci: "Epipedobates tricolor", grade: "VU 易危 (黃燈)", color: "#D81B60", habitat: "瀑布潮濕石縫與雨林落葉", cycle: "日行性", coins: 85, fact: "體型僅如大拇指指甲般精緻，身披警戒鮮紅黑紋！", eco: "雄蛙會將孵化的蝌蚪背負至積水鳳梨葉鞘中育幼。" },
+  { id: "rhinoceros_hornbill", name: "馬來犀鳥", sci: "Buceros rhinoceros", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "參天大樹樹冠與高空航道", cycle: "日行性", coins: 70, fact: "喙部上方長有如金色頭盔的巨大盔突，發聲時產生強烈共鳴！", eco: "終身一夫一妻制，繁殖期母鳥會用泥巴封在樹洞內育幼。" },
+  { id: "bornean_orangutan", name: "婆羅洲紅毛猩猩", sci: "Pongo pygmaeus", grade: "CR 極危 (紅燈)", color: "#BF360C", habitat: "原始泥炭沼澤林與低地雨林", cycle: "日行性", coins: 130, fact: "每天傍晚會挑選堅固樹枝編織厚實舒適的樹巢，還會撐芭蕉葉遮雨！", eco: "基因與人類有高達97%相似，因棕櫚油開墾瀕危。" },
+  { id: "green_iguana", name: "美洲鬣蜥", sci: "Iguana iguana", grade: "LC 無危 (綠燈)", color: "#2E7D32", habitat: "河岸林冠近水枝幹", cycle: "日行性", coins: 45, fact: "擅長從十幾公尺高的樹枝跳入溪流潛水逃生！", eco: "草食性爬蟲類，喜歡攀爬至日光充足高處曬背。" },
+  { id: "ruffed_lemur", name: "白頸狐猴", sci: "Varecia variegata", grade: "CR 極危 (紅燈)", color: "#37474F", habitat: "馬達加斯加東部高聳林冠", cycle: "日行性", coins: 90, fact: "嗓音宏亮穿透山谷，脖子長有厚實雪白毛領！", eco: "對花蜜與果實極具依賴性，是當地巨型花卉授粉者。" },
+  { id: "formosan_macaque", name: "台灣獼猴", sci: "Macaca cyclopis", grade: "LC 無危 (綠燈)", color: "#5D4037", habitat: "中低海拔森林岩石邊界", cycle: "日行性", coins: 48, fact: "頰囊能像口袋一樣塞入好幾顆野果慢慢咀嚼！", eco: "特有種群居社會，具有高智商階級協作系統。" },
+  { id: "swinhoe_pheasant", name: "藍腹鷴", sci: "Lophura swinhoii", grade: "NT 近危 (黃燈)", color: "#1A237E", habitat: "原始天然闊葉林深密底層", cycle: "晨昏出沒", coins: 65, fact: "雄鳥通體金屬靛藍光澤，背部有一片純白菱形羽斑！", eco: "生性羞怯警覺，清晨與黃昏常在林道安靜翻找落葉層。" },
+  { id: "mikado_pheasant", name: "黑長尾雉 (帝雉)", sci: "Syrmaticus mikado", grade: "NT 近危 (黃燈)", color: "#283593", habitat: "雲霧繚繞之高山針葉林", cycle: "晨昏出沒", coins: 100, fact: "千元大鈔上的國寶鳥！羽毛在陽光下泛出深沉紫藍光澤！", eco: "又稱迷霧中的王者，偏好在大霧或細雨綿綿的天氣現身。" },
+  { id: "moltrecht_tree_frog", name: "莫氏樹蛙", sci: "Zhangixalus moltrechti", grade: "LC 無危 (綠燈)", color: "#388E3C", habitat: "山區果園落葉積水與竹筒", cycle: "夜行性", coins: 38, fact: "指尖長有發達吸盤，大腿內側隱藏著亮橙紅色黑斑！", eco: "台灣分布最廣的綠色樹蛙，常打出泡沫卵塊護卵。" },
+  { id: "eurasian_otter", name: "歐亞水獺", sci: "Lutra lutra", grade: "NT 近危 (黃燈)", color: "#4E342E", habitat: "純淨天然溪流與池塘", cycle: "夜行性", coins: 88, fact: "水下流線型身段靈動如飛魚，皮毛具有密實防水絨毛！", eco: "夜行性頂級水域掠食者，主食魚蝦蟹類。" },
+  { id: "asian_elephant", name: "亞洲象", sci: "Elephas maximus", grade: "EN 瀕危 (紅燈)", color: "#455A64", habitat: "熱帶闊葉林與開闊草生地", cycle: "日行性", coins: 180, fact: "象鼻由四萬多條肌肉組成，能拔大樹亦能拾起落花生！", eco: "母系社會大群集體行動，透過次聲波穿透數公里傳訊。" },
+  { id: "clouded_leopard", name: "雲豹", sci: "Neofelis nebulosa", grade: "VU 易危 (黃燈)", color: "#D7CCC8", habitat: "亞熱帶原始高鬱閉度森林", cycle: "夜行性", coins: 190, fact: "擁有相對於頭部比例世界最長的犬齒！能倒立爬樹！", eco: "樹棲性極強，大塊雲狀黑斑在樹影中具備完美隱形擬態。" },
+  { id: "cheetah", name: "獵豹", sci: "Acinonyx jubatus", grade: "VU 易危 (黃燈)", color: "#FFA000", habitat: "林緣稀樹草原與開闊平原", cycle: "日行性", coins: 120, fact: "陸地極速之王！0至100公里加速僅需3秒！", eco: "眼角有黑色淚痕狀花紋吸收強烈陽光眩光。" },
+  { id: "andean_condor", name: "安地斯神鷹", sci: "Vultur gryphus", grade: "VU 易危 (黃燈)", color: "#263238", habitat: "高山斷崖峭壁強勁氣流區", cycle: "日行性", coins: 110, fact: "翼展超過3.2公尺的巨大飛禽，能滑翔數小時！", eco: "食腐性猛禽，是高山生態系中不可或缺的清道夫。" },
+  { id: "snow_leopard", name: "雪豹", sci: "Panthera uncia", grade: "VU 易危 (黃燈)", color: "#ECEFF1", habitat: "高山雪線以上之峭壁絕壁", cycle: "晨昏出沒", coins: 210, fact: "雪山之王！毛茸茸長尾巴睡覺時能當圍巾包覆面部！", eco: "灰色煙狀花紋完全融入岩石陰影，腳掌寬大如天然雪鞋。" },
+  { id: "serval", name: "藪貓", sci: "Leptailurus serval", grade: "LC 無危 (綠燈)", color: "#FFB300", habitat: "蘆葦沼澤與高草林緣地帶", cycle: "晨昏出沒", coins: 70, fact: "貓科界長腿名模！耳朵如雷達，能躍起3公尺截擊飛鳥！", eco: "依賴極敏銳聽覺鎖定草叢中移動的鼠類。" },
+  { id: "binturong", name: "熊狸", sci: "Arctictis binturong", grade: "VU 易危 (黃燈)", color: "#212121", habitat: "熱帶雨林高處樹冠", cycle: "夜行性", coins: 65, fact: "尾巴具有抓握力，身上散發濃濃的剛出爐爆米花香味！", eco: "罕見的樹棲靈貓科夜行動物，在雨林中能助種子萌芽。" },
+  { id: "proboscis_monkey", name: "長鼻猴", sci: "Nasalis larvatus", grade: "EN 瀕危 (紅燈)", color: "#E65100", habitat: "紅樹林與河流下游森林", cycle: "日行性", coins: 95, fact: "成年雄猴有巨大的懸垂大紅鼻子，趾間有微蹼擅長游泳！", eco: "擁有特化複雜胃室，專食紅樹林酸性嫩葉。" },
+  { id: "sword_billed_hummingbird", name: "刀嘴蜂鳥", sci: "Ensifera ensifera", grade: "LC 無危 (綠燈)", color: "#00897B", habitat: "高山雲霧林花冠層", cycle: "日行性", coins: 105, fact: "鳥喙比全身軀幹還長的奇蹟物種！每秒拍翅可達80次！", eco: "專門與超長筒狀曼陀羅與西番蓮共生授粉。" }
+];
+
+// Game State
+let gameState = {
+  coins: 1200,
+  ammo: 50,
+  incenseAmmo: 3,
+  consecutiveFailures: 0,
+  playSeconds: 0,
+  eyeCareActive: false,
+  targetAnimal: ALL_32_ANIMALS[0]
+};
+
+// Play Time Timer loop
+setInterval(() => {
+  gameState.playSeconds++;
+  const m = Math.floor(gameState.playSeconds / 60);
+  const s = gameState.playSeconds % 60;
+  document.getElementById("hud-time").innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  if (gameState.playSeconds >= 1800) {
+    document.getElementById("rest-modal").classList.add("active");
+  }
+}, 1000);
+
+function toggleEyeCare() {
+  gameState.eyeCareActive = !gameState.eyeCareActive;
+  document.getElementById("eye-care-filter").classList.toggle("active", gameState.eyeCareActive);
+}
+
+function fastForward30Mins() {
+  gameState.playSeconds = 1800;
+  document.getElementById("rest-modal").classList.add("active");
+}
+
+function dismissRestModal(enableWarm) {
+  document.getElementById("rest-modal").classList.remove("active");
+  if (enableWarm) {
+    gameState.eyeCareActive = true;
+    document.getElementById("eye-care-filter").classList.add("active");
+  }
+  setBoboSpeech("護眼暖光已啟用！祝戴夫探險順利～");
+}
+
+function setBoboSpeech(text) {
+  document.getElementById("bobo-text").innerText = text;
+}
+
+// Navigation
+function switchScreen(screenId) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(screenId).classList.add("active");
+}
+
+function backToMenu() {
+  stopBattleLoop();
+  switchScreen("screen-menu");
+}
+
+function openJournal() {
+  switchScreen("screen-journal");
+  renderJournalList();
+  selectJournalAnimal(0);
+}
+
+function openShelter() {
+  switchScreen("screen-shelter");
+}
+
+function collectTicketCoins() {
+  gameState.coins += 180;
+  document.getElementById("hud-coins").innerText = gameState.coins;
+  setBoboSpeech("門票收益 180 竹幣已入袋！");
+}
+
+// Battle & Dynamic QTE System
+let battleAnimId = null;
+let qte = {
+  cursor: 0.5,
+  velocity: 1.2,
+  sweetCenter: 0.5,
+  sweetWidth: 0.25,
+  progress: 0.0,
+  tension: 0.0,
+  inSweet: false,
+  incenseBuff: false
+};
+
+function startBattle() {
+  // Random select animal
+  gameState.targetAnimal = ALL_32_ANIMALS[Math.floor(Math.random() * ALL_32_ANIMALS.length)];
+  document.getElementById("battle-target-name").innerText = gameState.targetAnimal.name;
+  document.getElementById("battle-target-habitat").innerText = "棲地：" + gameState.targetAnimal.habitat;
+
+  // Apply DDA (Dynamic Difficulty Adjustment)
+  let ddaBonus = 0;
+  if (gameState.consecutiveFailures >= 3) ddaBonus = 0.18;
+  else if (gameState.consecutiveFailures >= 2) ddaBonus = 0.12;
+  else if (gameState.consecutiveFailures >= 1) ddaBonus = 0.06;
+
+  qte.sweetWidth = Math.min(0.55, 0.22 + ddaBonus);
+  qte.sweetCenter = 0.5;
+  qte.progress = 0.0;
+  qte.tension = 0.0;
+  qte.cursor = 0.5;
+  qte.incenseBuff = false;
+  qte.velocity = 1.35 * (gameState.consecutiveFailures > 0 ? 0.8 : 1.0);
+
+  // Update Sweet spot element in DOM
+  const leftPct = (qte.sweetCenter - qte.sweetWidth / 2) * 100;
+  const widthPct = qte.sweetWidth * 100;
+  const sweetEl = document.getElementById("qte-sweet-spot");
+  sweetEl.style.left = leftPct + "%";
+  sweetEl.style.width = widthPct + "%";
+
+  document.getElementById("incense-count").innerText = gameState.incenseAmmo;
+
+  switchScreen("screen-battle");
+  startBattleLoop();
+  setBoboSpeech(`發現【${gameState.targetAnimal.name}】！瞄準甜蜜點收線捕捉！`);
+}
+
+function startBattleLoop() {
+  const canvas = document.getElementById("battle-canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+
+  let time = 0;
+  function loop() {
+    time += 0.02;
+    // Oscillate cursor
+    const speed = qte.incenseBuff ? qte.velocity * 0.6 : qte.velocity;
+    qte.cursor = 0.5 + (Math.sin(time * speed * 3) + Math.sin(time * speed * 1.5) * 0.3) * 0.38;
+    qte.cursor = Math.max(0.05, Math.min(0.95, qte.cursor));
+
+    // Check sweet spot
+    const minS = qte.sweetCenter - qte.sweetWidth / 2;
+    const maxS = qte.sweetCenter + qte.sweetWidth / 2;
+    qte.inSweet = (qte.cursor >= minS && qte.cursor <= maxS);
+
+    // Update DOM cursor
+    const curEl = document.getElementById("qte-cursor");
+    curEl.style.left = (qte.cursor * 100) + "%";
+    curEl.classList.toggle("in-sweet", qte.inSweet);
+
+    // Tension gradual tick
+    if (!qte.inSweet) qte.tension = Math.min(1.0, qte.tension + 0.0008);
+    else qte.tension = Math.max(0.0, qte.tension - 0.0006);
+
+    document.getElementById("qte-progress-num").innerText = Math.floor(qte.progress * 100) + "%";
+    document.getElementById("qte-tension-num").innerText = Math.floor(qte.tension * 100) + "%";
+
+    // Escape check
+    if (qte.tension >= 1.0) {
+      stopBattleLoop();
+      gameState.consecutiveFailures++;
+      updateDdaUi();
+      alert(`🍃 ${gameState.targetAnimal.name} 掙脫了！波波安慰道：別灰心，下次甜蜜點會放寬！`);
+      backToMenu();
+      return;
+    }
+
+    // Render Canvas Realistic PBR Animal
+    renderPbrAnimal(ctx, canvas.width, canvas.height, time, gameState.targetAnimal);
+
+    battleAnimId = requestAnimationFrame(loop);
+  }
+  battleAnimId = requestAnimationFrame(loop);
+}
+
+function stopBattleLoop() {
+  if (battleAnimId) {
+    cancelAnimationFrame(battleAnimId);
+    battleAnimId = null;
+  }
+}
+
+function renderPbrAnimal(ctx, w, h, time, animal) {
+  ctx.clearRect(0, 0, w, h);
+
+  const cx = w / 2;
+  const cy = h / 2 - 30 + Math.sin(time * 2) * 8;
+  const radius = 100;
+
+  // Dynamic light direction
+  const lx = Math.cos(time * 0.8) * 0.5;
+  const ly = Math.sin(time * 0.8) * 0.3;
+
+  // Ground shadow
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + radius * 1.05, radius * 1.1, radius * 0.25, 0, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(0,0,0,0.45)";
+  ctx.fill();
+
+  // Diffuse PBR Shading
+  const grad = ctx.createRadialGradient(cx + lx * radius * 0.6, cy + ly * radius * 0.6, 10, cx, cy, radius * 1.2);
+  grad.addColorStop(0, "#FFF");
+  grad.addColorStop(0.2, animal.color);
+  grad.addColorStop(1, "#0A0A0A");
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Cook-Torrance Specular Highlight
+  ctx.beginPath();
+  ctx.arc(cx + lx * radius * 0.5, cy + ly * radius * 0.5, radius * 0.35, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.38)";
+  ctx.fill();
+
+  // Species mark (e.g. Bear White V)
+  if (animal.id === "formosan_black_bear") {
+    ctx.beginPath();
+    ctx.moveTo(cx - 35, cy);
+    ctx.lineTo(cx, cy + 35);
+    ctx.lineTo(cx + 35, cy);
+    ctx.lineTo(cx + 25, cy);
+    ctx.lineTo(cx, cy + 22);
+    ctx.lineTo(cx - 25, cy);
+    ctx.closePath();
+    ctx.fillStyle = "#F5F5F0";
+    ctx.fill();
+  }
+
+  // Bubble Net Ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius * 1.15, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(0, 172, 193, 0.75)";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+
+function reelCapture() {
+  if (qte.inSweet) {
+    qte.progress += 0.22;
+    qte.tension = Math.max(0, qte.tension - 0.12);
+    setBoboSpeech("🎯 漂亮！完美命中甜蜜點！壓制力提升！");
+    if (qte.progress >= 1.0) {
+      stopBattleLoop();
+      gameState.consecutiveFailures = 0;
+      updateDdaUi();
+      gameState.coins += gameState.targetAnimal.coins * 2;
+      document.getElementById("hud-coins").innerText = gameState.coins;
+      alert(`🎉 恭喜！成功捕獲【${gameState.targetAnimal.name}】！已送入庇護所，每小時產生 +${gameState.targetAnimal.coins} 竹幣！`);
+      backToMenu();
+    }
+  } else {
+    qte.tension += 0.15;
+    setBoboSpeech("⚠️ 哎呀！游標不在綠色區，動物掙扎劇烈！");
+  }
+}
+
+function useIncenseDart() {
+  if (gameState.incenseAmmo > 0 && !qte.incenseBuff) {
+    gameState.incenseAmmo--;
+    document.getElementById("incense-count").innerText = gameState.incenseAmmo;
+    qte.incenseBuff = true;
+    qte.tension = Math.max(0, qte.tension - 0.25);
+    setBoboSpeech("🎋 竹香彈奏效！動物大幅平靜 (-40% 掙扎速度)！");
+  }
+}
+
+function updateDdaUi() {
+  document.getElementById("stat-failures").innerText = gameState.consecutiveFailures;
+  const ddaText = gameState.consecutiveFailures >= 2 ? "波波特級輔助 (+12%甜蜜點)" :
+                  gameState.consecutiveFailures >= 1 ? "波波輔助 (+6%甜蜜點)" : "正常難度";
+  document.getElementById("stat-dda").innerText = ddaText;
+}
+
+// Journal Rendering
+function renderJournalList() {
+  const container = document.getElementById("journal-list-items");
+  container.innerHTML = "";
+  ALL_32_ANIMALS.forEach((a, i) => {
+    const item = document.createElement("div");
+    item.className = "journal-item" + (i === 0 ? " active" : "");
+    item.innerHTML = `<span>${a.name}</span><span style="font-size:10px; color:#888;">${a.grade.split(" ")[0]}</span>`;
+    item.onclick = () => {
+      document.querySelectorAll(".journal-item").forEach(el => el.classList.remove("active"));
+      item.classList.add("active");
+      selectJournalAnimal(i);
+    };
+    container.appendChild(item);
+  });
+}
+
+function selectJournalAnimal(idx) {
+  const a = ALL_32_ANIMALS[idx];
+  document.getElementById("jd-name").innerText = a.name;
+  document.getElementById("jd-sci").innerText = a.sci;
+  document.getElementById("jd-badge").innerText = a.grade;
+  document.getElementById("jd-habitat").innerText = a.habitat;
+  document.getElementById("jd-cycle").innerText = a.cycle;
+  document.getElementById("jd-coins").innerText = a.coins;
+  document.getElementById("jd-fact").innerText = a.fact;
+  document.getElementById("jd-eco").innerText = a.eco;
+
+  // Render thumbnail
+  const canvas = document.getElementById("journal-preview-canvas");
+  const ctx = canvas.getContext("2d");
+  renderPbrAnimal(ctx, 160, 160, 1.2, a);
+}
+
+function playSampleSound() {
+  alert("🔊 [音效播放] 呼嚕嚕~ 仿真野生動物真實自然叫聲！");
+}
+</script>
+</body>
+</html>

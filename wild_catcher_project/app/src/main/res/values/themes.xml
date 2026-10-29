@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.WildCatcher" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/leather_dark</item>
+        <item name="android:navigationBarColor">@color/leather_dark</item>
+        <item name="android:windowBackground">@color/parchment_bg</item>
+    </style>
+</resources>
