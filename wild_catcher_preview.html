@@ -302,6 +302,40 @@
     text-align: center;
     box-shadow: 0 15px 40px rgba(0,0,0,0.5);
   }
+
+  .pbr-chan-btn {
+    flex: 1;
+    background: #333;
+    color: #CCC;
+    border: 1px solid #555;
+    padding: 6px 4px;
+    font-size: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.15s;
+  }
+  .pbr-chan-btn.active {
+    background: var(--vintage-brass);
+    color: var(--leather-dark);
+    border-color: #FFF;
+    box-shadow: 0 0 8px rgba(200,157,66,0.6);
+  }
+  .pbr-env-btn {
+    background: var(--parchment-bg);
+    border: 1px solid var(--vintage-brass);
+    color: var(--leather-dark);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .pbr-env-btn.active {
+    background: var(--leather-brown);
+    color: #FFF;
+  }
+
 </style>
 </head>
 <body>
@@ -317,8 +351,9 @@
       <div class="hud-badge">💰 竹幣: <span id="hud-coins" style="color:var(--brass-highlight);">1200</span></div>
       <div class="hud-badge">🌐 泡泡彈: <span id="hud-ammo">50</span>/100</div>
       <div class="hud-badge">⏱️ 遊玩時長: <span id="hud-time">00:00</span></div>
-      <button onclick="toggleEyeCare()" style="background:#5D4037; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:2px 8px; cursor:pointer; font-size:11px;">護眼切換</button>
-      <button onclick="fastForward30Mins()" style="background:var(--sunset-amber); color:#000; border:none; border-radius:6px; padding:2px 8px; cursor:pointer; font-size:11px; font-weight:bold;">⚡ 觸發30分提醒</button>
+      <button onclick="openPbrInspector()" style="background:linear-gradient(180deg, #FFD57A, #C89D42); color:#2B1B17; border:1.5px solid #FFF; border-radius:6px; padding:3px 10px; cursor:pointer; font-size:11px; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.4);">🎨 PBR 材質光影檢查室</button>
+      <button onclick="toggleEyeCare()" style="background:#5D4037; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:3px 8px; cursor:pointer; font-size:11px;">護眼切換</button>
+      <button onclick="fastForward30Mins()" style="background:var(--sunset-amber); color:#000; border:none; border-radius:6px; padding:3px 8px; cursor:pointer; font-size:11px; font-weight:bold;">⚡ 30分提醒</button>
     </div>
   </div>
 
@@ -571,6 +606,106 @@
             </div>
           </div>
           <button onclick="backToMenu()" style="background:var(--bamboo-green); color:white; border:none; padding:8px; border-radius:6px; cursor:pointer; font-weight:bold;">完成共學，返回探險</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 6: High-Fidelity PBR Material & Lighting Inspector -->
+  <div class="screen" id="screen-pbr">
+    <div class="notebook-container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="font-size:22px;">🎨</div>
+          <div>
+            <div style="font-size:18px; font-weight:bold; color:var(--leather-brown); font-family:serif;">PBR 寫實材質與動態光影即時檢視室 (Material Inspector)</div>
+            <div style="font-size:11px; color:var(--ink-grey);">支援 2K/4K ASTC 壓縮規格、Normal 法線凹凸微浮雕、Roughness 粗糙度高光反射與動態光源拖曳</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button onclick="startBattle()" style="background:var(--bamboo-green); color:#FFF; border:none; border-radius:6px; padding:5px 12px; cursor:pointer; font-size:12px; font-weight:bold;">進入捕捉實戰 ▶</button>
+          <button onclick="backToMenu()" style="background:#4A2E1B; color:#FFF; border:1px solid var(--vintage-brass); border-radius:6px; padding:5px 12px; cursor:pointer; font-size:12px;">返回主選單</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:16px; flex:1;">
+        <!-- Left PBR 3D Viewport with Light dragging -->
+        <div style="width:360px; background:#181513; border-radius:14px; border:2px solid var(--vintage-brass); padding:12px; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+          <div style="display:flex; justify-content:space-between; align-items:center; color:#AAA; font-size:11px;">
+            <span>3D PBR 渲染視口 (支援滑鼠/觸控拖曳光照)</span>
+            <span id="pbr-fps-tag" style="color:var(--bamboo-light); font-weight:bold;">60.0 FPS</span>
+          </div>
+
+          <!-- The Canvas -->
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; position:relative; cursor:crosshair;" id="pbr-canvas-container">
+            <canvas id="pbr-inspector-canvas" width="280" height="280" style="border-radius:12px;"></canvas>
+            <div style="position:absolute; bottom:6px; left:10px; font-size:10px; color:#888; background:rgba(0,0,0,0.6); padding:2px 8px; border-radius:4px; pointer-events:none;">
+              ☀️ 光源方位: <span id="pbr-light-label" style="color:var(--brass-highlight);">60° (東南向)</span>
+            </div>
+          </div>
+
+          <!-- Channel Selection Pills -->
+          <div style="display:flex; gap:6px; background:rgba(0,0,0,0.5); padding:6px; border-radius:8px; justify-content:space-between;">
+            <button class="pbr-chan-btn active" onclick="setPbrChannel('composite')" id="btn-chan-comp">全通道合成</button>
+            <button class="pbr-chan-btn" onclick="setPbrChannel('albedo')" id="btn-chan-albedo">Albedo 漫射</button>
+            <button class="pbr-chan-btn" onclick="setPbrChannel('normal')" id="btn-chan-normal">Normal 法線</button>
+            <button class="pbr-chan-btn" onclick="setPbrChannel('roughness')" id="btn-chan-rough">Roughness 粗糙</button>
+          </div>
+        </div>
+
+        <!-- Right Controls & Material Ledger -->
+        <div style="flex:1; background:var(--parchment-card); border-radius:14px; border:1.5px solid var(--parchment-border); padding:14px; display:flex; flex-direction:column; justify-content:space-between; overflow-y:auto;">
+          <!-- Species Selector -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-weight:bold; font-size:14px; color:var(--leather-brown);">選擇檢視之 100 種動物物種：</span>
+              <select id="pbr-species-select" onchange="onPbrSpeciesChange(this.value)" style="padding:4px 10px; border-radius:8px; border:1.5px solid var(--vintage-brass); background:var(--parchment-bg); font-weight:bold; color:var(--leather-dark); font-size:12px;">
+              </select>
+            </div>
+
+            <!-- Material Specimen Information -->
+            <div style="background:var(--parchment-bg); border:1px solid var(--parchment-border); border-radius:10px; padding:10px; font-size:12px; line-height:1.7;">
+              <div style="display:flex; justify-content:space-between;">
+                <span><strong>物種名稱：</strong><span id="pbr-info-name">台灣黑熊</span> (<span id="pbr-info-bopomofo" style="color:var(--sunset-amber);">ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ</span>)</span>
+                <span id="pbr-info-grade" style="font-weight:bold; color:#E65100;">VU 易危 (黃燈)</span>
+              </div>
+              <div><strong>學名：</strong><span id="pbr-info-sci" style="font-style:italic; color:var(--ink-grey);">Ursus thibetanus formosanus</span></div>
+              <div><strong>PBR 貼圖規格：</strong>2048 x 2048 ASTC 4x4 紋理壓縮 · 法線切線空間微幾何</div>
+              <div><strong>生物特徵微浮雕：</strong><span id="pbr-info-feature">胸前白色V字領、濃密黑短毛微法線粗糙度、鼻吻部皮革光澤</span></div>
+            </div>
+          </div>
+
+          <!-- Interactive Sliders: Lighting & Shader Dynamics -->
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+            <div style="font-weight:bold; font-size:13px; color:var(--leather-brown);">🎛️ 光源與材質物理參數實時微調：</div>
+            
+            <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px;">
+              <span>光源水平旋轉角度 (Azimuth):</span>
+              <input type="range" min="0" max="360" value="60" id="slider-pbr-angle" oninput="onPbrSliderChange()" style="width:180px;">
+              <span id="val-pbr-angle" style="font-weight:bold; width:36px; text-align:right;">60°</span>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px;">
+              <span>法線凹凸強度 (Normal Depth):</span>
+              <input type="range" min="20" max="250" value="100" id="slider-pbr-normal" oninput="onPbrSliderChange()" style="width:180px;">
+              <span id="val-pbr-normal" style="font-weight:bold; width:36px; text-align:right;">1.0x</span>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px;">
+              <span>表面粗糙度 (Microfacet Roughness):</span>
+              <input type="range" min="10" max="90" value="45" id="slider-pbr-rough" oninput="onPbrSliderChange()" style="width:180px;">
+              <span id="val-pbr-rough" style="font-weight:bold; width:36px; text-align:right;">0.45</span>
+            </div>
+
+            <!-- Atmosphere Preset Buttons -->
+            <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+              <span style="font-size:11px; font-weight:bold;">環境天候光：</span>
+              <button onclick="setPbrEnv('sunny')" class="pbr-env-btn active" id="btn-env-sunny">☀️ 晴空暖陽</button>
+              <button onclick="setPbrEnv('jungle')" class="pbr-env-btn" id="btn-env-jungle">🌴 雨林散射</button>
+              <button onclick="setPbrEnv('mist')" class="pbr-env-btn" id="btn-env-mist">🌫️ 高山雲霧</button>
+              <button onclick="setPbrEnv('night')" class="pbr-env-btn" id="btn-env-night">🌙 星夜幽光</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1137,6 +1272,297 @@ document.addEventListener("DOMContentLoaded", () => {
 function playSampleSound() {
   alert("🔊 [音效播放] 呼嚕嚕~ 仿真野生動物真實自然叫聲！");
 }
+
+// PBR Material Inspector State & Engine
+let pbrState = {
+  activeAnimal: ALL_100_ANIMALS[0],
+  channel: 'composite', // 'composite', 'albedo', 'normal', 'roughness'
+  angle: 60,
+  normalDepth: 1.0,
+  roughness: 0.45,
+  envMode: 'sunny',
+  isDraggingLight: false,
+  animId: null
+};
+
+function openPbrInspector() {
+  populatePbrDropdown();
+  switchScreen("screen-pbr");
+  setPbrAnimal(pbrState.activeAnimal.id);
+  startPbrInspectorLoop();
+  setBoboSpeech("歡迎來到 PBR 材質光影檢查室！拖曳滑鼠可以360度改變陽光照射角度喔！");
+}
+
+function populatePbrDropdown() {
+  const sel = document.getElementById("pbr-species-select");
+  if (!sel || sel.children.length > 0) return;
+  ALL_100_ANIMALS.forEach(a => {
+    const opt = document.createElement("option");
+    opt.value = a.id;
+    opt.innerText = `${a.name} (${a.grade.split(" ")[0]})`;
+    sel.appendChild(opt);
+  });
+}
+
+function onPbrSpeciesChange(id) {
+  const found = ALL_100_ANIMALS.find(a => a.id === id);
+  if (found) {
+    pbrState.activeAnimal = found;
+    updatePbrCardInfo(found);
+  }
+}
+
+function setPbrAnimal(id) {
+  const found = ALL_100_ANIMALS.find(a => a.id === id);
+  if (found) {
+    pbrState.activeAnimal = found;
+    const sel = document.getElementById("pbr-species-select");
+    if (sel) sel.value = id;
+    updatePbrCardInfo(found);
+  }
+}
+
+function updatePbrCardInfo(a) {
+  document.getElementById("pbr-info-name").innerText = a.name;
+  document.getElementById("pbr-info-bopomofo").innerText = a.bopomofo;
+  document.getElementById("pbr-info-sci").innerText = a.sci;
+  document.getElementById("pbr-info-grade").innerText = a.grade;
+  document.getElementById("pbr-info-feature").innerText = `${a.fact} 表面微浮雕與原生毛皮反光。`;
+}
+
+function setPbrChannel(chan) {
+  pbrState.channel = chan;
+  document.querySelectorAll(".pbr-chan-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.getElementById(`btn-chan-${chan.slice(0, 4)}`);
+  if (btn) btn.classList.add("active");
+  if (chan === 'composite') document.getElementById("btn-chan-comp").classList.add("active");
+  setBoboSpeech(`已切換為：【${chan.toUpperCase()}】通道檢視模式！`);
+}
+
+function onPbrSliderChange() {
+  pbrState.angle = parseInt(document.getElementById("slider-pbr-angle").value);
+  pbrState.normalDepth = parseInt(document.getElementById("slider-pbr-normal").value) / 100;
+  pbrState.roughness = parseInt(document.getElementById("slider-pbr-rough").value) / 100;
+
+  document.getElementById("val-pbr-angle").innerText = pbrState.angle + "°";
+  document.getElementById("val-pbr-normal").innerText = pbrState.normalDepth.toFixed(1) + "x";
+  document.getElementById("val-pbr-rough").innerText = pbrState.roughness.toFixed(2);
+  document.getElementById("pbr-light-label").innerText = `${pbrState.angle}° (${getCompassDir(pbrState.angle)})`;
+}
+
+function getCompassDir(deg) {
+  if (deg >= 337.5 || deg < 22.5) return "正北";
+  if (deg >= 22.5 && deg < 67.5) return "東北";
+  if (deg >= 67.5 && deg < 112.5) return "正東";
+  if (deg >= 112.5 && deg < 157.5) return "東南";
+  if (deg >= 157.5 && deg < 202.5) return "正南";
+  if (deg >= 202.5 && deg < 247.5) return "西南";
+  if (deg >= 247.5 && deg < 292.5) return "正西";
+  return "西北";
+}
+
+function setPbrEnv(env) {
+  pbrState.envMode = env;
+  document.querySelectorAll(".pbr-env-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById(`btn-env-${env}`).classList.add("active");
+}
+
+function startPbrInspectorLoop() {
+  if (pbrState.animId) cancelAnimationFrame(pbrState.animId);
+  const canvas = document.getElementById("pbr-inspector-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  // Mouse / Touch light dragging
+  const container = document.getElementById("pbr-canvas-container");
+  if (container && !container.dataset.bound) {
+    container.dataset.bound = "true";
+    function handleDrag(e) {
+      if (!pbrState.isDraggingLight) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || (e.touches && e.touches[0].clientX)) - (rect.left + rect.width / 2);
+      const y = (e.clientY || (e.touches && e.touches[0].clientY)) - (rect.top + rect.height / 2);
+      let deg = Math.atan2(y, x) * (180 / Math.PI);
+      if (deg < 0) deg += 360;
+      pbrState.angle = Math.round(deg);
+      const slider = document.getElementById("slider-pbr-angle");
+      if (slider) slider.value = pbrState.angle;
+      onPbrSliderChange();
+    }
+    container.addEventListener("mousedown", (e) => { pbrState.isDraggingLight = true; handleDrag(e); });
+    window.addEventListener("mousemove", handleDrag);
+    window.addEventListener("mouseup", () => { pbrState.isDraggingLight = false; });
+    container.addEventListener("touchstart", (e) => { pbrState.isDraggingLight = true; handleDrag(e); });
+    window.addEventListener("touchmove", handleDrag);
+    window.addEventListener("touchend", () => { pbrState.isDraggingLight = false; });
+  }
+
+  let time = 0;
+  function pbrLoop() {
+    time += 0.02;
+    renderPbrInspectorCanvas(ctx, canvas.width, canvas.height, time);
+    pbrState.animId = requestAnimationFrame(pbrLoop);
+  }
+  pbrState.animId = requestAnimationFrame(pbrLoop);
+}
+
+function renderPbrInspectorCanvas(ctx, w, h, time) {
+  ctx.clearRect(0, 0, w, h);
+
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = 105;
+  const a = pbrState.activeAnimal;
+
+  // Directional Light Vector
+  const rad = pbrState.angle * (Math.PI / 180);
+  const lx = Math.cos(rad);
+  const ly = Math.sin(rad);
+
+  if (pbrState.channel === 'albedo') {
+    // Albedo Pass: Flat diffuse color + species iconic markings
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = a.color;
+    ctx.fill();
+
+    renderSpeciesIconicPattern(ctx, cx, cy, radius, a.id, false);
+    return;
+  }
+
+  if (pbrState.channel === 'normal') {
+    // Normal Map Pass: RGB colored tangent space normal vector (128, 128, 255 baseline)
+    const normGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, radius);
+    normGrad.addColorStop(0, "#8080FF");
+    normGrad.addColorStop(0.7, "#7A7AFF");
+    normGrad.addColorStop(1, "#6666CC");
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = normGrad;
+    ctx.fill();
+
+    // Render micro-relief tangent bump contours
+    ctx.strokeStyle = "rgba(255, 128, 255, 0.4)";
+    ctx.lineWidth = 3 * pbrState.normalDepth;
+    ctx.stroke();
+    return;
+  }
+
+  if (pbrState.channel === 'roughness') {
+    // Roughness Pass: Greyscale map (black = glossy mirror, white = totally rough matte)
+    const greyVal = Math.round(pbrState.roughness * 255);
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgb(${greyVal},${greyVal},${greyVal})`;
+    ctx.fill();
+
+    // Specular highlight spot inverse
+    ctx.beginPath();
+    ctx.arc(cx + lx * radius * 0.45, cy + ly * radius * 0.45, radius * 0.35, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fill();
+    return;
+  }
+
+  // Full PBR Composite Pass
+  // 1. Ambient Occlusion Ground Shadow
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + radius * 1.05, radius * 1.15, radius * 0.22, 0, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+  ctx.fill();
+
+  // 2. Diffuse Lambertian Shading with dynamic light angle & environment tint
+  const lightCenterOffset = {
+    x: cx + lx * radius * 0.5,
+    y: cy + ly * radius * 0.5
+  };
+
+  const envTint = pbrState.envMode === 'jungle' ? "#81C784" :
+                  pbrState.envMode === 'mist' ? "#B0BEC5" :
+                  pbrState.envMode === 'night' ? "#4FC3F7" : "#FFF9C4";
+
+  const pbrGrad = ctx.createRadialGradient(
+    lightCenterOffset.x, lightCenterOffset.y, 10,
+    cx, cy, radius * 1.25
+  );
+  pbrGrad.addColorStop(0, envTint);
+  pbrGrad.addColorStop(0.25, a.color);
+  pbrGrad.addColorStop(1, "#08080A");
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = pbrGrad;
+  ctx.fill();
+
+  // 3. Normal Map Surface Relief Perturbation
+  renderSpeciesIconicPattern(ctx, cx, cy, radius, a.id, true);
+
+  // 4. Microfacet Specular Lobe (Cook-Torrance reflection)
+  const specRoughSize = radius * (0.2 + (1.0 - pbrState.roughness) * 0.35);
+  const specAlpha = (1.0 - pbrState.roughness) * 0.75;
+  const specGrad = ctx.createRadialGradient(
+    lightCenterOffset.x, lightCenterOffset.y, 2,
+    lightCenterOffset.x, lightCenterOffset.y, specRoughSize
+  );
+  specGrad.addColorStop(0, `rgba(255, 255, 255, ${specAlpha})`);
+  specGrad.addColorStop(0.4, `rgba(255, 255, 255, ${specAlpha * 0.3})`);
+  specGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+  ctx.beginPath();
+  ctx.arc(lightCenterOffset.x, lightCenterOffset.y, specRoughSize, 0, Math.PI * 2);
+  ctx.fillStyle = specGrad;
+  ctx.fill();
+
+  // 5. Fresnel Rim Light (Atmospheric Back-scatter)
+  const rimColor = pbrState.envMode === 'night' ? "rgba(129, 212, 250, 0.45)" : "rgba(255, 255, 255, 0.25)";
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.strokeStyle = rimColor;
+  ctx.lineWidth = 3.5;
+  ctx.stroke();
+
+  // Draw light indicator directional arrow
+  ctx.beginPath();
+  ctx.moveTo(lightCenterOffset.x, lightCenterOffset.y);
+  ctx.lineTo(lightCenterOffset.x - lx * 24, lightCenterOffset.y - ly * 24);
+  ctx.strokeStyle = "rgba(255, 213, 122, 0.85)";
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+}
+
+function renderSpeciesIconicPattern(ctx, cx, cy, radius, id, isComposite) {
+  if (id === "formosan_black_bear") {
+    ctx.beginPath();
+    ctx.moveTo(cx - 38, cy - 5);
+    ctx.lineTo(cx, cy + 38);
+    ctx.lineTo(cx + 38, cy - 5);
+    ctx.lineTo(cx + 28, cy - 5);
+    ctx.lineTo(cx, cy + 24);
+    ctx.lineTo(cx - 28, cy - 5);
+    ctx.closePath();
+    ctx.fillStyle = isComposite ? "rgba(245, 245, 240, 0.95)" : "#F5F5F0";
+    ctx.fill();
+  } else if (id === "leopard_cat") {
+    const spotCol = isComposite ? "rgba(46, 28, 12, 0.85)" : "#2E1C0C";
+    [[-30, -25], [20, -15], [-15, 25], [35, 20], [0, -5]].forEach(([ox, oy]) => {
+      ctx.beginPath();
+      ctx.arc(cx + ox, cy + oy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = spotCol;
+      ctx.fill();
+    });
+  } else if (id === "formosan_landlocked_salmon") {
+    const pinkGrad = ctx.createLinearGradient(cx - 50, cy, cx + 50, cy);
+    pinkGrad.addColorStop(0, "rgba(255, 128, 171, 0.8)");
+    pinkGrad.addColorStop(0.5, "rgba(234, 128, 252, 0.8)");
+    pinkGrad.addColorStop(1, "rgba(128, 216, 255, 0.8)");
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, radius * 0.7, radius * 0.2, 0, 0, Math.PI * 2);
+    ctx.fillStyle = pinkGrad;
+    ctx.fill();
+  }
+}
+
 </script>
 </body>
 </html>
