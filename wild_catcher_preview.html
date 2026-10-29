@@ -3,91 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>野性捕捉大師 (Wild Catcher: Jungle & Sky) - 潛水員戴夫風 叢林縱橫探索與黑白熊貓槍實機預覽</title>
+<title>野性捕捉大師 (Wild Catcher) - 俯視叢林自由探索與Q版寫實動物實機</title>
 <style>
   :root {
-    --wood-dark: #1F140E;
     --parchment: #F4ECD8;
-    --parchment-card: #ECE2C8;
-    --parchment-border: #C8BA9B;
-    --ink-black: #1A1C18;
     --brass: #C89D42;
     --brass-glow: #FBD473;
     --bamboo-green: #2E7D32;
-    --panda-black: #18191A;
-    --panda-white: #F8F9FA;
     --danger-red: #D32F2F;
     --ocean-cyan: #00ACC1;
+    --grass-dark: #1E3821;
+    --grass-light: #2D522F;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   
   html, body {
     width: 100%;
     min-height: 100vh;
-    background: #0E0A08;
-    color: var(--ink-black);
+    background: #0B0E0C;
+    color: #FFF;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
     overflow-x: hidden;
     overflow-y: auto;
   }
 
-  /* Top Sticky Navigation Bar */
+  /* Top Sticky Nav */
   .preview-top-nav {
     position: sticky;
     top: 0;
     left: 0;
     right: 0;
     height: 52px;
-    background: rgba(24, 25, 26, 0.98);
+    background: rgba(18, 24, 20, 0.98);
     border-bottom: 2px solid var(--brass);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-    color: #FFF;
     z-index: 999;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
   }
-  .nav-tabs {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-  }
+  .nav-tabs { display: flex; gap: 8px; }
   .nav-tab-btn {
-    background: #2D241E;
-    color: #D7CCC8;
-    border: 1px solid #4E342E;
+    background: #1C2720;
+    color: #C8E6C9;
+    border: 1px solid #2E4C38;
     padding: 6px 14px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
     transition: all 0.15s;
-    white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 6px;
   }
-  .nav-tab-btn:hover { background: #3E2723; border-color: var(--brass); color: #FFF; }
+  .nav-tab-btn:hover { background: #2E4C38; border-color: var(--brass); color: #FFF; }
   .nav-tab-btn.active {
-    background: linear-gradient(180deg, #4E342E, #2A1810);
+    background: linear-gradient(180deg, #2E5A36, #1A351F);
     border: 1.5px solid var(--brass);
     color: var(--brass-glow);
     box-shadow: 0 0 10px rgba(200, 157, 66, 0.4);
   }
 
-  /* Viewport Container */
+  /* Main Viewport Container */
   #main-viewport {
     width: 100%;
     max-width: 1320px;
     margin: 10px auto;
     min-height: calc(100vh - 74px);
-    background: var(--parchment);
+    background: #142117;
     border: 3px solid var(--brass);
     border-radius: 12px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9);
     display: flex;
     flex-direction: column;
   }
@@ -105,16 +95,16 @@
   }
 
   /* ========================================================
-     PANEL 1: DAVE JUNGLE EXPLORATION (DAVE THE DIVER STYLE)
+     PANEL 1: TOP-DOWN JUNGLE EXPLORATION (俯視自由探索)
      ======================================================== */
-  #panel-battle {
-    background: #08120F;
+  #panel-topdown {
     min-height: 600px;
-    height: calc(100vh - 90px);
+    height: calc(100vh - 86px);
     position: relative;
     user-select: none;
+    background: #192D1D;
   }
-  #jungle-canvas {
+  #jungle-topdown-canvas {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -122,9 +112,9 @@
     display: block;
     cursor: crosshair;
   }
-  
-  /* Dave HUD Overlay */
-  .dave-hud {
+
+  /* Top-Down HUD */
+  .topdown-hud {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -136,29 +126,28 @@
   }
   .hud-interactive { pointer-events: auto; }
 
-  /* Altitude & Depth Gauge (Just like Dave's Depth Meter) */
-  .altitude-meter {
-    background: rgba(24, 25, 26, 0.9);
+  .radar-card {
+    background: rgba(18, 28, 22, 0.92);
     border: 2px solid var(--brass);
-    border-radius: 10px;
-    padding: 8px 16px;
+    border-radius: 12px;
+    padding: 10px 16px;
     color: #FFF;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    gap: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
   }
-  .altitude-val {
-    font-size: 22px;
+  .compass-tag {
+    font-size: 16px;
     font-weight: 900;
     color: #81C784;
     font-family: monospace;
   }
 
-  /* Toddler Wing Controls & Crosshair Instructions */
+  /* Toddler Touch Controls */
   .touch-wing-left, .touch-wing-right {
     position: absolute;
-    bottom: 100px;
+    bottom: 95px;
     width: 110px;
     height: 110px;
     border-radius: 24px;
@@ -194,12 +183,45 @@
     box-shadow: 0 0 20px rgba(251, 212, 115, 0.9);
   }
 
+  /* Virtual D-pad for Touch/Mouse (On bottom left) */
+  .virtual-dpad {
+    position: absolute;
+    bottom: 95px;
+    left: 150px;
+    width: 120px;
+    height: 120px;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+  }
+  .dpad-row { display: flex; gap: 8px; }
+  .dpad-btn {
+    width: 34px;
+    height: 34px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid var(--brass);
+    border-radius: 6px;
+    color: #FFF;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .dpad-btn:active { background: var(--brass); color: #111; }
+
   /* QTE Capture Bar Cockpit */
   .qte-cockpit {
     width: 100%;
     max-width: 660px;
     margin: 0 auto;
-    background: rgba(24, 25, 26, 0.95);
+    background: rgba(18, 28, 22, 0.95);
     border: 2px solid var(--brass);
     border-radius: 14px;
     padding: 10px 18px;
@@ -237,14 +259,10 @@
   }
 
   /* ========================================================
-     PANEL 2: PANDA GUN BLUEPRINT & PALETTE (BLACK & WHITE PANDA THEME)
+     PANEL 2: PANDA GUN BLUEPRINT
      ======================================================== */
   #panel-workshop {
     background: #111417;
-    background-image: 
-      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-    background-size: 24px 24px;
     color: #ECEFF1;
     padding: 24px;
     display: flex;
@@ -253,90 +271,12 @@
   }
 
   /* ========================================================
-     PANEL 3: PBR SHADER & MATERIAL LAB
-     ======================================================== */
-  #panel-pbr {
-    background: #111417;
-    color: #EEE;
-    display: flex;
-    flex-direction: row;
-    min-height: 580px;
-    height: calc(100vh - 90px);
-  }
-  .pbr-sidebar {
-    width: 310px;
-    background: #181C20;
-    border-right: 2px solid #2B333B;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow-y: auto;
-  }
-  .pbr-stage {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    background: radial-gradient(circle at center, #1E252D 0%, #0F1316 100%);
-    overflow: hidden;
-  }
-  #pbr-canvas {
-    width: 100%;
-    height: 100%;
-    cursor: grab;
-    display: block;
-  }
-
-  /* Channel buttons */
-  .channel-pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .channel-pill {
-    background: #252D36;
-    border: 1px solid #3B4754;
-    color: #B0BEC5;
-    padding: 5px 9px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .channel-pill.active {
-    background: var(--brass);
-    color: #111;
-    border-color: var(--brass-glow);
-  }
-
-  /* ========================================================
-     PANEL 4: 100 ANIMALS JOURNAL
+     PANEL 3: 100 ANIMALS JOURNAL
      ======================================================== */
   #panel-journal {
     background: var(--parchment);
+    color: #2E1D13;
     padding: 18px 24px;
-  }
-  .journal-header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid var(--parchment-border);
-    padding-bottom: 12px;
-    margin-bottom: 14px;
-    gap: 10px;
-  }
-  .filter-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
-  .filter-btn {
-    background: var(--parchment-card);
-    border: 1px solid var(--parchment-border);
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .filter-btn.active {
-    background: #3E2723;
-    color: #FFF;
-    border-color: #3E2723;
   }
   .animal-grid {
     display: grid;
@@ -363,20 +303,19 @@
 </head>
 <body>
 
-  <!-- Sticky Top Nav -->
+  <!-- Top Navigation Bar -->
   <div class="preview-top-nav">
     <div style="display:flex; align-items:center; gap:8px;">
       <span style="font-size:22px;">🐼</span>
       <div>
-        <div style="font-weight:900; font-size:14px; color:var(--brass-glow);">野性捕捉大師：叢林與天空 (Dave the Diver Style)</div>
-        <div style="font-size:10px; opacity:0.85;">縱橫軸生態探索 · 黑白萌系熊貓槍 · PBR 寫實材質</div>
+        <div style="font-weight:900; font-size:14px; color:var(--brass-glow);">野性捕捉大師 (Wild Catcher: Jungle & Sky)</div>
+        <div style="font-size:10px; opacity:0.85;">俯視叢林自由探索 · Q版寫實生動動物 · 黑白熊貓槍實機</div>
       </div>
     </div>
 
     <div class="nav-tabs">
-      <button class="nav-tab-btn active" onclick="switchView('battle')">🎯 縱橫軸實機探索 (戴夫視角)</button>
+      <button class="nav-tab-btn active" onclick="switchView('topdown')">🌿 俯視叢林探索 (W/A/S/D移動)</button>
       <button class="nav-tab-btn" onclick="switchView('workshop')">🐼 經典黑白熊貓槍設計</button>
-      <button class="nav-tab-btn" onclick="switchView('pbr')">🎨 PBR 材質光影實驗室</button>
       <button class="nav-tab-btn" onclick="switchView('journal')">📖 100種動物圖鑑</button>
     </div>
 
@@ -387,36 +326,33 @@
     </div>
   </div>
 
-  <!-- Main Container -->
+  <!-- Main Viewport Container -->
   <div id="main-viewport">
 
-    <!-- ==================== VIEW 1: DAVE THE DIVER STYLE JUNGLE EXPLORATION ==================== -->
-    <div class="view-panel active" id="panel-battle">
-      <canvas id="jungle-canvas"></canvas>
+    <!-- ==================== VIEW 1: TOP-DOWN JUNGLE EXPLORATION ==================== -->
+    <div class="view-panel active" id="panel-topdown">
+      <canvas id="jungle-topdown-canvas"></canvas>
 
-      <div class="dave-hud">
-        <!-- Top Dave Stats -->
+      <div class="topdown-hud">
+        <!-- Top status bar -->
         <div style="display:flex; justify-content:space-between; align-items:flex-start;" class="hud-interactive">
-          <!-- Altitude Meter (Like Dave's Depth Gauge) -->
-          <div class="altitude-meter">
+          <div class="radar-card">
             <div>
-              <div style="font-size:10px; color:#AAA; text-transform:uppercase;">生境高度 (Altitude)</div>
-              <div class="altitude-val" id="dave-altitude">地面 0.0 m</div>
+              <div style="font-size:10px; color:#A5D6A7; text-transform:uppercase;">生境區域 (Jungle Zone)</div>
+              <div class="compass-tag" id="zone-name-tag">神木溪谷林地 (X: 520, Y: 430)</div>
             </div>
             <div style="border-left:1px solid rgba(255,255,255,0.2); padding-left:12px;">
-              <div style="font-size:10px; color:#AAA;">當前棲地層</div>
-              <div style="font-size:13px; font-weight:bold; color:var(--brass-glow);" id="dave-layer-name">地面灌木林</div>
+              <div style="font-size:10px; color:#AAA;">視角模式</div>
+              <div style="font-size:12px; font-weight:bold; color:var(--brass-glow);">🧭 2D 俯視自由穿梭</div>
             </div>
           </div>
 
-          <!-- Controls Help Card -->
-          <div style="background:rgba(24,25,26,0.9); border:1.5px solid var(--brass); border-radius:10px; padding:8px 14px; color:#FFF; font-size:12px; max-width:380px;">
-            <div style="font-weight:bold; color:var(--brass-glow); margin-bottom:2px;">🎮 潛水員戴夫風 探索操作指南：</div>
+          <div style="background:rgba(18, 28, 22, 0.92); border:1.5px solid var(--brass); border-radius:10px; padding:8px 14px; color:#FFF; font-size:12px; max-width:390px;">
+            <div style="font-weight:bold; color:var(--brass-glow); margin-bottom:2px;">🎮 俯視操作指南：</div>
             <div style="line-height:1.5; color:#CFD8DC;">
-              • <b>鍵盤【A / D】或【方向鍵】</b>：左右橫向奔跑探索<br>
-              • <b>鍵盤【W】或【空白鍵】</b>：跳躍 / 攀爬巨木藤蔓與高聳樹冠<br>
-              • <b>滑鼠移動</b>：360° 旋轉瞄準 (出現瞄準彈道線)<br>
-              • <b>滑鼠點擊 / 右翼點擊</b>：發射黑白熊貓槍泡泡網！
+              • <b>鍵盤【W / A / S / D】或【方向鍵】</b>：向上下左右 8 方向自由漫步探索<br>
+              • <b>滑鼠移動</b>：360° 旋轉瞄準，槍口光束鎖定目標<br>
+              • <b>滑鼠左鍵點擊 / 點擊右翼</b>：發射黑白熊貓槍泡泡網！
             </div>
           </div>
         </div>
@@ -426,6 +362,17 @@
           <div style="font-size:28px;">✋</div>
           <div style="font-size:13px; margin-top:2px;">左手按住</div>
           <div style="font-size:10px; opacity:0.8;">緩速壓制 50%</div>
+        </div>
+
+        <!-- Virtual D-pad on screen -->
+        <div class="virtual-dpad hud-interactive">
+          <div class="dpad-btn" onmousedown="keys.up=true" onmouseup="keys.up=false" ontouchstart="keys.up=true" ontouchend="keys.up=false">▲</div>
+          <div class="dpad-row">
+            <div class="dpad-btn" onmousedown="keys.left=true" onmouseup="keys.left=false" ontouchstart="keys.left=true" ontouchend="keys.left=false">◀</div>
+            <div style="width:24px; text-align:center; font-size:10px; color:var(--brass-glow); align-self:center;">走</div>
+            <div class="dpad-btn" onmousedown="keys.right=true" onmouseup="keys.right=false" ontouchstart="keys.right=true" ontouchend="keys.right=false">▶</div>
+          </div>
+          <div class="dpad-btn" onmousedown="keys.down=true" onmouseup="keys.down=false" ontouchstart="keys.down=true" ontouchend="keys.down=false">▼</div>
         </div>
 
         <div class="touch-wing-right hud-interactive" id="wing-right" onclick="handleFirePandaGun()">
@@ -439,7 +386,7 @@
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:bold;">
             <span style="color:var(--ocean-cyan);">🌐 熊貓泡泡網束縛度：<span id="qte-progress-num">0%</span></span>
             <span style="color:var(--brass-glow); background:rgba(200,157,66,0.25); padding:2px 8px; border-radius:6px;">
-              🎯 命中目標：<span id="target-name-hud">探索瞄準中</span>
+              🎯 鎖定目標：<span id="target-name-hud">探索瞄準中</span>
             </span>
             <span style="color:var(--danger-red);">⚠️ 掙脫拉力：<span id="qte-tension-num">0%</span></span>
           </div>
@@ -451,189 +398,68 @@
 
           <div style="display:flex; justify-content:space-between; font-size:11px; opacity:0.85;">
             <span>💡 提示：按住左手穩住拉力，游標進入綠區時連點右手快速收網！</span>
-            <span id="qte-status-hint" style="color:#81C784;">狀態：自由探索</span>
+            <span id="qte-status-hint" style="color:#81C784;">狀態：在叢林自由漫步搜尋動物</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ==================== VIEW 2: PANDA GUN WORKSHOP & PALETTE ==================== -->
+    <!-- ==================== VIEW 2: PANDA GUN BLUEPRINT ==================== -->
     <div class="view-panel" id="panel-workshop">
       <div style="width:360px; display:flex; flex-direction:column; gap:14px;">
-        <div>
-          <div style="font-size:22px; font-weight:900; color:var(--brass-glow); display:flex; align-items:center; gap:8px;">
-            <span>🐼</span> 熊貓槍 (Panda Gun Mk-III)
-          </div>
-          <div style="font-size:12px; color:#90A4AE; margin-top:4px;">
-            經典黑白大熊貓塗裝 · 萌系熊貓耳朵瞄具 · 鮮竹筍高壓彈夾
-          </div>
+        <div style="font-size:22px; font-weight:900; color:var(--brass-glow);">
+          🐼 經典黑白大熊貓槍 (Panda Gun Mk-III)
         </div>
-
         <div style="background:rgba(255,255,255,0.05); border:1.5px solid rgba(255,255,255,0.15); border-radius:10px; padding:14px; font-size:12px; line-height:1.8;">
-          <div style="font-weight:bold; color:#81C784; margin-bottom:4px;">🎨 熊貓視覺語彙全面進化：</div>
-          <div><b>① 黑白對比陶瓷槍身：</b>主機匣採用溫潤的大熊貓乳白烤漆，前後握把與槍托採用消光黑熊貓毛皮質感。</div>
-          <div><b>② 萌系熊貓雙耳準星：</b>槍管頂端裝配一對圓滾滾的立體熊貓耳朵機械瞄具，瞄準時雙耳微幅擺動。</div>
-          <div><b>③ 可愛鼻頭與萌嘴槍口：</b>槍口造型為熊貓口鼻，開火時宛如熊貓口吐夢幻竹香泡泡網！</div>
-          <div><b>④ 鮮嫩竹筍彈夾 (Bamboo Shoot Mag)：</b>下方裝卸翠綠竹筍造型氣閥彈夾，側邊刻有熊貓肉球腳印。</div>
-          <div><b>⑤ 左右手肉球防滑握把：</b>前握把與主手柄飾有立體粉紅肉球抓握膠墊，專為幼兒手掌抓握防滑設計。</div>
+          <div style="font-weight:bold; color:#81C784; margin-bottom:4px;">🎨 熊貓視覺塗裝細節：</div>
+          <div><b>① 黑白對比陶瓷主機匣：</b>圓潤熊貓黑白毛皮質感的烤漆機身，具抗摔防水塗層。</div>
+          <div><b>② 萌系熊貓雙耳準星：</b>槍頂裝配一對圓滾滾的黑白立體熊貓耳朵機械瞄具。</div>
+          <div><b>③ 可愛鼻頭與萌嘴槍口：</b>槍口為立體熊貓口鼻，開火時噗一聲發射柔性泡泡網！</div>
+          <div><b>④ 鮮嫩竹筍彈夾 (Bamboo Shoot Mag)：</b>下方裝卸翠綠竹筍造型氣閥，印有肉球腳印。</div>
+          <div><b>⑤ 左右手肉球防滑握把：</b>飾有立體粉紅肉球抓握膠墊，專為幼兒手掌抓握防滑設計。</div>
         </div>
-
-        <button style="background:linear-gradient(180deg, #2E7D32, #1B5E20); color:#FFF; border:2px solid var(--brass); border-radius:8px; padding:12px; font-weight:bold; cursor:pointer; font-size:14px;" onclick="alert('🎋 熊貓槍已升級完成！黑白塗裝加成：泡泡柔性包覆力 +35%！')">
-          🎋 強化黑白熊貓塗裝 (+35% 泡泡張力)
-        </button>
       </div>
 
-      <!-- High-res Panda Gun Vector Blueprint (Black & White Theme) -->
       <div style="flex:1; min-width:320px; background:rgba(18, 22, 26, 0.85); border:2px dashed rgba(200, 157, 66, 0.5); border-radius:14px; padding:20px; display:flex; align-items:center; justify-content:center;">
-        <svg width="100%" height="400" viewBox="0 0 740 450" style="max-width:700px;">
-          <!-- Gun Stock (Panda Matte Black with white trim) -->
+        <svg width="100%" height="380" viewBox="0 0 740 450" style="max-width:680px;">
           <path d="M 90 320 C 130 270 210 280 280 260 L 260 380 C 180 390 110 380 90 320 Z" fill="#18191A" stroke="#ECEFF1" stroke-width="3"/>
-          <ellipse cx="180" cy="330" rx="35" ry="20" fill="#263238"/>
-
-          <!-- Panda Gun Body Receiver (Pure Ceramic White) -->
           <rect x="270" y="225" width="220" height="75" rx="20" fill="#F8F9FA" stroke="#18191A" stroke-width="4"/>
-          <!-- Panda Black Eye Patch on receiver -->
           <ellipse cx="340" cy="255" rx="22" ry="16" fill="#18191A" transform="rotate(-15, 340, 255)"/>
           <circle cx="340" cy="255" r="7" fill="#4DD0E1"/>
-          <!-- White smile mouth -->
           <path d="M 330 275 Q 345 285 360 275" fill="none" stroke="#18191A" stroke-width="3" stroke-linecap="round"/>
-
-          <!-- Panda Ears Sight on Top (Left and Right Black Ears) -->
           <circle cx="320" cy="205" r="18" fill="#18191A" stroke="#ECEFF1" stroke-width="2"/>
           <circle cx="320" cy="205" r="9" fill="#37474F"/>
           <circle cx="430" cy="205" r="18" fill="#18191A" stroke="#ECEFF1" stroke-width="2"/>
           <circle cx="430" cy="205" r="9" fill="#37474F"/>
-          <!-- Sighting Bridge -->
           <rect x="330" y="215" width="90" height="12" rx="4" fill="#37474F"/>
-
-          <!-- Panda Nose Barrel & Muzzle (Front) -->
           <rect x="490" y="238" width="130" height="50" rx="12" fill="#18191A" stroke="#ECEFF1" stroke-width="3"/>
-          <!-- Cute Pink/Black Panda Muzzle Flare -->
           <ellipse cx="620" cy="263" rx="16" ry="26" fill="#212121" stroke="#81C784" stroke-width="4"/>
           <ellipse cx="580" cy="250" rx="12" ry="8" fill="#ECEFF1"/>
-          <ellipse cx="580" cy="250" rx="7" ry="5" fill="#111"/> <!-- Nose -->
-
-          <!-- Fresh Bamboo Shoot Magazine (Underneath Receiver) -->
+          <ellipse cx="580" cy="250" rx="7" ry="5" fill="#111"/>
           <path d="M 360 300 L 400 300 L 415 390 C 400 410 360 410 345 390 Z" fill="#43A047" stroke="#2E7D32" stroke-width="3"/>
           <line x1="355" y1="330" x2="405" y2="330" stroke="#81C784" stroke-width="3"/>
           <line x1="350" y1="360" x2="410" y2="360" stroke="#81C784" stroke-width="3"/>
-          <!-- Cute Panda Paw on Magazine -->
           <ellipse cx="380" cy="380" rx="10" ry="8" fill="#18191A"/>
           <circle cx="372" cy="370" r="3" fill="#18191A"/>
           <circle cx="380" cy="368" r="3" fill="#18191A"/>
           <circle cx="388" cy="370" r="3" fill="#18191A"/>
-
-          <!-- Front Foregrip (Panda Black with Pink Paw Grip) -->
           <rect x="470" y="288" width="28" height="75" rx="8" fill="#18191A" stroke="#37474F" stroke-width="2"/>
-          <circle cx="484" cy="325" r="5" fill="#FF80AB"/> <!-- Pink pad -->
-
-          <!-- Rear Main Grip -->
+          <circle cx="484" cy="325" r="5" fill="#FF80AB"/>
           <rect x="230" y="275" width="36" height="85" rx="10" fill="#18191A" stroke="#37474F" stroke-width="3"/>
-          <ellipse cx="248" cy="315" rx="7" ry="12" fill="#FF80AB"/> <!-- Pink pad -->
-
-          <!-- Bubble Net Glow Chamber (Cyan) -->
+          <ellipse cx="248" cy="315" rx="7" ry="12" fill="#FF80AB"/>
           <rect x="310" y="145" width="130" height="50" rx="16" fill="rgba(0,229,255,0.25)" stroke="#00E5FF" stroke-width="2.5"/>
           <circle cx="340" cy="170" r="10" fill="rgba(255,255,255,0.7)"/>
           <circle cx="380" cy="165" r="14" fill="rgba(255,255,255,0.6)"/>
           <circle cx="415" cy="172" r="8" fill="rgba(255,255,255,0.8)"/>
-
-          <!-- Blueprint Labels -->
-          <text x="320" y="135" fill="#00E5FF" font-size="12" font-family="monospace">● 夢幻泡泡網聚合倉</text>
-          <text x="320" y="195" fill="#FFF" font-size="12" font-family="monospace">● 萌系熊貓耳朵準星</text>
-          <text x="490" y="225" fill="#ECEFF1" font-size="12" font-family="monospace">● 經典熊貓黑白陶瓷槍身</text>
-          <text x="430" y="415" fill="#81C784" font-size="12" font-family="monospace">● 鮮竹筍氣壓彈夾 (肉球印記)</text>
-          <text x="120" y="300" fill="#FF80AB" font-size="12" font-family="monospace">● 幼兒防滑粉紅肉球握把</text>
         </svg>
       </div>
     </div>
 
-    <!-- ==================== VIEW 3: PBR SHADER & MATERIAL LAB ==================== -->
-    <div class="view-panel" id="panel-pbr">
-      <div class="pbr-sidebar">
-        <div>
-          <div style="font-weight:900; font-size:15px; color:var(--brass-glow); margin-bottom:4px;">🎨 PBR 寫實材質檢驗台</div>
-          <div style="font-size:11px; color:#90A4AE; line-height:1.4;">
-            檢視真實法線貼圖 (Normal)、微表面粗糙度 (Roughness) 及邊緣菲涅爾背光。
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:12px; font-weight:bold; color:#CFD8DC; margin-bottom:4px;">材質預設 (Material Presets)</div>
-          <select id="pbr-preset-select" onchange="setPbrPreset(this.value)" style="width:100%; background:#252D36; color:#FFF; border:1px solid #3B4754; padding:6px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">
-            <option value="bear">🐻 台灣黑熊：濃密毛流法線 + 啞光皮革</option>
-            <option value="leopard">🐆 台灣石虎：毛茸微絨毛 + 豹斑高反照</option>
-            <option value="frog">🐸 翡翠樹蛙：顆粒突起法線 + 濕潤強高光</option>
-            <option value="eagle">🦅 大冠鷲：幾何重疊羽片 + 疏水金屬光</option>
-            <option value="bark">🌲 千年神木樹皮：深邃裂痕法線 + 苔蘚粗糙</option>
-          </select>
-        </div>
-
-        <div>
-          <div style="font-size:12px; font-weight:bold; color:#CFD8DC; margin-bottom:4px;">著色通道分離 (Channel Split)</div>
-          <div class="channel-pill-row">
-            <button class="channel-pill active" onclick="setPbrChannel('composite')">完整複合渲染</button>
-            <button class="channel-pill" onclick="setPbrChannel('normal')">法線 (Normal)</button>
-            <button class="channel-pill" onclick="setPbrChannel('roughness')">粗糙度 (Rough)</button>
-            <button class="channel-pill" onclick="setPbrChannel('albedo')">反照率 (Albedo)</button>
-            <button class="channel-pill" onclick="setPbrChannel('specular')">鏡面光 (Spec)</button>
-            <button class="channel-pill" onclick="setPbrChannel('fresnel')">菲涅爾 (Fresnel)</button>
-          </div>
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid #2B333B; padding-top:8px;">
-          <div class="slider-control">
-            <div style="display:flex; justify-content:space-between; font-size:11px;">
-              <span>光源強度:</span><span id="val-light-intensity" style="color:var(--brass-glow);">1.2x</span>
-            </div>
-            <input type="range" min="0.2" max="2.5" step="0.1" value="1.2" oninput="updatePbrSlider('intensity', this.value)">
-          </div>
-
-          <div class="slider-control">
-            <div style="display:flex; justify-content:space-between; font-size:11px;">
-              <span>粗糙度:</span><span id="val-roughness" style="color:var(--brass-glow);">0.45</span>
-            </div>
-            <input type="range" min="0.05" max="1.0" step="0.02" value="0.45" oninput="updatePbrSlider('roughness', this.value)">
-          </div>
-
-          <div class="slider-control">
-            <div style="display:flex; justify-content:space-between; font-size:11px;">
-              <span>法線深度:</span><span id="val-normal-depth" style="color:var(--brass-glow);">1.8x</span>
-            </div>
-            <input type="range" min="0.2" max="3.0" step="0.1" value="1.8" oninput="updatePbrSlider('normalDepth', this.value)">
-          </div>
-        </div>
-
-        <div style="font-size:11px; background:#252D36; padding:8px; border-radius:6px; color:#90A4AE; line-height:1.4;">
-          💡 <b>操作</b>：在右側畫布<b>按住滑鼠左鍵拖曳</b>即可自由改變太陽光入射角！
-        </div>
-      </div>
-
-      <div class="pbr-stage">
-        <canvas id="pbr-canvas"></canvas>
-      </div>
-    </div>
-
-    <!-- ==================== VIEW 4: 100 ANIMALS JOURNAL ==================== -->
+    <!-- ==================== VIEW 3: 100 ANIMALS JOURNAL ==================== -->
     <div class="view-panel" id="panel-journal">
-      <div class="journal-header">
-        <div>
-          <div style="font-size:22px; font-weight:900; color:#3E2723; font-family:serif;">
-            📖 冒險圖鑑筆記：全量 100 種寫實動物
-          </div>
-          <div style="font-size:12px; color:#6D4C41;">
-            Dave's Adventure Field Guide · 含注音標注、生物學分類、生態棲地與中文語音導覽
-          </div>
-        </div>
-
-        <div class="filter-tabs">
-          <button class="filter-btn active" onclick="filterAnimals('all', this)">全部 (100)</button>
-          <button class="filter-btn" onclick="filterAnimals('地面', this)">地面生境</button>
-          <button class="filter-btn" onclick="filterAnimals('樹冠', this)">樹冠層</button>
-          <button class="filter-btn" onclick="filterAnimals('高空', this)">天空巡弋</button>
-          <button class="filter-btn" onclick="filterAnimals('溪流', this)">溪流濕地</button>
-        </div>
+      <div style="font-size:22px; font-weight:900; color:#2E1D13; margin-bottom:12px;">
+        📖 冒險圖鑑筆記：全量 100 種寫實動物
       </div>
-
       <div class="animal-grid" id="animal-grid-container">
         <!-- Rendered by JS -->
       </div>
@@ -641,14 +467,14 @@
 
   </div>
 
-  <!-- Raw 100 Animal Data Store -->
+  <!-- Animal Database -->
   <script>
-    const ALL_ANIMALS = [{"id": "formosan_black_bear", "name": "台灣黑熊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", "latin": "Ursus thibetanus formosanus", "status": "瀕危 (EN)", "badge": "danger", "habitat": "地面針闊葉林", "diet": "雜食性", "desc": "胸前擁有標誌性白色V字斑紋，毛皮濃密微帶油脂反光，在森林底層漫步尋覓橡實與漿果。", "coins": 180, "color": "#1A1817", "altitude": "地面 0m"}, {"id": "leopard_cat", "name": "台灣石虎", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕˊ ㄏㄨˇ", "latin": "Prionailurus bengalensis chinensis", "status": "瀕危 (EN)", "badge": "danger", "habitat": "地面低矮灌木", "diet": "肉食性", "desc": "耳後有白斑，身上覆蓋如錢幣般的豹紋，動作輕盈迅捷，在灌木草叢間潛伏。", "coins": 160, "color": "#C89658", "altitude": "地面 5m"}, {"id": "golden_snub_nosed_monkey", "name": "川金絲猴", "zhuyin": "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", "latin": "Rhinopithecus roxellana", "status": "珍貴 (VU)", "badge": "warning", "habitat": "巨木樹冠層", "diet": "植食性", "desc": "面部天藍，身披絲綢般金黃長毛，極擅長在巨木藤蔓間悠蕩攀爬。", "coins": 150, "color": "#FFB300", "altitude": "樹冠 35m"}, {"id": "crested_serpent_eagle", "name": "大冠鷲", "zhuyin": "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", "latin": "Spilornis cheela hoya", "status": "珍貴 (VU)", "badge": "warning", "habitat": "高空巡弋層", "diet": "肉食性", "desc": "黑白相間羽冠威風凜凜，翼展超過1.5米，在高空熱氣流中盤旋俯瞰林冠。", "coins": 140, "color": "#5D4037", "altitude": "天空 80m"}, {"id": "emerald_tree_frog", "name": "翡翠樹蛙", "zhuyin": "ㄈㄟˇ ㄘㄨㄟˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus prasinatus", "status": "珍貴 (VU)", "badge": "warning", "habitat": "濕潤樹葉層", "diet": "食蟲性", "desc": "全身翠綠如寶玉，皮膚濕潤晶亮，趾端吸盤吸附在芭蕉與巨大姑婆芋葉片上。", "coins": 120, "color": "#00E676", "altitude": "枝幹 18m"}, {"id": "formosan_sika_deer", "name": "台灣梅花鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄟˊ ㄏㄨㄚ ㄌㄨˋ", "latin": "Cervus nippon taiouanus", "status": "一般 (LC)", "badge": "success", "habitat": "地面草生地", "diet": "草食性", "desc": "夏季毛皮呈紅褐色點綴白色梅花斑點，生性機警敏捷，奔馳於林間林道。", "coins": 100, "color": "#A1623A", "altitude": "地面 0m"}, {"id": "pangolin", "name": "穿山甲", "zhuyin": "ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", "latin": "Manis pentadactyla", "status": "極危 (CR)", "badge": "danger", "habitat": "地面落葉土穴", "diet": "食蟻性", "desc": "全身覆蓋角質硬鱗，遇險時縮成堅硬球狀，用強壯前爪挖掘白蟻丘。", "coins": 200, "color": "#795548", "altitude": "地面 0m"}, {"id": "mikado_pheasant", "name": "黑長尾雉 (帝雉)", "zhuyin": "ㄉㄧˋ ㄓˋ", "latin": "Syrmaticus mikado", "status": "珍貴 (VU)", "badge": "warning", "habitat": "迷霧針葉林", "diet": "雜食性", "desc": "雄鳥通體深藍泛金屬紫光，長尾羽有黑白橫斑，霧氣中漫步宛如高山隱士。", "coins": 170, "color": "#1A237E", "altitude": "地面 10m"}, {"id": "swinhoes_pheasant", "name": "藍腹鷴", "zhuyin": "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", "latin": "Lophura swinhoii", "status": "珍貴 (VU)", "badge": "warning", "habitat": "林下灌木層", "diet": "雜食性", "desc": "雪白羽冠與背斑，深藍羽身搭配朱紅臉頰肉垂，為台灣特有珍稀鳥類。", "coins": 150, "color": "#0D47A1", "altitude": "地面 2m"}, {"id": "red_giant_flying_squirrel", "name": "大赤鼯鼠", "zhuyin": "ㄉㄚˋ ㄔˋ ㄨˊ ㄕㄨˇ", "latin": "Petaurista philippensis grandis", "status": "一般 (LC)", "badge": "success", "habitat": "樹冠滑翔層", "diet": "植食性", "desc": "體型如貓，四肢間有寬大皮褶翼膜，夜晚在樹冠層間滑翔如飛毯。", "coins": 90, "color": "#8D6E63", "altitude": "樹冠 45m"}, {"id": "species_11", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "地面針闊葉林", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_12", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "懸崖峭壁層", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_13", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "中層樹幹", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_14", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_15", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_16", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹中層", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_17", "name": "台灣野豬", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄧㄝˇ ㄓㄨ", "latin": "Sus scrofa taivanus", "habitat": "地面灌木叢", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "厚實剛毛與有力長吻，在地面翻找草根與堅果。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_18", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條層", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_19", "name": "高山白腹鼠", "zhuyin": "ㄍㄠ ㄕㄢ ㄅㄞˊ ㄈㄨˋ ㄕㄨˇ", "latin": "Niviventer culturatus", "habitat": "地面松針堆", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "白肚皮大耳朵，在高山落葉下收集松子。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_20", "name": "台灣森鼠", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄙㄣ ㄕㄨˇ", "latin": "Apodemus semotus", "habitat": "枯木根部", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "動作靈動無比的小精靈，夜間覓食敏銳警覺。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_21", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷樹葉", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_22", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "低矮竹林", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_23", "name": "諸羅樹蛙", "zhuyin": "ㄓㄨ ㄌㄨㄛˊ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus arvalis", "habitat": "中層竹梢", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "翠綠如翡翠竹葉，叫聲像一連串清脆的鈴鐺。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_24", "name": "盤古蟾蜍", "zhuyin": "ㄆㄢˊ ㄍㄨˇ ㄔㄢˊ ㄔㄨˊ", "latin": "Bufo bankorensis", "habitat": "地面岩縫", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "皮膚具粗糙顆粒疣粒，性情沉穩守護森林。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_25", "name": "拉都希氏赤蛙", "zhuyin": "ㄌㄚ ㄉㄨ ㄒㄧ ㄕˋ ㄔˋ ㄨㄚ", "latin": "Hylarana latouchii", "habitat": "溪畔草叢", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "發出像小綿羊一樣咩咩的溫柔叫聲。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_26", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "中層樹洞", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_27", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "高山冷杉枝", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_28", "name": "褐林鴞", "zhuyin": "ㄏㄜˋ ㄌㄧㄣˊ ㄒㄧㄠ", "latin": "Strix leptogrammica", "habitat": "巨木分叉處", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "體型碩大的森林守護者，無聲滑翔掠過樹冠。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_29", "name": "灰林鴞", "zhuyin": "ㄏㄨㄟ ㄌㄧㄣˊ ㄒㄧㄠ", "latin": "Strix aluco", "habitat": "高山雲霧層", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "羽毛柔軟灰暗，夜間視野敏銳絕倫。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_30", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_31", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_32", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_33", "name": "林雕", "zhuyin": "ㄌㄧㄣˊ ㄉㄧㄠ", "latin": "Ictinaetus malaiensis", "habitat": "原始林冠上空", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "翅膀長直平展，在密林樹冠緩慢盤旋搜尋。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_34", "name": "熊鷹 (赫氏角鷹)", "zhuyin": "ㄒㄩㄥˊ ㄧㄥ", "latin": "Nisaetus nipalensis", "habitat": "神木巔峰", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "台灣最強猛禽霸主，冠羽威武，巨爪孔武有力。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_35", "name": "魚鷹", "zhuyin": "ㄩˊ ㄧㄥ", "latin": "Pandion haliaetus", "habitat": "湖泊河口", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "從空中向水面俯衝，用粗糙帶刺爪心緊緊抓魚。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_36", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_37", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "闊葉林中層", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_38", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "中層枯木", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_39", "name": "綠鳩", "zhuyin": "ㄌㄩˋ ㄐㄧㄡ", "latin": "Treron sieboldii", "habitat": "榕樹果冠", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "身披柔和草綠色，在高處啄食甜潤榕樹果實。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_40", "name": "紅頭山雀", "zhuyin": "ㄏㄨㄥˊ ㄊㄡˊ ㄕㄢ ㄑㄩㄝˋ", "latin": "Aegithalos concinnus", "habitat": "針葉林細枝", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "戴著小焦黃帽子，像圓滾滾的小毛球在枝頭翻筋斗。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_41", "name": "金翼白眉", "zhuyin": "ㄐㄧㄣ ㄧˋ ㄅㄞˊ ㄇㄟˊ", "latin": "Trochalopteron morrisonianum", "habitat": "地面高山步道", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "眼旁兩道雪白長眉，不怕人，在步道旁歡快蹦跳。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_42", "name": "酒紅朱雀", "zhuyin": "ㄐㄧㄡˇ ㄏㄨㄥˊ ㄓㄨ ㄑㄩㄝˋ", "latin": "Carpodacus formosanus", "habitat": "高海拔灌木", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "羽色宛如成熟的紅葡萄酒，鮮豔奪目。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_43", "name": "栗背林鴝", "zhuyin": "ㄌㄧˋ ㄅㄟˋ ㄌㄧㄣˊ ㄑㄩˊ", "latin": "Tarsiger johnstoniae", "habitat": "林緣枯枝", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "胸口橫著一道溫暖橘紅項圈，翹尾跳躍。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_44", "name": "黃山雀", "zhuyin": "ㄏㄨㄤˊ ㄕㄢ ㄑㄩㄝˋ", "latin": "Machlolophus holsti", "habitat": "闊葉林上層", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "頭頂黑色帥氣鳳冠，通體檸檬亮黃，叫聲婉轉。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_45", "name": "冠羽畫眉", "zhuyin": "ㄍㄨㄢ ㄩˇ ㄏㄨㄚˋ ㄇㄟˊ", "latin": "Yuhina brunneiceps", "habitat": "杜鵑灌叢", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "咖啡色俏皮小尖冠，叫著清甜的 To-meet-you。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_46", "name": "白耳畫眉", "zhuyin": "ㄅㄞˊ ㄦˇ ㄏㄨㄚˋ ㄇㄟˊ", "latin": "Heterophasia auricularis", "habitat": "高木頂冠", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "耳後白絲帶隨風飄逸，嗓音嘹亮貫穿整座山谷。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_47", "name": "藪鳥", "zhuyin": "ㄙㄡˇ ㄋㄧㄠˇ", "latin": "Liocichla steerii", "habitat": "地面落葉林下", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "眼角有一點俏皮黃痣，林下草叢大聲唱歌。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_48", "name": "紋翼畫眉", "zhuyin": "ㄨㄣˊ ㄧˋ ㄏㄨㄚˋ ㄇㄟˊ", "latin": "Actinodura morrisoniana", "habitat": "高聳林冠", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雙翼有如水波般的細緻橫紋，動作優雅沉靜。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_49", "name": "火冠戴菊", "zhuyin": "ㄏㄨㄛˇ ㄍㄨㄢ ㄉㄞˋ ㄐㄩˊ", "latin": "Regulus goodfellowi", "habitat": "冷杉針葉尖", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "體型極小，頭頂有一撮像燃燒小火苗的金紅羽毛。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_50", "name": "灰鷽", "zhuyin": "ㄏㄨㄟ ㄒㄩㄝˊ", "latin": "Pyrrhula erythaca", "habitat": "鐵杉樹冠", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "厚厚圓鈍的大嘴，專門咬破堅硬的松樹毬果。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_51", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_52", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "冰涼清澈溪水", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_53", "name": "台灣鏟頜魚 (苦花)", "zhuyin": "ㄎㄨˇ ㄏㄨㄚ", "latin": "Onychostoma barbatulum", "habitat": "湍急石隙", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "用像鏟子般的嘴啃食石頭青苔，水底翻身閃銀光。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_54", "name": "台灣石賓", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕˊ ㄅㄧㄣ", "latin": "Acrossocheilus paradoxus", "habitat": "清澈中游溪", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "身上帶著7條俐落黑橫帶，活潑好動。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_55", "name": "台灣細髫", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄒㄧˋ ㄊㄧㄠˊ", "latin": "Aphyocypris moltrechti", "habitat": "淺水草澤", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "半透明如琉璃的小魚，體側閃耀青藍光芒。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_56", "name": "蓋斑鬥魚", "zhuyin": "ㄍㄞˋ ㄅㄢ ㄉㄡˋ ㄩˊ", "latin": "Macropodus opercularis", "habitat": "靜止水塘", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "腮邊有彩虹斑塊，雄魚長著飄逸長尾巴。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_57", "name": "高身鏟頜魚", "zhuyin": "ㄍㄠ ㄕㄣ ㄔㄢˇ ㄏㄜˊ ㄩˊ", "latin": "Onychostoma alticorpus", "habitat": "深谷急流", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "高拱的菱形體態，鱗片如鎧甲般堅韌閃亮。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_58", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "地面落葉堆", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_59", "name": "雨傘節", "zhuyin": "ㄩˇ ㄙㄢˇ ㄐㄧㄝˊ", "latin": "Bungarus multicinctus", "habitat": "潮濕地面", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "黑白環節分明，鱗片光滑如黑色鋼琴漆。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_60", "name": "眼鏡蛇", "zhuyin": "ㄧㄢˇ ㄐㄧㄥˋ ㄕㄜˊ", "latin": "Naja atra", "habitat": "低矮草叢", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "昂首展開扁平頸盾，背後印著眼鏡般的紋樣。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_61", "name": "龜殼花", "zhuyin": "ㄍㄨㄟ ㄎㄜˊ ㄏㄨㄚ", "latin": "Protobothrops mucrosquamatus", "habitat": "枯木堆", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "三角形頭部，身上布滿錯綜複雜的棕褐斑。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_62", "name": "赤尾青竹絲", "zhuyin": "ㄔˋ ㄨㄟˇ ㄑㄧㄥ ㄓㄨˊ ㄙ", "latin": "Species taiwanensis", "habitat": "低垂竹枝", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "翠綠身軀藏在竹葉中，尾端留有一點焦紅色。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_63", "name": "錦蛇 (黑眉錦蛇)", "zhuyin": "ㄏㄟ ㄇㄟˊ ㄐㄧㄣˇ ㄕㄜˊ", "latin": "Species taiwanensis", "habitat": "大樹粗幹", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "眼睛後方有一條帥氣長黑眉，性情溫順不咬人。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_64", "name": "草花蛇", "zhuyin": "ㄘㄠˇ ㄏㄨㄚ ㄕㄜˊ", "latin": "Species taiwanensis", "habitat": "水田邊緣", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "身上帶有格子花紋，水陸兩棲動作敏捷。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_65", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species taiwanensis", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_66", "name": "黃口攀蜥", "zhuyin": "ㄏㄨㄤˊ ㄎㄡˇ ㄆㄢ ㄒㄧ", "latin": "Species taiwanensis", "habitat": "低海拔枝枒", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "張開嘴巴裡面是金黃色的，尾巴非常修長。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_67", "name": "台灣草蜥", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄘㄠˇ ㄒㄧ", "latin": "Species taiwanensis", "habitat": "向陽草尖", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "拖著兩倍體長的尾巴在草尖曬日光浴。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_68", "name": "麗紋石龍子", "zhuyin": "ㄌㄧˋ ㄨㄣˊ ㄕˊ ㄌㄨㄥˊ ㄗˇ", "latin": "Species taiwanensis", "habitat": "溫暖石堆", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "幼年時有一條亮藍寶石色尾巴與金黃五條線。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_69", "name": "綠蠵龜", "zhuyin": "ㄌㄩˋ ㄒㄧ ㄍㄨㄟ", "latin": "Species taiwanensis", "habitat": "海島沙灘", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "大大的流線海龜甲，前腳划水像在海中飛翔。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_70", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Species taiwanensis", "habitat": "地面潮濕森林", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_71", "name": "柴棺龜", "zhuyin": "ㄔㄞˊ ㄍㄨㄢ ㄍㄨㄟ", "latin": "Species taiwanensis", "habitat": "荷花泥塘", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "頭側有鮮黃斑紋，喜歡趴在木頭上曬背。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_72", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Species taiwanensis", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_73", "name": "大紫蛺蝶", "zhuyin": "ㄉㄚˋ ㄗˇ ㄐㄧㄚˊ ㄉㄧㄝˊ", "latin": "Species taiwanensis", "habitat": "樹頂樹汁流", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "翅面中央散發華麗高貴的絲絨紫光。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_74", "name": "曙鳳蝶", "zhuyin": "ㄕㄨˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Species taiwanensis", "habitat": "高山花叢", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "下半翅膀呈現像清晨太陽升起時的溫柔粉紅。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_75", "name": "珠光鳳蝶", "zhuyin": "ㄓㄨ ㄍㄨㄤ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Species taiwanensis", "habitat": "海島向陽面", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "金色翅膀在斜陽下會發出珍珠虹彩般的彩色偏光。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_76", "name": "台灣長臂金龜", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄅㄧˋ ㄐㄧㄣ ㄍㄨㄟ", "latin": "Species taiwanensis", "habitat": "中層樹幹流", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "公蟲前腳長得不可思議，金屬銅綠背板閃閃發光。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_77", "name": "大圓翅鍬形蟲", "zhuyin": "ㄉㄚˋ ㄩㄢˊ ㄔˋ ㄑㄧㄠ ㄒㄧㄥˊ ㄔㄨㄥˊ", "latin": "Species taiwanensis", "habitat": "秋天林道", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "黑亮如墨玉寶石的圓弧翅鞘，形態高貴。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_78", "name": "高砂深山鍬形蟲", "zhuyin": "ㄍㄠ ㄕㄚ ㄕㄣ ㄕㄢ ㄑㄧㄠ ㄒㄧㄥˊ ㄔㄨㄥˊ", "latin": "Species taiwanensis", "habitat": "高山櫟樹", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "頭部大顎長著機械般帥氣鋸齒與耳突。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_79", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Species taiwanensis", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_80", "name": "霧社血斑天牛", "zhuyin": "ㄨˋ ㄕㄜˋ ㄒㄧㄝˇ ㄅㄢ ㄊㄧㄢ ㄋㄧㄡˊ", "latin": "Species taiwanensis", "habitat": "高山山櫻木", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "通體長滿鮮紅如絲絨的紅毛，極為珍貴。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_81", "name": "彩虹吉丁蟲", "zhuyin": "ㄘㄞˇ ㄏㄨㄥˊ ㄐㄧˊ ㄉㄧㄥ ㄔㄨㄥˊ", "latin": "Species taiwanensis", "habitat": "向陽樹冠頂", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "綠色翅膀帶兩條金屬紫紅條紋，光彩奪目。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_82", "name": "渡邊氏東方蠟蟬", "zhuyin": "ㄉㄨˋ ㄅㄧㄢ ㄕˋ ㄉㄨㄥ ㄈㄤ ㄌㄚˋ ㄔㄢˊ", "latin": "Species taiwanensis", "habitat": "烏桕樹皮", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "鼻子前長著一根翹起的小黃球，外型超可愛。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_83", "name": "黑翅晦螢", "zhuyin": "ㄏㄟ ㄔˋ ㄏㄨㄟˋ ㄧㄥˊ", "latin": "Species taiwanensis", "habitat": "地面草根處", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "初夏夜晚在森林底層閃著柔和綠光的小燈泡。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_84", "name": "黃緣螢", "zhuyin": "ㄏㄨㄤˊ ㄩㄢˊ ㄧㄥˊ", "latin": "Species taiwanensis", "habitat": "乾淨水溝旁", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "小時候住在水裡，翅膀邊緣有一道黃金鑲邊。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_85", "name": "山椒魚 (阿里山山椒魚)", "zhuyin": "ㄚ ㄌㄧˇ ㄕㄢ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Species taiwanensis", "habitat": "冰冷腐木下", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "冰河留下來的五趾活化石，黑褐色身軀帶金斑。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_86", "name": "觀霧山椒魚", "zhuyin": "ㄍㄨㄢ ㄨˋ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Species taiwanensis", "habitat": "濕潤苔蘚碎石", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "雪霸觀霧的珍稀活化石，靠濕潤皮膚呼吸。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_87", "name": "南湖山椒魚", "zhuyin": "ㄋㄢˊ ㄏㄨˊ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Species taiwanensis", "habitat": "極高山冰冷溪源", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "生活在3000公尺高山荒涼碎石坡的極端生存者。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_88", "name": "楚南氏山椒魚", "zhuyin": "ㄔㄨˇ ㄋㄢˊ ㄕˋ ㄕㄢ ㄐㄧㄠ ㄩˊ", "latin": "Species taiwanensis", "habitat": "高山溪流落葉", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "前腳四趾後腳四趾，在冰冷高山清泉穿梭。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_89", "name": "台灣山鷓鴣 (深山竹雞)", "zhuyin": "ㄕㄣ ㄕㄢ ㄓㄨˊ ㄐㄧ", "latin": "Species taiwanensis", "habitat": "濃霧林下", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "喉部黑白太極斑，在霧氣裡發出悠長對唱。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_90", "name": "灰頭花翼", "zhuyin": "ㄏㄨㄟ ㄊㄡˊ ㄏㄨㄚ ㄧˋ", "latin": "Species taiwanensis", "habitat": "箭竹叢細枝", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "雪白眼圈圍著大眼睛，活潑在竹叢鑽來鑽去。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_91", "name": "小剪尾", "zhuyin": "ㄒㄧㄠˇ ㄐㄧㄢˇ ㄨㄟˇ", "latin": "Species taiwanensis", "habitat": "瀑布激流岩石", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "黑白小燕尾，站在濕滑瀑布旁輕巧啄食小蟲。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_92", "name": "紫嘯鶇", "zhuyin": "ㄗˇ ㄒㄧㄠˋ ㄉㄨㄥ", "latin": "Species taiwanensis", "habitat": "陰暗溪石上", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "全身披著黑紫藍色羽衣，陽光下一閃琉璃光。", "coins": 95, "color": "#795548", "altitude": "生態層"}, {"id": "species_93", "name": "白河烏", "zhuyin": "ㄅㄞˊ ㄏㄜˊ ㄨ", "latin": "Species taiwanensis", "habitat": "激流大石頭", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "能在冰冷急流中直接走下水底抓蟲，水性一流。", "coins": 110, "color": "#795548", "altitude": "生態層"}, {"id": "species_94", "name": "鉛色水鶇", "zhuyin": "ㄑㄧㄢ ㄙㄜˋ ㄕㄨㄟˇ ㄉㄨㄥ", "latin": "Species taiwanensis", "habitat": "陽光溪石", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "鉛藍身子配一把鮮紅扇子尾巴，上下搖擺宣示領地。", "coins": 125, "color": "#795548", "altitude": "生態層"}, {"id": "species_95", "name": "栗尾鴝", "zhuyin": "ㄌㄧˋ ㄨㄟˇ ㄑㄩˊ", "latin": "Species taiwanensis", "habitat": "冷杉林落葉", "status": "一般 (LC)", "badge": "success", "diet": "天然野生", "desc": "金黃耀眼的毛色，喜歡在林緣小跳步。", "coins": 140, "color": "#795548", "altitude": "生態層"}, {"id": "species_96", "name": "金黃鼠耳蝠", "zhuyin": "ㄐㄧㄣ ㄏㄨㄤˊ ㄕㄨˇ ㄦˇ ㄈㄨˊ", "latin": "Species taiwanensis", "habitat": "向陽闊葉背", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "毛茸茸鮮黃色小蝙蝠，倒掛在樹葉下睡午覺。", "coins": 155, "color": "#795548", "altitude": "生態層"}, {"id": "species_97", "name": "無尾葉鼻蝠", "zhuyin": "ㄨˊ ㄨㄟˇ ㄧㄝˋ ㄅㄧˊ ㄈㄨˊ", "latin": "Species taiwanensis", "habitat": "隱密樹洞", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "鼻子長得像一朵複雜的小花瓣，耳朵特化。", "coins": 170, "color": "#795548", "altitude": "生態層"}, {"id": "species_98", "name": "東方白鸛", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄅㄞˊ ㄍㄨㄢˋ", "latin": "Species taiwanensis", "habitat": "開闊大濕地", "status": "極危 (CR)", "badge": "danger", "diet": "天然野生", "desc": "雪白大翅膀配黑色飛羽，眼圈緋紅，體態優雅高貴。", "coins": 185, "color": "#795548", "altitude": "生態層"}, {"id": "species_99", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Species taiwanensis", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "diet": "天然野生", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 80, "color": "#795548", "altitude": "生態層"}, {"id": "species_100", "name": "水雉", "zhuyin": "ㄕㄨㄟˇ ㄓˋ", "latin": "Species taiwanensis", "habitat": "菱角田水面", "status": "珍貴 (VU)", "badge": "warning", "diet": "天然野生", "desc": "長長腳趾在菱角葉上輕盈漫步，有凌波仙子美稱。", "coins": 95, "color": "#795548", "altitude": "生態層"}];
+    const ALL_ANIMALS = [{"id": "formosan_black_bear", "name": "台灣黑熊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄏㄟ ㄒㄩㄥˊ", "latin": "Ursus thibetanus formosanus", "status": "瀕危 (EN)", "badge": "danger", "habitat": "原始闊葉林深處", "desc": "胸前擁有醒目雪白V字斑紋，耳朵圓厚，步伐穩健沉著，為台灣特有亞種黑熊。", "coins": 180, "color": "#1A1817"}, {"id": "leopard_cat", "name": "台灣石虎", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕˊ ㄏㄨˇ", "latin": "Prionailurus bengalensis chinensis", "status": "瀕危 (EN)", "badge": "danger", "habitat": "淺山灌木草叢", "desc": "耳後有黑白分明斑塊，身上布滿錢幣般的豹紋，雙眼在林間閃爍警覺綠光。", "coins": 160, "color": "#C89658"}, {"id": "golden_snub_nosed_monkey", "name": "川金絲猴", "zhuyin": "ㄔㄨㄢ ㄐㄧㄣ ㄙ ㄏㄡˊ", "latin": "Rhinopithecus roxellana", "status": "珍貴 (VU)", "badge": "warning", "habitat": "高木果實群", "desc": "淡藍色面龐與靈動五官，身披金絲緞子般的柔順背毛，在林間抓著果實啃食。", "coins": 150, "color": "#FFB300"}, {"id": "crested_serpent_eagle", "name": "大冠鷲", "zhuyin": "ㄉㄚˋ ㄍㄨㄢ ㄐㄧㄡˋ", "latin": "Spilornis cheela hoya", "status": "珍貴 (VU)", "badge": "warning", "habitat": "林冠開闊上空", "desc": "頭戴黑白相間羽冠，展翼盤旋在林冠上空，銳利鷹眼俯瞰地面獵物動靜。", "coins": 140, "color": "#5D4037"}, {"id": "emerald_tree_frog", "name": "翡翠樹蛙", "zhuyin": "ㄈㄟˇ ㄘㄨㄟˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus prasinatus", "status": "珍貴 (VU)", "badge": "warning", "habitat": "姑婆芋大葉片", "desc": "通體翠綠如上等翡翠玉，趾端圓潤肉質吸盤牢固吸附，皮膚濕潤晶亮。", "coins": 120, "color": "#00E676"}, {"id": "formosan_sika_deer", "name": "台灣梅花鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄟˊ ㄏㄨㄚ ㄌㄨˋ", "latin": "Cervus nippon taiouanus", "status": "一般 (LC)", "badge": "success", "habitat": "陽光林間草地", "desc": "紅褐色毛皮點綴著珍珠白梅花斑點，公鹿長有高聳分叉角，邁著優雅細腿踱步。", "coins": 100, "color": "#A1623A"}, {"id": "pangolin", "name": "穿山甲", "zhuyin": "ㄔㄨㄢ ㄕㄢ ㄐㄧㄚˇ", "latin": "Manis pentadactyla", "status": "極危 (CR)", "badge": "danger", "habitat": "腐植土落葉堆", "desc": "身上緊密排列著菱形角質硬鱗片，長尾巴拖在身後，受驚時立即蜷縮成堅硬球體。", "coins": 200, "color": "#795548"}, {"id": "mikado_pheasant", "name": "黑長尾雉 (帝雉)", "zhuyin": "ㄉㄧˋ ㄓˋ", "latin": "Syrmaticus mikado", "status": "珍貴 (VU)", "badge": "warning", "habitat": "針葉林下步道", "desc": "深藍泛金屬紫羽衣，修長尾羽有黑白相間橫斑，宛如身穿華麗斗篷的高山黑武士。", "coins": 170, "color": "#1A237E"}, {"id": "swinhoes_pheasant", "name": "藍腹鷴", "zhuyin": "ㄌㄢˊ ㄈㄨˋ ㄒㄧㄢˊ", "latin": "Lophura swinhoii", "status": "珍貴 (VU)", "badge": "warning", "habitat": "原始林下落葉層", "desc": "雪白羽冠與背斑，藍寶石光澤身軀搭配鮮紅肉垂，姿態沉穩端莊。", "coins": 150, "color": "#0D47A1"}, {"id": "taiwan_wild_boar", "name": "台灣野豬", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄧㄝˇ ㄓㄨ", "latin": "Sus scrofa taivanus", "status": "一般 (LC)", "badge": "success", "habitat": "深林泥浴草叢", "desc": "粗糙剛毛與厚實鼻吻，小豬身上有條紋，成豬拱土尋找塊莖，行動敏捷。", "coins": 90, "color": "#4E342E"}, {"id": "species_11", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 80, "color": "#6D4C41"}, {"id": "species_12", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 95, "color": "#6D4C41"}, {"id": "species_13", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 110, "color": "#6D4C41"}, {"id": "species_14", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 125, "color": "#6D4C41"}, {"id": "species_15", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 140, "color": "#6D4C41"}, {"id": "species_16", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 155, "color": "#6D4C41"}, {"id": "species_17", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 170, "color": "#6D4C41"}, {"id": "species_18", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 185, "color": "#6D4C41"}, {"id": "species_19", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 80, "color": "#6D4C41"}, {"id": "species_20", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_21", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 110, "color": "#6D4C41"}, {"id": "species_22", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 125, "color": "#6D4C41"}, {"id": "species_23", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 140, "color": "#6D4C41"}, {"id": "species_24", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 155, "color": "#6D4C41"}, {"id": "species_25", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 170, "color": "#6D4C41"}, {"id": "species_26", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 185, "color": "#6D4C41"}, {"id": "species_27", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 80, "color": "#6D4C41"}, {"id": "species_28", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 95, "color": "#6D4C41"}, {"id": "species_29", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 110, "color": "#6D4C41"}, {"id": "species_30", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 125, "color": "#6D4C41"}, {"id": "species_31", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 140, "color": "#6D4C41"}, {"id": "species_32", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 155, "color": "#6D4C41"}, {"id": "species_33", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 170, "color": "#6D4C41"}, {"id": "species_34", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 185, "color": "#6D4C41"}, {"id": "species_35", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 80, "color": "#6D4C41"}, {"id": "species_36", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 95, "color": "#6D4C41"}, {"id": "species_37", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 110, "color": "#6D4C41"}, {"id": "species_38", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 125, "color": "#6D4C41"}, {"id": "species_39", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 140, "color": "#6D4C41"}, {"id": "species_40", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 155, "color": "#6D4C41"}, {"id": "species_41", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 170, "color": "#6D4C41"}, {"id": "species_42", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 185, "color": "#6D4C41"}, {"id": "species_43", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 80, "color": "#6D4C41"}, {"id": "species_44", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 95, "color": "#6D4C41"}, {"id": "species_45", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_46", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 125, "color": "#6D4C41"}, {"id": "species_47", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 140, "color": "#6D4C41"}, {"id": "species_48", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 155, "color": "#6D4C41"}, {"id": "species_49", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 170, "color": "#6D4C41"}, {"id": "species_50", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 185, "color": "#6D4C41"}, {"id": "species_51", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 80, "color": "#6D4C41"}, {"id": "species_52", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_53", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 110, "color": "#6D4C41"}, {"id": "species_54", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 125, "color": "#6D4C41"}, {"id": "species_55", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 140, "color": "#6D4C41"}, {"id": "species_56", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 155, "color": "#6D4C41"}, {"id": "species_57", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 170, "color": "#6D4C41"}, {"id": "species_58", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 185, "color": "#6D4C41"}, {"id": "species_59", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 80, "color": "#6D4C41"}, {"id": "species_60", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 95, "color": "#6D4C41"}, {"id": "species_61", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 110, "color": "#6D4C41"}, {"id": "species_62", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 125, "color": "#6D4C41"}, {"id": "species_63", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 140, "color": "#6D4C41"}, {"id": "species_64", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 155, "color": "#6D4C41"}, {"id": "species_65", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 170, "color": "#6D4C41"}, {"id": "species_66", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 185, "color": "#6D4C41"}, {"id": "species_67", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 80, "color": "#6D4C41"}, {"id": "species_68", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 95, "color": "#6D4C41"}, {"id": "species_69", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 110, "color": "#6D4C41"}, {"id": "species_70", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 125, "color": "#6D4C41"}, {"id": "species_71", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 140, "color": "#6D4C41"}, {"id": "species_72", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 155, "color": "#6D4C41"}, {"id": "species_73", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 170, "color": "#6D4C41"}, {"id": "species_74", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 185, "color": "#6D4C41"}, {"id": "species_75", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 80, "color": "#6D4C41"}, {"id": "species_76", "name": "台灣藍鵲", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄌㄢˊ ㄑㄩㄝˋ", "latin": "Urocissa caerulea", "habitat": "林間中層", "status": "珍貴 (VU)", "badge": "warning", "desc": "台灣國寶長尾藍鳥，朱紅嘴爪，長尾如飄帶。", "coins": 95, "color": "#6D4C41"}, {"id": "species_77", "name": "五色鳥", "zhuyin": "ㄨˇ ㄙㄜˋ ㄋㄧㄠˇ", "latin": "Psilopogon nuchalis", "habitat": "枯木林緣", "status": "一般 (LC)", "badge": "success", "desc": "頭戴五彩花冠，在枯木用大嘴咚咚咚啄出圓巢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_78", "name": "水獺 (歐亞水獺)", "zhuyin": "ㄡ ㄧㄚˋ ㄕㄨㄟˇ ㄊㄚˋ", "latin": "Lutra lutra", "habitat": "溪流深潭", "status": "瀕危 (EN)", "badge": "danger", "desc": "水下流線身軀，四腳帶蹼，抓魚靈活如魚雷。", "coins": 125, "color": "#6D4C41"}, {"id": "species_79", "name": "櫻花鉤吻鮭", "zhuyin": "ㄧㄥ ㄏㄨㄚ ㄍㄡ ㄨㄣˇ ㄍㄨㄟ", "latin": "Oncorhynchus masou formosanus", "habitat": "清澈冰涼溪流", "status": "極危 (CR)", "badge": "danger", "desc": "冰河時期的國寶鮭魚，成熟時下巴彎成鉤狀。", "coins": 140, "color": "#6D4C41"}, {"id": "species_80", "name": "百步蛇", "zhuyin": "ㄅㄞˇ ㄅㄨˋ ㄕㄜˊ", "latin": "Deinagkistrodon acutus", "habitat": "林下落葉堆", "status": "珍貴 (VU)", "badge": "warning", "desc": "鼻子翹起像小角，身上有對稱漂亮的三角形斑紋。", "coins": 155, "color": "#6D4C41"}, {"id": "species_81", "name": "斯文豪氏攀蜥", "zhuyin": "ㄙ ㄨㄣˊ ㄏㄠˊ ㄕˋ ㄆㄢ ㄒㄧ", "latin": "Species", "habitat": "陽光樹幹", "status": "一般 (LC)", "badge": "success", "desc": "在樹皮上做伏地挺身示威，體側黃色條紋顯眼。", "coins": 170, "color": "#6D4C41"}, {"id": "species_82", "name": "食蛇龜", "zhuyin": "ㄕˊ ㄕㄜˊ ㄍㄨㄟ", "latin": "Cuora flavomarginata", "habitat": "潮濕地面", "status": "瀕危 (EN)", "badge": "danger", "desc": "腹甲有鉸鏈可以把頭尾完全封閉進去，極擅防禦。", "coins": 185, "color": "#6D4C41"}, {"id": "species_83", "name": "寬尾鳳蝶", "zhuyin": "ㄎㄨㄢ ㄨㄟˇ ㄈㄥˋ ㄉㄧㄝˊ", "latin": "Agehana maraho", "habitat": "高空林緣", "status": "瀕危 (EN)", "badge": "danger", "desc": "國寶級紅黑大蝴蝶，後翅有寬大的紅月斑尾突。", "coins": 80, "color": "#6D4C41"}, {"id": "species_84", "name": "獨角仙", "zhuyin": "ㄉㄨˊ ㄐㄧㄠˇ ㄒㄧㄢ", "latin": "Allomyrina dichotoma", "habitat": "光臘樹樹幹", "status": "一般 (LC)", "badge": "success", "desc": "頭戴威猛雙叉鹿角，甲蟲界的超級大力士。", "coins": 95, "color": "#6D4C41"}, {"id": "species_85", "name": "黑面琵鷺", "zhuyin": "ㄏㄟ ㄇㄧㄢˋ ㄆㄧˊ ㄌㄨˋ", "latin": "Platalea minor", "habitat": "海邊淺灘", "status": "瀕危 (EN)", "badge": "danger", "desc": "扁扁長長的湯匙嘴在水底左右掃動過濾小魚小蝦。", "coins": 110, "color": "#6D4C41"}, {"id": "species_86", "name": "台灣水鹿", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄕㄨㄟˇ ㄌㄨˋ", "latin": "Rusa unicolor", "habitat": "高山林間", "status": "珍貴 (VU)", "badge": "warning", "desc": "高山林間漫步的大型鹿種，頭頂分叉長角威嚴壯觀。", "coins": 125, "color": "#6D4C41"}, {"id": "species_87", "name": "台灣長鬃山羊", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄔㄤˊ ㄗㄨㄥ ㄕㄢ ㄧㄤˊ", "latin": "Capricornis swinhoei", "habitat": "岩石陡坡", "status": "珍貴 (VU)", "badge": "warning", "desc": "蹄部具防滑肉墊，能在近垂直的山壁懸崖靈巧跳躍。", "coins": 140, "color": "#6D4C41"}, {"id": "species_88", "name": "黃喉貂", "zhuyin": "ㄏㄨㄤˊ ㄏㄡˊ ㄉㄧㄠ", "latin": "Martes flavigula", "habitat": "樹林倒木", "status": "珍貴 (VU)", "badge": "warning", "desc": "頸部亮黃如圍巾，身手矯健，在樹幹與岩石間追逐獵物。", "coins": 155, "color": "#6D4C41"}, {"id": "species_89", "name": "食蟹獴", "zhuyin": "ㄕˊ ㄒㄧㄝˋ ㄇㄥˇ", "latin": "Urva urva", "habitat": "清涼溪流邊", "status": "一般 (LC)", "badge": "success", "desc": "溪流邊抓魚捕蟹的好手，粗硬剛毛能防水防刺。", "coins": 170, "color": "#6D4C41"}, {"id": "species_90", "name": "麝香貓", "zhuyin": "ㄕㄜˋ ㄒㄧㄤ ㄇㄠ", "latin": "Viverricula indica", "habitat": "地面林道", "status": "珍貴 (VU)", "badge": "warning", "desc": "身上帶有優雅黑褐斑紋，長尾具黑白環節，神祕靈動。", "coins": 185, "color": "#6D4C41"}, {"id": "species_91", "name": "白鼻心", "zhuyin": "ㄅㄞˊ ㄅㄧˊ ㄒㄧㄣ", "latin": "Paguma larvata", "habitat": "果樹周圍", "status": "一般 (LC)", "badge": "success", "desc": "鼻樑一抹白痕，極度擅長爬樹採食甜美野果。", "coins": 80, "color": "#6D4C41"}, {"id": "species_92", "name": "台灣獼猴", "zhuyin": "ㄊㄞˊ ㄨㄢ ㄇㄧˊ ㄏㄡˊ", "latin": "Macaca cyclopis", "habitat": "樹冠枝條", "status": "一般 (LC)", "badge": "success", "desc": "靈活雙手雙腳在樹枝間翻滾跳躍，家族聚集群居。", "coins": 95, "color": "#6D4C41"}, {"id": "species_93", "name": "台北樹蛙", "zhuyin": "ㄊㄞˊ ㄅㄟˇ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus taipeianus", "habitat": "溪谷泥穴", "status": "珍貴 (VU)", "badge": "warning", "desc": "背部碧綠無瑕，冬天在潮濕泥洞裡築泡巢。", "coins": 110, "color": "#6D4C41"}, {"id": "species_94", "name": "莫氏樹蛙", "zhuyin": "ㄇㄛˋ ㄕˋ ㄕㄨˋ ㄨㄚ", "latin": "Zhangixalus moltrechti", "habitat": "潮濕竹叢", "status": "一般 (LC)", "badge": "success", "desc": "大腿內側鮮紅如血，叫聲如喀喀敲竹板。", "coins": 125, "color": "#6D4C41"}, {"id": "species_95", "name": "領角鴞", "zhuyin": "ㄌㄧㄥˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus lettia glabripes", "habitat": "老樹枝枒", "status": "珍貴 (VU)", "badge": "warning", "desc": "頭頂有一對小角羽，夜晚睜著圓圓大眼守護林梢。", "coins": 140, "color": "#6D4C41"}, {"id": "species_96", "name": "黃嘴角鴞", "zhuyin": "ㄏㄨㄤˊ ㄗㄨㄟˇ ㄐㄧㄠˇ ㄒㄧㄠ", "latin": "Otus spilocephalus", "habitat": "冷杉林蔭", "status": "珍貴 (VU)", "badge": "warning", "desc": "嘴喙鮮黃，吹出兩聲一組空靈的夜間哨音。", "coins": 155, "color": "#6D4C41"}, {"id": "species_97", "name": "東方蜂鷹", "zhuyin": "ㄉㄨㄥ ㄈㄤ ㄈㄥ ㄧㄥ", "latin": "Pernis ptilorhynchus", "habitat": "林冠上空", "status": "珍貴 (VU)", "badge": "warning", "desc": "臉羽細如硬鱗，不怕野蜂螯刺，專吃蜂巢蛹。", "coins": 170, "color": "#6D4C41"}, {"id": "species_98", "name": "黑翅鳶", "zhuyin": "ㄏㄟ ㄔˋ ㄩㄢ", "latin": "Elanus caeruleus", "habitat": "草甸高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "雙眼紅如寶石，能在空中靜止懸停振翅巡邏。", "coins": 185, "color": "#6D4C41"}, {"id": "species_99", "name": "遊隼", "zhuyin": "ㄧㄡˊ ㄓㄨㄣˇ", "latin": "Falco peregrinus", "habitat": "斷崖高空", "status": "珍貴 (VU)", "badge": "warning", "desc": "俯衝速度世界第一的猛禽，撕裂長空如黑色閃電。", "coins": 80, "color": "#6D4C41"}, {"id": "species_100", "name": "翠鳥", "zhuyin": "ㄘㄨㄟˋ ㄋㄧㄠˇ", "latin": "Alcedo atthis", "habitat": "溪面低空", "status": "一般 (LC)", "badge": "success", "desc": "藍綠色羽毛在水面疾飛，宛如閃爍寶石光芒。", "coins": 95, "color": "#6D4C41"}];
   </script>
 
-  <!-- Main Game Loop & Interaction Engine -->
+  <!-- Top-Down Jungle Game Engine -->
   <script>
-    let currentView = 'battle';
+    let currentView = 'topdown';
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
@@ -669,60 +495,69 @@
       if (panel) panel.classList.add('active');
 
       setTimeout(() => {
-        if (viewName === 'battle') startDaveJungleEngine();
-        else stopDaveJungleEngine();
-
-        if (viewName === 'pbr') initPbrLab();
+        if (viewName === 'topdown') startTopDownEngine();
+        else stopTopDownEngine();
       }, 50);
     }
 
     // ========================================================
-    // DAVE THE DIVER STYLE 2D JUNGLE EXPLORATION ENGINE
+    // TOP-DOWN 2D JUNGLE ENGINE (俯視上下左右自由探索)
     // ========================================================
-    let gameLoopId = null;
+    let engineLoopId = null;
+
+    // Top-down World Size: 2600 x 2000 px
+    const MAP_W = 2600;
+    const MAP_H = 2000;
+
+    // Player Dave (Top-Down perspective)
     const dave = {
-      x: 300,
-      y: 450,       // world coordinates
+      x: 650,
+      y: 550,
       vx: 0,
       vy: 0,
-      width: 44,
-      height: 58,
-      isGrounded: false,
-      facing: 1,    // 1: right, -1: left
-      aimAngle: 0,  // aiming angle in radians
-      aimDist: 160
+      speed: 4.2,
+      angle: 0,       // Aim angle
+      walkFrame: 0,
+      isMoving: false
     };
-
-    // Jungle World (Vertical & Horizontal: Height from 0m to 100m, Width 2400px)
-    const WORLD_WIDTH = 2400;
-    const WORLD_HEIGHT = 1600; // 0 at bottom, sky at top
 
     // Camera
     const camera = { x: 0, y: 0 };
 
-    // Platforms (Huge Ancient Trees, Vines, Canopy Branches)
-    const platforms = [
-      { x: 0, y: 520, w: 2400, h: 60, type: 'ground' },         // Forest Floor (0m)
-      { x: 200, y: 400, w: 280, h: 20, type: 'branch' },       // Understory Branch (15m)
-      { x: 580, y: 320, w: 320, h: 22, type: 'branch' },       // Banyan Branch (25m)
-      { x: 1000, y: 240, w: 420, h: 25, type: 'canopy' },      // Massive Canopy (40m)
-      { x: 340, y: 160, w: 350, h: 25, type: 'canopy' },       // High Canopy (60m)
-      { x: 800, y: 60, w: 500, h: 25, type: 'sky_platform' }   // Sky Lookout (85m)
+    // Keyboard inputs
+    const keys = { up: false, down: false, left: false, right: false };
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.up = true;
+      if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.down = true;
+      if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = true;
+      if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.up = false;
+      if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.down = false;
+      if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = false;
+      if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = false;
+    });
+
+    // Dynamic Animals Roaming in the Top-Down Jungle
+    // Each animal has rich distinct rendering (Q-version realistic), state, and animations
+    const roamingAnimals = [
+      { id: 'formosan_black_bear', name: '台灣黑熊', x: 800, y: 700, vx: 0.5, vy: 0.3, rot: 0.2, type: 'bear', radius: 46, alert: 0 },
+      { id: 'leopard_cat', name: '台灣石虎', x: 450, y: 400, vx: -0.7, vy: 0.5, rot: 1.5, type: 'cat', radius: 28, alert: 0 },
+      { id: 'emerald_tree_frog', name: '翡翠樹蛙', x: 620, y: 320, vx: 0.2, vy: -0.4, rot: -0.8, type: 'frog', radius: 24, alert: 0 },
+      { id: 'formosan_sika_deer', name: '梅花鹿', x: 1100, y: 550, vx: 0.6, vy: -0.2, rot: 2.1, type: 'deer', radius: 38, alert: 0 },
+      { id: 'pangolin', name: '穿山甲', x: 920, y: 880, vx: -0.3, vy: -0.3, rot: 3.0, type: 'pangolin', radius: 30, alert: 0 },
+      { id: 'crested_serpent_eagle', name: '大冠鷲', x: 700, y: 250, vx: 1.2, vy: 0.4, rot: 0.5, type: 'eagle', radius: 42, alert: 0, isShadow: true },
+      { id: 'golden_snub_nosed_monkey', name: '川金絲猴', x: 1250, y: 400, vx: -0.5, vy: 0.6, rot: -1.2, type: 'monkey', radius: 32, alert: 0 },
+      { id: 'taiwan_wild_boar', name: '台灣野豬', x: 500, y: 950, vx: 0.8, vy: 0.1, rot: 0.1, type: 'boar', radius: 36, alert: 0 }
     ];
 
-    // Roaming Animals at Different Altitudes
-    const worldAnimals = [
-      { id: 'formosan_black_bear', name: '台灣黑熊', x: 750, y: 520 - 45, vx: 0.6, bounds: [500, 1100], color: '#1A1817', radius: 42, layer: '地面森林底層 (0m)' },
-      { id: 'leopard_cat', name: '台灣石虎', x: 260, y: 400 - 30, vx: -0.8, bounds: [200, 460], color: '#C89658', radius: 26, layer: '低矮巨木枝幹 (15m)' },
-      { id: 'golden_snub_nosed_monkey', name: '川金絲猴', x: 1100, y: 240 - 32, vx: 1.1, bounds: [1000, 1400], color: '#FFB300', radius: 28, layer: '古木樹冠層 (40m)' },
-      { id: 'emerald_tree_frog', name: '翡翠樹蛙', x: 650, y: 320 - 18, vx: 0.3, bounds: [600, 800], color: '#00E676', radius: 18, layer: '潮濕枝葉層 (25m)' },
-      { id: 'crested_serpent_eagle', name: '大冠鷲', x: 850, y: -40, vx: 1.4, bounds: [400, 1600], color: '#5D4037', radius: 36, isFlying: true, layer: '雲霧高空巡弋 (85m)' }
-    ];
-
-    // Flying Bubble Net Projectiles
+    // Bubbles
     const bubbles = [];
 
-    // Capture State (QTE)
+    // Capture QTE
     const captureState = {
       active: false,
       targetAnimal: null,
@@ -730,31 +565,9 @@
       tension: 0.0,
       cursor: 0.5,
       sweetCenter: 0.5,
-      sweetWidth: 0.3,
-      leftHolding: false,
-      rightTaps: 0
+      sweetWidth: 0.32,
+      leftHolding: false
     };
-
-    // Keys State
-    const keys = { left: false, right: false, jump: false };
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = true;
-      if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = true;
-      if (e.key === 'w' || e.key === 'W' || e.key === ' ' || e.key === 'ArrowUp') {
-        keys.jump = true;
-        if (dave.isGrounded) {
-          dave.vy = -13.5;
-          dave.isGrounded = false;
-        }
-      }
-    });
-
-    window.addEventListener('keyup', (e) => {
-      if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = false;
-      if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = false;
-      if (e.key === 'w' || e.key === 'W' || e.key === ' ' || e.key === 'ArrowUp') keys.jump = false;
-    });
 
     function handleLeftWing(holding) {
       captureState.leftHolding = holding;
@@ -764,44 +577,41 @@
     }
 
     function handleFirePandaGun() {
-      // Fire a bubble net in direction of aim
       const speed = 14;
-      const spawnX = dave.x + Math.cos(dave.aimAngle) * 35;
-      const spawnY = dave.y - 25 + Math.sin(dave.aimAngle) * 35;
+      const spawnX = dave.x + Math.cos(dave.angle) * 35;
+      const spawnY = dave.y + Math.sin(dave.angle) * 35;
 
       bubbles.push({
         x: spawnX,
         y: spawnY,
-        vx: Math.cos(dave.aimAngle) * speed,
-        vy: Math.sin(dave.aimAngle) * speed,
-        life: 50,
-        radius: 18
+        vx: Math.cos(dave.angle) * speed,
+        vy: Math.sin(dave.angle) * speed,
+        life: 55,
+        radius: 20
       });
 
       if (navigator.vibrate) navigator.vibrate(25);
     }
 
-    function startDaveJungleEngine() {
-      stopDaveJungleEngine();
-      const canvas = document.getElementById('jungle-canvas');
+    function startTopDownEngine() {
+      stopTopDownEngine();
+      const canvas = document.getElementById('jungle-topdown-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
 
       canvas.width = canvas.clientWidth || canvas.parentElement.clientWidth;
       canvas.height = canvas.clientHeight || canvas.parentElement.clientHeight;
 
-      // Mouse Aim Tracking
+      // Mouse tracking for 360 aim
       canvas.onmousemove = (e) => {
         const rect = canvas.getBoundingClientRect();
         const mx = e.clientX - rect.left;
         const my = e.clientY - rect.top;
 
-        // Screen position of Dave
-        const daveScreenX = dave.x - camera.x;
-        const daveScreenY = dave.y - 25 - camera.y;
+        const screenDaveX = dave.x - camera.x;
+        const screenDaveY = dave.y - camera.y;
 
-        dave.aimAngle = Math.atan2(my - daveScreenY, mx - daveScreenX);
-        dave.facing = Math.cos(dave.aimAngle) >= 0 ? 1 : -1;
+        dave.angle = Math.atan2(my - screenDaveY, mx - screenDaveX);
       };
 
       canvas.onmousedown = (e) => {
@@ -812,67 +622,70 @@
       function loop() {
         animTime += 0.02;
 
-        // 1. Dave Physics & Horizontal movement
-        if (keys.left) { dave.vx = -4.5; dave.facing = -1; }
-        else if (keys.right) { dave.vx = 4.5; dave.facing = 1; }
-        else { dave.vx *= 0.8; }
+        // 1. Dave 8-Direction Top-down movement
+        dave.vx = 0;
+        dave.vy = 0;
+        if (keys.up) dave.vy -= dave.speed;
+        if (keys.down) dave.vy += dave.speed;
+        if (keys.left) dave.vx -= dave.speed;
+        if (keys.right) dave.vx += dave.speed;
 
-        // Gravity
-        dave.vy += 0.65;
+        // Normalize diagonal speed
+        if (dave.vx !== 0 && dave.vy !== 0) {
+          dave.vx *= 0.707;
+          dave.vy *= 0.707;
+        }
+
         dave.x += dave.vx;
         dave.y += dave.vy;
+        dave.isMoving = (dave.vx !== 0 || dave.vy !== 0);
+        if (dave.isMoving) dave.walkFrame += 0.25;
 
-        // Platform Collisions
-        dave.isGrounded = false;
-        platforms.forEach(p => {
-          if (dave.x + dave.width / 2 > p.x && dave.x - dave.width / 2 < p.x + p.w) {
-            if (dave.y >= p.y && dave.y - dave.vy <= p.y + 16) {
-              dave.y = p.y;
-              dave.vy = 0;
-              dave.isGrounded = true;
-            }
+        // Constrain Dave inside map
+        dave.x = Math.max(60, Math.min(MAP_W - 60, dave.x));
+        dave.y = Math.max(60, Math.min(MAP_H - 60, dave.y));
+
+        // Smooth Camera Follow
+        const targetCamX = dave.x - canvas.width / 2;
+        const targetCamY = dave.y - canvas.height / 2;
+        camera.x += (targetCamX - camera.x) * 0.09;
+        camera.y += (targetCamY - camera.y) * 0.09;
+
+        // Update HUD
+        document.getElementById('zone-name-tag').innerText = `神木林區 (X: ${Math.floor(dave.x)}, Y: ${Math.floor(dave.y)})`;
+
+        // 2. Animal Roaming AI
+        roamingAnimals.forEach(a => {
+          a.x += a.vx;
+          a.y += a.vy;
+
+          // Turn around at map borders
+          if (a.x < 150 || a.x > MAP_W - 150) a.vx *= -1;
+          if (a.y < 150 || a.y > MAP_H - 150) a.vy *= -1;
+
+          // Update rotation angle to face direction
+          a.rot = Math.atan2(a.vy, a.vx);
+
+          // Natural random turns
+          if (Math.random() < 0.015) {
+            const newAng = Math.random() * Math.PI * 2;
+            const spd = Math.hypot(a.vx, a.vy);
+            a.vx = Math.cos(newAng) * spd;
+            a.vy = Math.sin(newAng) * spd;
           }
         });
 
-        // Constrain Dave inside world bounds
-        dave.x = Math.max(30, Math.min(WORLD_WIDTH - 30, dave.x));
-
-        // 2. Camera Smooth Follow (Just like Dave the Diver Blue Hole)
-        const targetCamX = dave.x - canvas.width / 2;
-        const targetCamY = dave.y - canvas.height / 2;
-        camera.x += (targetCamX - camera.x) * 0.08;
-        camera.y += (targetCamY - camera.y) * 0.08;
-
-        // Altitude Calculation (Floor is 520, Sky is -100)
-        const currentAltitude = Math.max(0, Math.floor((520 - dave.y) * 0.18));
-        document.getElementById('dave-altitude').innerText = currentAltitude > 0 ? (currentAltitude + ' m') : '地面 0.0 m';
-        
-        let layerName = '地面森林底層 (0~15m)';
-        if (currentAltitude > 65) layerName = '高空雲霧巡弋層 (65m+)';
-        else if (currentAltitude > 35) layerName = '神木巨樹冠層 (35~65m)';
-        else if (currentAltitude > 10) layerName = '藤蔓與粗枝中層 (10~35m)';
-        document.getElementById('dave-layer-name').innerText = layerName;
-
-        // 3. Animal Movements
-        worldAnimals.forEach(a => {
-          a.x += a.vx;
-          if (a.x < a.bounds[0] || a.x > a.bounds[1]) a.vx *= -1;
-          if (a.isFlying) a.y = -40 + Math.sin(animTime * 1.5) * 20;
-        });
-
-        // 4. Update Bubbles & Collision with Animals
+        // 3. Bubbles & Collision
         for (let i = bubbles.length - 1; i >= 0; i--) {
           const b = bubbles[i];
           b.x += b.vx;
           b.y += b.vy;
           b.life--;
 
-          // Check hit animal
-          worldAnimals.forEach(a => {
+          roamingAnimals.forEach(a => {
             const dist = Math.hypot(b.x - a.x, b.y - a.y);
             if (dist < a.radius + b.radius) {
-              // Caught in bubble!
-              initiateCaptureQte(a);
+              triggerCapture(a);
               bubbles.splice(i, 1);
             }
           });
@@ -880,56 +693,50 @@
           if (b.life <= 0) bubbles.splice(i, 1);
         }
 
-        // 5. Update Capture QTE if active
+        // 4. Update QTE loop if active
         if (captureState.active) {
-          updateCaptureQteLoop(animTime);
+          updateCaptureLoop(animTime);
         }
 
-        // 6. Draw Entire Dave Exploration Scene
-        drawDaveScene(ctx, canvas.width, canvas.height, animTime);
+        // 5. Draw Top-Down World & Animals
+        drawTopDownScene(ctx, canvas.width, canvas.height, animTime);
 
-        gameLoopId = requestAnimationFrame(loop);
+        engineLoopId = requestAnimationFrame(loop);
       }
-      gameLoopId = requestAnimationFrame(loop);
+      engineLoopId = requestAnimationFrame(loop);
     }
 
-    function stopDaveJungleEngine() {
-      if (gameLoopId) {
-        cancelAnimationFrame(gameLoopId);
-        gameLoopId = null;
+    function stopTopDownEngine() {
+      if (engineLoopId) {
+        cancelAnimationFrame(engineLoopId);
+        engineLoopId = null;
       }
     }
 
-    function initiateCaptureQte(animal) {
+    function triggerCapture(animal) {
       captureState.active = true;
       captureState.targetAnimal = animal;
       captureState.progress = 0.2;
       captureState.tension = 0.1;
-      captureState.sweetCenter = 0.5;
-      captureState.sweetWidth = 0.32;
+      animal.alert = 1.0;
 
       document.getElementById('target-name-hud').innerText = animal.name;
-      document.getElementById('qte-status-hint').innerText = '🔥 泡泡網已鎖定！雙手準備壓制！';
+      document.getElementById('qte-status-hint').innerText = '🔥 泡泡網已牢牢鎖定！左手按住壓制！';
     }
 
-    function updateCaptureQteLoop(t) {
-      const speed = captureState.leftHolding ? 1.0 : 2.2;
+    function updateCaptureLoop(t) {
+      const speed = captureState.leftHolding ? 1.0 : 2.4;
       captureState.cursor = 0.5 + Math.sin(t * speed * 3) * 0.38;
 
       const minS = captureState.sweetCenter - captureState.sweetWidth / 2;
       const maxS = captureState.sweetCenter + captureState.sweetWidth / 2;
       const inSweet = (captureState.cursor >= minS && captureState.cursor <= maxS);
 
-      // Natural escape tension if not holding left hand
       if (!captureState.leftHolding) captureState.tension = Math.min(1.0, captureState.tension + 0.001);
       else captureState.tension = Math.max(0.0, captureState.tension - 0.0006);
 
-      // Right tap / hold auto progress
-      if (inSweet && captureState.leftHolding) {
-        captureState.progress += 0.002;
-      }
+      if (inSweet && captureState.leftHolding) captureState.progress += 0.0025;
 
-      // DOM updates
       document.getElementById('qte-progress-num').innerText = Math.floor(captureState.progress * 100) + '%';
       document.getElementById('qte-tension-num').innerText = Math.floor(captureState.tension * 100) + '%';
       document.getElementById('qte-cursor').style.left = (captureState.cursor * 100) + '%';
@@ -937,494 +744,482 @@
       document.getElementById('qte-sweet-spot').style.width = (captureState.sweetWidth * 100) + '%';
 
       if (captureState.progress >= 1.0) {
-        alert(`🎉 恭喜！成功捕獲【${captureState.targetAnimal.name}】！\n棲地：${captureState.targetAnimal.layer}\n獲得庇護所門票獎勵 +280 G！`);
+        alert(`🎉 恭喜！成功捕獲【${captureState.targetAnimal.name}】！\n已送往自然庇護所安置！獲得獎勵 +250 G！`);
         captureState.active = false;
-        document.getElementById('target-name-hud').innerText = '捕捉成功！探索中';
+        document.getElementById('target-name-hud').innerText = '捕捉成功！繼續探索中';
       }
 
       if (captureState.tension >= 1.0) {
-        alert(`🍃 ${captureState.targetAnimal.name} 掙脫泡泡網跑回樹冠了！\n波波提示：左手要記得持續按住壓制喔！`);
+        alert(`🍃 ${captureState.targetAnimal.name} 掙脫泡泡網跑入草叢了！\n波波提示：左手要按住不放才能穩住！`);
         captureState.active = false;
         document.getElementById('target-name-hud').innerText = '動物已脫逃';
       }
     }
 
-    function drawDaveScene(ctx, w, h, t) {
+    // ========================================================
+    // TOP-DOWN SCENE & EXPRESSIVE Q-VERSION ANIMAL RENDERING
+    // ========================================================
+    function drawTopDownScene(ctx, w, h, t) {
       ctx.clearRect(0, 0, w, h);
 
-      // Save for Camera Transform
       ctx.save();
       ctx.translate(-camera.x, -camera.y);
 
-      // 1. Sky & Forest Gradient
-      const bgGrad = ctx.createLinearGradient(0, -300, 0, 600);
-      bgGrad.addColorStop(0, '#5C9EAD');    // Morning Sky
-      bgGrad.addColorStop(0.35, '#204E4A'); // High Canopy Mist
-      bgGrad.addColorStop(0.7, '#133328');  // Mid Jungle
-      bgGrad.addColorStop(1, '#081712');    // Deep Soil
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(-200, -400, WORLD_WIDTH + 400, WORLD_HEIGHT + 400);
+      // 1. Lush Jungle Grass Grid Background
+      ctx.fillStyle = '#1B3120';
+      ctx.fillRect(0, 0, MAP_W, MAP_H);
 
-      // 2. God Rays filtering through Canopy
-      ctx.save();
-      ctx.globalAlpha = 0.12;
-      for (let i = 0; i < 10; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * 260 + Math.sin(t + i) * 30, -300);
-        ctx.lineTo(i * 320 - 150, 700);
-        ctx.lineTo(i * 320 - 50, 700);
-        ctx.fillStyle = '#FFE082';
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // 3. Huge Ancient Banyan Trees Trunks (Vertical exploration routes)
-      ctx.fillStyle = '#261C14';
-      ctx.fillRect(450, 60, 90, 460);   // Tree 1
-      ctx.fillRect(1150, -50, 110, 570); // Tree 2
-
-      // Vines on tree trunks
-      ctx.strokeStyle = '#388E3C';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(495, 60);
-      for (let y = 60; y <= 520; y += 40) {
-        ctx.lineTo(495 + Math.sin(y * 0.05) * 16, y);
-      }
-      ctx.stroke();
-
-      // 4. Platforms (Branches & Ground)
-      platforms.forEach(p => {
-        if (p.type === 'ground') {
-          // Forest floor with grass top
-          ctx.fillStyle = '#1D130C';
-          ctx.fillRect(p.x, p.y, p.w, p.h);
-          ctx.fillStyle = '#2E7D32';
-          ctx.fillRect(p.x, p.y, p.w, 10);
-        } else {
-          // Massive mossy branches
-          ctx.fillStyle = '#3E2723';
-          ctx.beginPath();
-          ctx.roundRect(p.x, p.y, p.w, p.h, 10);
-          ctx.fill();
-          // Moss highlight
-          ctx.fillStyle = '#4CAF50';
-          ctx.fillRect(p.x + 10, p.y, p.w - 20, 5);
-        }
-      });
-
-      // 5. Roaming Animals
-      worldAnimals.forEach(a => {
-        drawWorldAnimal(ctx, a, t);
-      });
-
-      // 6. Flying Bubble Projectiles
-      bubbles.forEach(b => {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 229, 255, 0.4)';
-        ctx.strokeStyle = '#00E5FF';
-        ctx.lineWidth = 2.5;
-        ctx.fill();
-        ctx.stroke();
-        // Highlight bubble reflection
-        ctx.beginPath();
-        ctx.arc(b.x - 5, b.y - 5, 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#FFF';
-        ctx.fill();
-        ctx.restore();
-      });
-
-      // 7. Dave The Explorer & Panda Gun (Character Render)
-      drawDaveCharacter(ctx, dave, t);
-
-      ctx.restore(); // Restore camera
-    }
-
-    function drawDaveCharacter(ctx, d, t) {
-      ctx.save();
-      ctx.translate(d.x, d.y);
-
-      // Facing Flip
-      if (d.facing === -1) ctx.scale(-1, 1);
-
-      // Dave Walking Bounce
-      const walkBob = Math.abs(d.vx) > 0.5 ? Math.sin(t * 15) * 3 : 0;
-
-      // Dave Shadow
-      ctx.beginPath();
-      ctx.ellipse(0, 2, 22, 6, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.fill();
-
-      // Dave Legs
-      ctx.fillStyle = '#3E2723';
-      ctx.fillRect(-12, -18 + walkBob, 10, 18);
-      ctx.fillRect(2, -18 - walkBob, 10, 18);
-
-      // Body (Tactical Ranger Vest & Dave's iconic chubby silhouette)
-      ctx.beginPath();
-      ctx.ellipse(0, -32 + walkBob * 0.5, 18, 16, 0, 0, Math.PI * 2);
-      ctx.fillStyle = '#2E7D32'; // Green Tactical Vest
-      ctx.fill();
-      // Vest Pockets
-      ctx.fillStyle = '#1B5E20';
-      ctx.fillRect(-12, -36 + walkBob * 0.5, 8, 8);
-      ctx.fillRect(4, -36 + walkBob * 0.5, 8, 8);
-
-      // Dave Beard & Face
-      ctx.beginPath();
-      ctx.arc(0, -48 + walkBob * 0.5, 12, 0, Math.PI * 2);
-      ctx.fillStyle = '#F5CBA7';
-      ctx.fill();
-      // Brown Bushy Beard
-      ctx.beginPath();
-      ctx.ellipse(0, -44 + walkBob * 0.5, 13, 8, 0, 0, Math.PI * 2);
-      ctx.fillStyle = '#3E2723';
-      ctx.fill();
-      // Titanium Polygonal Glasses
-      ctx.strokeStyle = '#263238';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(2, -52 + walkBob * 0.5, 7, 6);
-      ctx.strokeRect(-9, -52 + walkBob * 0.5, 7, 6);
-      // Explorer Cap
-      ctx.fillStyle = '#1B5E20';
-      ctx.beginPath();
-      ctx.arc(0, -53 + walkBob * 0.5, 13, Math.PI, 0);
-      ctx.fill();
-      ctx.fillRect(-4, -54 + walkBob * 0.5, 18, 4); // Visor
-
-      // ==========================================
-      // PANDA GUN IN DAVE'S HANDS (BLACK & WHITE THEME)
-      // ==========================================
-      ctx.save();
-      ctx.translate(6, -30 + walkBob * 0.5);
-      
-      // Calculate arm angle matching aim
-      let gunRot = d.aimAngle;
-      if (d.facing === -1) gunRot = Math.PI - d.aimAngle;
-      ctx.rotate(gunRot);
-
-      // Sighting Trajectory Laser Line (Like Dave's Harpoon)
-      ctx.save();
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.45)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([6, 6]);
-      ctx.beginPath();
-      ctx.moveTo(35, 0);
-      ctx.lineTo(220, 0);
-      ctx.stroke();
-      // Crosshair dot
-      ctx.fillStyle = '#00E5FF';
-      ctx.beginPath();
-      ctx.arc(220, 0, 3, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // Gun Body: Panda White & Black
-      ctx.fillStyle = '#F8F9FA'; // Panda White Ceramic
-      ctx.strokeStyle = '#18191A';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(0, -6, 32, 12, 4);
-      ctx.fill();
-      ctx.stroke();
-
-      // Panda Ears Sight on Gun
-      ctx.fillStyle = '#18191A';
-      ctx.beginPath();
-      ctx.arc(10, -9, 4, 0, Math.PI * 2);
-      ctx.arc(22, -9, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Panda Muzzle (Black Front)
-      ctx.fillStyle = '#18191A';
-      ctx.fillRect(32, -4, 8, 8);
-      // Bamboo Magazine below
-      ctx.fillStyle = '#4CAF50';
-      ctx.fillRect(8, 6, 8, 12);
-
-      ctx.restore();
-
-      ctx.restore();
-    }
-
-    function drawWorldAnimal(ctx, a, t) {
-      ctx.save();
-      ctx.translate(a.x, a.y);
-      const faceDir = a.vx >= 0 ? 1 : -1;
-      ctx.scale(faceDir, 1);
-
-      if (a.id === 'formosan_black_bear') {
-        // Bear Body
-        ctx.beginPath();
-        ctx.ellipse(0, -20, 38, 26, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#1A1817';
-        ctx.fill();
-        // White V Crescent on Chest
-        ctx.beginPath();
-        ctx.moveTo(-10, -18);
-        ctx.lineTo(0, -6);
-        ctx.lineTo(10, -18);
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = '#FFF';
-        ctx.stroke();
-        // Ears
-        ctx.beginPath();
-        ctx.arc(-14, -36, 8, 0, Math.PI * 2);
-        ctx.arc(14, -36, 8, 0, Math.PI * 2);
-        ctx.fillStyle = '#111';
-        ctx.fill();
-      } else if (a.id === 'crested_serpent_eagle') {
-        // Flying Eagle with Wings flapping
-        const flap = Math.sin(t * 8) * 18;
-        ctx.fillStyle = '#4E342E';
-        ctx.beginPath();
-        ctx.ellipse(0, 0, 22, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
-        // Wing Left & Right
-        ctx.beginPath();
-        ctx.moveTo(-10, 0);
-        ctx.lineTo(-40, flap);
-        ctx.lineTo(0, -6);
-        ctx.lineTo(40, flap);
-        ctx.lineTo(10, 0);
-        ctx.fillStyle = '#3E2723';
-        ctx.fill();
-        // Yellow Beak
-        ctx.fillStyle = '#FFD54F';
-        ctx.beginPath();
-        ctx.moveTo(20, -2);
-        ctx.lineTo(28, 0);
-        ctx.lineTo(20, 4);
-        ctx.fill();
-      } else {
-        // Generic Cute Animal (Monkey / Cat / Frog)
-        ctx.beginPath();
-        ctx.arc(0, -14, a.radius * 0.7, 0, Math.PI * 2);
-        ctx.fillStyle = a.color;
-        ctx.fill();
-        // Eyes
-        ctx.fillStyle = '#FFF';
-        ctx.beginPath();
-        ctx.arc(5, -16, 3, 0, Math.PI * 2);
-        ctx.arc(-5, -16, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Name Tag HUD above animal
-      ctx.scale(faceDir, 1); // unflip text
-      ctx.fillStyle = 'rgba(0,0,0,0.7)';
-      ctx.roundRect(-40, -56, 80, 18, 4);
-      ctx.fill();
-      ctx.fillStyle = '#FFF';
-      ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(a.name, 0, -43);
-
-      ctx.restore();
-    }
-
-    // ========================================================
-    // PBR LAB LOGIC
-    // ========================================================
-    const pbrState = {
-      preset: 'bear',
-      channel: 'composite',
-      lightAngle: 45,
-      lightElev: 30,
-      intensity: 1.2,
-      roughness: 0.45,
-      normalDepth: 1.8,
-      ao: 0.8,
-      dragging: false
-    };
-
-    function setPbrPreset(val) {
-      pbrState.preset = val;
-      if (val === 'frog') pbrState.roughness = 0.08;
-      else if (val === 'bear') pbrState.roughness = 0.55;
-      else if (val === 'leopard') pbrState.roughness = 0.40;
-      else if (val === 'eagle') pbrState.roughness = 0.25;
-      else if (val === 'bark') pbrState.roughness = 0.85;
-      document.getElementById('val-roughness').innerText = pbrState.roughness;
-      renderPbrCanvas();
-    }
-
-    function setPbrChannel(chan) {
-      pbrState.channel = chan;
-      document.querySelectorAll('.channel-pill').forEach(b => b.classList.remove('active'));
-      const activeBtn = Array.from(document.querySelectorAll('.channel-pill')).find(b => b.getAttribute('onclick').includes(chan));
-      if (activeBtn) activeBtn.classList.add('active');
-      renderPbrCanvas();
-    }
-
-    function updatePbrSlider(prop, val) {
-      pbrState[prop] = parseFloat(val);
-      if (prop === 'intensity') document.getElementById('val-light-intensity').innerText = val + 'x';
-      if (prop === 'roughness') document.getElementById('val-roughness').innerText = val;
-      if (prop === 'normalDepth') document.getElementById('val-normal-depth').innerText = val + 'x';
-      renderPbrCanvas();
-    }
-
-    function initPbrLab() {
-      const canvas = document.getElementById('pbr-canvas');
-      if (!canvas) return;
-      canvas.width = canvas.clientWidth || canvas.parentElement.clientWidth;
-      canvas.height = canvas.clientHeight || canvas.parentElement.clientHeight;
-
-      canvas.onmousedown = (e) => {
-        pbrState.dragging = true;
-        updateLightFromMouse(e, canvas);
-      };
-      window.onmousemove = (e) => {
-        if (pbrState.dragging) updateLightFromMouse(e, canvas);
-      };
-      window.onmouseup = () => pbrState.dragging = false;
-
-      renderPbrCanvas();
-    }
-
-    function updateLightFromMouse(e, canvas) {
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left - rect.width / 2;
-      const my = e.clientY - rect.top - rect.height / 2;
-
-      pbrState.lightAngle = Math.floor((Math.atan2(my, mx) * 180 / Math.PI + 360) % 360);
-      const dist = Math.min(1.0, Math.hypot(mx, my) / (rect.width * 0.4));
-      pbrState.lightElev = Math.floor((1.0 - dist) * 75);
-      renderPbrCanvas();
-    }
-
-    function renderPbrCanvas() {
-      const canvas = document.getElementById('pbr-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-
-      const cx = w / 2;
-      const cy = h / 2;
-      const radius = Math.min(160, Math.floor(Math.min(w, h) * 0.38));
-
-      const radA = pbrState.lightAngle * Math.PI / 180;
-      const radE = pbrState.lightElev * Math.PI / 180;
-      const lx = Math.cos(radA) * Math.cos(radE);
-      const ly = Math.sin(radA) * Math.cos(radE);
-      const lz = Math.sin(radE);
-
-      const imgData = ctx.createImageData(radius * 2, radius * 2);
-      const data = imgData.data;
-
-      let baseR = 30, baseG = 26, baseB = 24;
-      if (pbrState.preset === 'leopard') { baseR = 195; baseG = 140; baseB = 80; }
-      if (pbrState.preset === 'frog') { baseR = 10; baseG = 210; baseB = 90; }
-      if (pbrState.preset === 'eagle') { baseR = 70; baseG = 55; baseB = 40; }
-      if (pbrState.preset === 'bark') { baseR = 85; baseG = 55; baseB = 30; }
-
-      const depth = pbrState.normalDepth;
-      const roughness = pbrState.roughness;
-
-      for (let y = 0; y < radius * 2; y++) {
-        for (let x = 0; x < radius * 2; x++) {
-          const dx = (x - radius) / radius;
-          const dy = (y - radius) / radius;
-          const distSq = dx * dx + dy * dy;
-          const idx = (y * radius * 2 + x) * 4;
-
-          if (distSq <= 1.0) {
-            const dz = Math.sqrt(1.0 - distSq);
-
-            let bump = 0;
-            if (pbrState.preset === 'bear') bump = Math.sin(dx * 85) * Math.cos(dy * 85) * 0.25;
-            else if (pbrState.preset === 'frog') bump = Math.sin(dx * 40) * Math.sin(dy * 40) * 0.15;
-            else if (pbrState.preset === 'bark') bump = (Math.sin(dy * 30 + Math.sin(dx * 15)) * 0.45);
-            else bump = Math.sin(dx * 60) * 0.2;
-
-            let nx = dx + bump * depth;
-            let ny = dy + bump * depth;
-            let nz = dz;
-            const nLen = Math.hypot(nx, ny, nz);
-            nx /= nLen; ny /= nLen; nz /= nLen;
-
-            const nDotL = Math.max(0.0, nx * lx + ny * ly + nz * lz);
-            const hx = lx; const hy = ly; const hz = lz + 1.0;
-            const hLen = Math.hypot(hx, hy, hz);
-            const nDotH = Math.max(0.0, (nx * hx + ny * hy + nz * hz) / hLen);
-            const shininess = (1.0 - roughness) * 128 + 4;
-            const spec = Math.pow(nDotH, shininess) * (1.0 - roughness * 0.6);
-
-            const nDotV = Math.max(0.0, nz);
-            const fresnel = Math.pow(1.0 - nDotV, 3.0);
-            const ao = (1.0 - distSq * 0.4) * pbrState.ao;
-
-            let outR = 0, outG = 0, outB = 0;
-            if (pbrState.channel === 'composite') {
-              outR = (baseR * nDotL * pbrState.intensity + spec * 220 + fresnel * 90) * ao;
-              outG = (baseG * nDotL * pbrState.intensity + spec * 220 + fresnel * 90) * ao;
-              outB = (baseB * nDotL * pbrState.intensity + spec * 220 + fresnel * 90) * ao;
-            } else if (pbrState.channel === 'normal') {
-              outR = (nx * 0.5 + 0.5) * 255;
-              outG = (ny * 0.5 + 0.5) * 255;
-              outB = (nz * 0.5 + 0.5) * 255;
-            } else if (pbrState.channel === 'roughness') {
-              const rVal = roughness * 255;
-              outR = rVal; outG = rVal; outB = rVal;
-            } else if (pbrState.channel === 'albedo') {
-              outR = baseR; outG = baseG; outB = baseB;
-            } else if (pbrState.channel === 'specular') {
-              const sVal = spec * 255;
-              outR = sVal; outG = sVal; outB = sVal;
-            } else if (pbrState.channel === 'fresnel') {
-              const fVal = fresnel * 255;
-              outR = fVal; outG = fVal; outB = fVal;
-            }
-
-            data[idx] = Math.min(255, Math.max(0, outR));
-            data[idx + 1] = Math.min(255, Math.max(0, outG));
-            data[idx + 2] = Math.min(255, Math.max(0, outB));
-            data[idx + 3] = 255;
-          } else {
-            data[idx + 3] = 0;
+      // Natural grass color patches
+      ctx.fillStyle = '#223E28';
+      for (let gx = 0; gx < MAP_W; gx += 200) {
+        for (let gy = 0; gy < MAP_H; gy += 200) {
+          if ((gx + gy) % 400 === 0) {
+            ctx.fillRect(gx, gy, 180, 180);
           }
         }
       }
 
-      ctx.putImageData(imgData, cx - radius, cy - radius);
-
-      // Light Orb
-      const lightOrbX = cx + lx * radius * 1.35;
-      const lightOrbY = cy + ly * radius * 1.35;
+      // Winding Jungle River
       ctx.beginPath();
-      ctx.arc(lightOrbX, lightOrbY, 12, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFE082';
-      ctx.fill();
-      ctx.strokeStyle = '#FFF';
-      ctx.lineWidth = 2;
+      ctx.moveTo(0, 700);
+      ctx.bezierCurveTo(700, 600, 1200, 950, MAP_W, 800);
+      ctx.lineWidth = 120;
+      ctx.strokeStyle = '#1E404E';
       ctx.stroke();
+      // River edge foam
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = '#80DEEA';
+      ctx.stroke();
+
+      // Stone Walking Paths
+      ctx.lineWidth = 45;
+      ctx.strokeStyle = '#3E2E20';
+      ctx.beginPath();
+      ctx.moveTo(300, 0);
+      ctx.lineTo(600, 600);
+      ctx.lineTo(1400, 600);
+      ctx.lineTo(1800, 1400);
+      ctx.stroke();
+
+      // Trees (Top-Down Canopy Circles with Trunk Shadows)
+      const trees = [
+        { x: 300, y: 250, r: 85 }, { x: 750, y: 180, r: 100 },
+        { x: 1300, y: 300, r: 110 }, { x: 1800, y: 220, r: 90 },
+        { x: 400, y: 800, r: 95 }, { x: 950, y: 1100, r: 105 },
+        { x: 1550, y: 850, r: 120 }, { x: 1950, y: 1250, r: 100 }
+      ];
+
+      trees.forEach(tr => {
+        // Tree Shadow
+        ctx.beginPath();
+        ctx.ellipse(tr.x + 20, tr.y + 30, tr.r, tr.r * 0.7, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fill();
+
+        // Lush Green Tree Canopy
+        ctx.beginPath();
+        ctx.arc(tr.x, tr.y, tr.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#1B5E20';
+        ctx.fill();
+        // Inner highlights
+        ctx.beginPath();
+        ctx.arc(tr.x - 15, tr.y - 15, tr.r * 0.7, 0, Math.PI * 2);
+        ctx.fillStyle = '#2E7D32';
+        ctx.fill();
+      });
+
+      // 2. Draw Animals (Expressive Q-version Realistic, NEVER just circles!)
+      roamingAnimals.forEach(a => {
+        drawQRealisticAnimal(ctx, a, t);
+      });
+
+      // 3. Draw Bubbles
+      bubbles.forEach(b => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 229, 255, 0.45)';
+        ctx.strokeStyle = '#00E5FF';
+        ctx.lineWidth = 3;
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // 4. Draw Player Ranger Dave with Black-and-White Panda Gun
+      drawTopDownDave(ctx, dave, t);
+
+      ctx.restore();
     }
 
     // ========================================================
-    // 100 ANIMALS JOURNAL
+    // Q-VERSION REALISTIC ANIMAL RENDERER (生動可愛且具備特徵)
     // ========================================================
-    function populateAnimalJournal(items) {
+    function drawQRealisticAnimal(ctx, a, t) {
+      ctx.save();
+      ctx.translate(a.x, a.y);
+      ctx.rotate(a.rot);
+
+      // Walk wobble
+      const walkBob = Math.sin(t * 10) * 2;
+
+      // Soft ground shadow
+      ctx.beginPath();
+      ctx.ellipse(0, 5, a.radius * 1.1, a.radius * 0.7, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fill();
+
+      if (a.type === 'bear') {
+        // ================= 🐻 台灣黑熊 (Q版寫實) =================
+        // 4 Paws
+        ctx.fillStyle = '#141414';
+        ctx.beginPath();
+        ctx.ellipse(18, -20 + walkBob, 9, 7, 0.2, 0, Math.PI * 2);
+        ctx.ellipse(18, 20 - walkBob, 9, 7, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(-18, -22 - walkBob, 10, 8, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(-18, 22 + walkBob, 10, 8, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Chubby Bear Body
+        ctx.fillStyle = '#1F1E1D';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 34, 25, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Round Ears
+        ctx.fillStyle = '#141414';
+        ctx.beginPath();
+        ctx.arc(16, -18, 8, 0, Math.PI * 2);
+        ctx.arc(16, 18, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#424242';
+        ctx.beginPath();
+        ctx.arc(16, -18, 4, 0, Math.PI * 2);
+        ctx.arc(16, 18, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bear Head & Muzzle
+        ctx.fillStyle = '#262423';
+        ctx.beginPath();
+        ctx.ellipse(22, 0, 16, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Light tan snout
+        ctx.fillStyle = '#BCAAA4';
+        ctx.beginPath();
+        ctx.ellipse(30, 0, 8, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Wet Black Nose
+        ctx.fillStyle = '#050505';
+        ctx.beginPath();
+        ctx.ellipse(34, 0, 4, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sparkly Eyes
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath();
+        ctx.arc(24, -6, 3, 0, Math.PI * 2);
+        ctx.arc(24, 6, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#111';
+        ctx.beginPath();
+        ctx.arc(25, -6, 1.8, 0, Math.PI * 2);
+        ctx.arc(25, 6, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Iconic White V Mark on Chest (Seen from top angle)
+        ctx.strokeStyle = '#F5F5F0';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.moveTo(8, -12);
+        ctx.lineTo(2, 0);
+        ctx.lineTo(8, 12);
+        ctx.stroke();
+
+      } else if (a.type === 'cat') {
+        // ================= 🐆 台灣石虎 (Q版寫實) =================
+        // Slender Body
+        ctx.fillStyle = '#C89658';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 26, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Rosette Leopard Spots
+        ctx.fillStyle = '#4E342E';
+        [[-8, -6], [-5, 5], [6, -4], [4, 5], [-16, 0]].forEach(sp => {
+          ctx.beginPath();
+          ctx.arc(sp[0], sp[1], 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Pointed Ears with White Back-Spots (石虎標誌特徵)
+        ctx.fillStyle = '#8D6E63';
+        ctx.beginPath();
+        ctx.moveTo(12, -14); ctx.lineTo(20, -18); ctx.lineTo(16, -8); ctx.fill();
+        ctx.moveTo(12, 14); ctx.lineTo(20, 18); ctx.lineTo(16, 8); ctx.fill();
+        // White ear-patches
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath();
+        ctx.arc(14, -14, 2.5, 0, Math.PI * 2);
+        ctx.arc(14, 14, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head & Green Cat Eyes
+        ctx.fillStyle = '#C89658';
+        ctx.beginPath();
+        ctx.ellipse(18, 0, 12, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#76FF03'; // Glowing Green Eyes
+        ctx.beginPath();
+        ctx.ellipse(22, -4, 3, 2, 0.4, 0, Math.PI * 2);
+        ctx.ellipse(22, 4, 3, 2, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Long Striped Tail
+        ctx.strokeStyle = '#A17038';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(-24, 0);
+        ctx.quadraticCurveTo(-38, Math.sin(t * 8) * 8, -46, Math.cos(t * 8) * 6);
+        ctx.stroke();
+
+      } else if (a.type === 'frog') {
+        // ================= 🐸 翡翠樹蛙 (Q版寫實) =================
+        // Hind Leg Thighs
+        ctx.fillStyle = '#00C853';
+        ctx.beginPath();
+        ctx.ellipse(-12, -16, 12, 6, 0.5, 0, Math.PI * 2);
+        ctx.ellipse(-12, 16, 12, 6, -0.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Suction Discs Pads (吸盤趾端)
+        ctx.fillStyle = '#69F0AE';
+        ctx.beginPath();
+        ctx.arc(18, -14, 4, 0, Math.PI * 2);
+        ctx.arc(18, 14, 4, 0, Math.PI * 2);
+        ctx.arc(-22, -18, 4, 0, Math.PI * 2);
+        ctx.arc(-22, 18, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Translucent Emerald Body
+        ctx.fillStyle = '#00E676';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 20, 16, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Moist skin gloss
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.beginPath();
+        ctx.ellipse(4, -4, 8, 4, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Golden Bulging Eyes
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(12, -10, 5, 0, Math.PI * 2);
+        ctx.arc(12, 10, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#111';
+        ctx.fillRect(11, -12, 2, 4);
+        ctx.fillRect(11, 8, 2, 4);
+
+      } else if (a.type === 'deer') {
+        // ================= 🦌 梅花鹿 (Q版寫實) =================
+        // Deer Body
+        ctx.fillStyle = '#A1623A';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 30, 16, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Dappled White Spots
+        ctx.fillStyle = '#FFF';
+        [[-10, -5], [-5, 6], [5, -6], [10, 5], [-16, 2]].forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p[0], p[1], 2.2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        // Head & Snout
+        ctx.fillStyle = '#A1623A';
+        ctx.beginPath();
+        ctx.ellipse(24, 0, 12, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Antlers
+        ctx.strokeStyle = '#ECEFF1';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(22, -8); ctx.lineTo(26, -20); ctx.lineTo(32, -24);
+        ctx.moveTo(22, 8); ctx.lineTo(26, 20); ctx.lineTo(32, 24);
+        ctx.stroke();
+
+      } else if (a.type === 'eagle') {
+        // ================= 🦅 大冠鷲 (空中俯視展翼) =================
+        const wingFlap = Math.sin(t * 8) * 8;
+        ctx.fillStyle = '#3E2723';
+        // Massive Spread Wings
+        ctx.beginPath();
+        ctx.moveTo(10, 0);
+        ctx.quadraticCurveTo(0, -45 + wingFlap, -25, -55 + wingFlap);
+        ctx.lineTo(-15, 0);
+        ctx.quadraticCurveTo(0, 45 - wingFlap, -25, 55 - wingFlap);
+        ctx.closePath();
+        ctx.fill();
+        // Feather white band
+        ctx.strokeStyle = '#ECEFF1';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-10, -40 + wingFlap); ctx.lineTo(5, -25);
+        ctx.moveTo(-10, 40 - wingFlap); ctx.lineTo(5, 25);
+        ctx.stroke();
+
+        // Eagle Head & Yellow Beak
+        ctx.fillStyle = '#261C14';
+        ctx.beginPath();
+        ctx.ellipse(14, 0, 10, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#FFCA28';
+        ctx.beginPath();
+        ctx.moveTo(22, -3); ctx.lineTo(30, 0); ctx.lineTo(22, 3); ctx.fill();
+
+      } else {
+        // Default Q-Cute Wild Animal
+        ctx.fillStyle = '#795548';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 22, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#5D4037';
+        ctx.beginPath();
+        ctx.arc(16, 0, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Name Tag bubble
+      ctx.rotate(-a.rot); // unrotate text
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.roundRect(-36, -a.radius - 14, 72, 16, 4);
+      ctx.fill();
+      ctx.fillStyle = '#FFF';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(a.name, 0, -a.radius - 2);
+
+      ctx.restore();
+    }
+
+    // ========================================================
+    // TOP-DOWN DAVE & BLACK-AND-WHITE PANDA GUN
+    // ========================================================
+    function drawTopDownDave(ctx, d, t) {
+      ctx.save();
+      ctx.translate(d.x, d.y);
+      ctx.rotate(d.angle);
+
+      const walkLeg = Math.sin(d.walkFrame) * 6;
+
+      // Dave Walking Boots (Top angle)
+      ctx.fillStyle = '#3E2723';
+      ctx.beginPath();
+      ctx.ellipse(-10, -14 + walkLeg, 8, 5, 0, 0, Math.PI * 2);
+      ctx.ellipse(-10, 14 - walkLeg, 8, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dave Tactical Green Ranger Vest (Chubby Dave Silhouette)
+      ctx.fillStyle = '#2E7D32';
+      ctx.beginPath();
+      ctx.ellipse(-4, 0, 18, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Shoulder Straps & Walkie-talkie
+      ctx.fillStyle = '#1B5E20';
+      ctx.fillRect(-8, -12, 16, 4);
+      ctx.fillRect(-8, 8, 16, 4);
+      ctx.fillStyle = '#263238';
+      ctx.fillRect(-6, -16, 6, 4);
+
+      // Dave Cap & Head (Looking forward along aim angle)
+      ctx.fillStyle = '#F5CBA7';
+      ctx.beginPath();
+      ctx.arc(4, 0, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Green Visor Hat
+      ctx.fillStyle = '#1B5E20';
+      ctx.beginPath();
+      ctx.arc(3, 0, 11, -Math.PI / 2, Math.PI / 2);
+      ctx.fill();
+      ctx.fillRect(8, -8, 6, 16);
+
+      // Titanium Glasses Edge
+      ctx.strokeStyle = '#37474F';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(10, -6, 4, 12);
+
+      // ==============================================
+      // PANDA GUN IN HANDS (BLACK & WHITE THEME)
+      // ==============================================
+      // Gun Flashlight / Sighting Aim Beam
+      ctx.save();
+      const beamGrad = ctx.createRadialGradient(28, 0, 10, 240, 0, 120);
+      beamGrad.addColorStop(0, 'rgba(0, 229, 255, 0.35)');
+      beamGrad.addColorStop(1, 'rgba(0, 229, 255, 0.0)');
+      ctx.fillStyle = beamGrad;
+      ctx.beginPath();
+      ctx.moveTo(28, -6);
+      ctx.lineTo(260, -45);
+      ctx.lineTo(260, 45);
+      ctx.lineTo(28, 6);
+      ctx.fill();
+      ctx.restore();
+
+      // Dave Hands holding the gun
+      ctx.fillStyle = '#F5CBA7';
+      ctx.beginPath();
+      ctx.arc(14, -10, 4, 0, Math.PI * 2);
+      ctx.arc(24, 6, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Panda Gun Body: Ceramic White & Matte Black
+      ctx.fillStyle = '#F8F9FA'; // White Panda Ceramic
+      ctx.strokeStyle = '#18191A';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(14, -5, 26, 10, 3);
+      ctx.fill();
+      ctx.stroke();
+
+      // Panda Ears on Sights
+      ctx.fillStyle = '#18191A';
+      ctx.beginPath();
+      ctx.arc(20, -7, 3, 0, Math.PI * 2);
+      ctx.arc(28, -7, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Black Panda Muzzle / Front
+      ctx.fillStyle = '#18191A';
+      ctx.fillRect(40, -3.5, 8, 7);
+
+      // Bamboo Green Shoot Magazine
+      ctx.fillStyle = '#4CAF50';
+      ctx.fillRect(18, 5, 8, 6);
+
+      ctx.restore();
+    }
+
+    // ========================================================
+    // 100 ANIMALS JOURNAL POPULATION
+    // ========================================================
+    function populateJournal() {
       const container = document.getElementById('animal-grid-container');
       container.innerHTML = '';
 
-      items.forEach(a => {
+      ALL_ANIMALS.forEach(a => {
         const card = document.createElement('div');
         card.className = 'animal-polaroid';
-        card.onclick = () => alert(`📖【冒險手帳】\n物種：${a.name} (${a.zhuyin})\n學名：${a.latin}\n棲地：${a.habitat} (${a.altitude})\n\n${a.desc}`);
+        card.onclick = () => alert(`📖【野生動物手帳】\n物種：${a.name} (${a.zhuyin})\n學名：${a.latin}\n棲地：${a.habitat}\n\n${a.desc}`);
 
         let badgeColor = '#4CAF50';
         if (a.badge === 'warning') badgeColor = '#FF9800';
         if (a.badge === 'danger') badgeColor = '#F44336';
 
         card.innerHTML = `
-          <div style="background:${a.color}22; border-radius:6px; padding:16px; text-align:center; position:relative; margin-bottom:8px;">
-            <span style="font-size:32px;">🐾</span>
+          <div style="background:#E8F5E9; border-radius:6px; padding:12px; text-align:center; position:relative; margin-bottom:8px;">
+            <span style="font-size:30px;">🐾</span>
             <span style="position:absolute; top:6px; right:6px; background:${badgeColor}; color:#FFF; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:4px;">
               ${a.status}
             </span>
@@ -1434,7 +1229,7 @@
             <div style="font-size:11px; color:#8D6E63; font-weight:600;">${a.zhuyin}</div>
             <div style="font-size:10px; color:#757575; font-style:italic;">${a.latin}</div>
             <div style="margin-top:6px; font-size:11px; color:#2E7D32; font-weight:bold;">
-              📍 ${a.habitat} · ${a.altitude}
+              📍 ${a.habitat}
             </div>
           </div>
         `;
@@ -1442,21 +1237,12 @@
       });
     }
 
-    function filterAnimals(habitat, btn) {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      if (habitat === 'all') {
-        populateAnimalJournal(ALL_ANIMALS);
-      } else {
-        const filtered = ALL_ANIMALS.filter(a => a.habitat.includes(habitat) || a.altitude.includes(habitat));
-        populateAnimalJournal(filtered);
-      }
-    }
-
     window.onload = () => {
-      populateAnimalJournal(ALL_ANIMALS);
-      startDaveJungleEngine();
+      populateJournal();
+      startTopDownEngine();
+      window.onresize = () => {
+        if (currentView === 'topdown') startTopDownEngine();
+      };
     };
   </script>
 </body>
