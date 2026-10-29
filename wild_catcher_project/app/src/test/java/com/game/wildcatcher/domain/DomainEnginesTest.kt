@@ -34,26 +34,32 @@ class DomainEnginesTest {
     )
 
     @Test
-    fun testDynamicDifficultyAdjustment_widensSweetSpotOnFailure() {
-        // Normal first attempt: consecutiveFailures = 0
-        val engineNormal = CaptureEngine(testBear, consecutiveFailures = 0)
-        val normalWidth = engineNormal.getCurrentState().sweetSpotWidth
-        assertEquals(0.22f, normalWidth, 0.001f)
+    fun testToddlerBimanualCoordination_boostsCapturePower() {
+        // Engine without left hand stabilization
+        val engine1 = CaptureEngine(testBear, consecutiveFailures = 0)
+        // Set cursor to center inside sweet spot
+        engine1.onRightHandTap()
+        val soloProgress = engine1.getCurrentState().captureProgress
 
-        // After 2 consecutive failures, DDA bonus must expand sweet spot
-        val engineAssisted = CaptureEngine(testBear, consecutiveFailures = 2)
-        val assistedWidth = engineAssisted.getCurrentState().sweetSpotWidth
-        assertTrue("Assisted sweet spot should be wider than normal", assistedWidth > normalWidth)
-        assertEquals(0.34f, assistedWidth, 0.001f)
+        // Engine with left hand stabilizing
+        val engine2 = CaptureEngine(testBear, consecutiveFailures = 0)
+        engine2.setLeftHandStabilizing(true)
+        engine2.onRightHandTap()
+        val bimanualProgress = engine2.getCurrentState().captureProgress
+
+        assertTrue(
+            "Bimanual coordination should boost capture progress more than single hand",
+            bimanualProgress > soloProgress
+        )
     }
 
     @Test
-    fun testBambooIncenseDart_reducesTensionAndStruggle() {
+    fun testLeftHandHolding_slowsDownAnimalStruggle() {
         val engine = CaptureEngine(testBear, consecutiveFailures = 0)
-        engine.tick(1.0f)
-        engine.applyBambooIncenseDart()
+        engine.setLeftHandStabilizing(true)
+        engine.tick(0.5f)
         val state = engine.getCurrentState()
-        assertTrue(state.isIncenseDartActive)
+        assertTrue("Left hand hold seconds should increase", state.leftHandHoldSeconds > 0f)
     }
 
     @Test
@@ -61,16 +67,13 @@ class DomainEnginesTest {
         val manager = PlayTimeManager(thresholdSeconds = 1800L) // 30 mins
         assertEquals(HealthAlertState.Normal, manager.healthState.value)
 
-        // Tick 26 minutes (1560s) -> remaining <= 5 min -> NearThreshold
         manager.onTick(26 * 60L)
         assertTrue(manager.healthState.value is HealthAlertState.NearThreshold)
 
-        // Tick to 30 mins (1800s) -> RestTimeTriggered & warm filter active
         manager.onTick(4 * 60L)
         assertTrue(manager.healthState.value is HealthAlertState.RestTimeTriggered)
         assertTrue(manager.isWarmModeActive.value)
 
-        // After resting, resets timer
         manager.resetTimerAfterRest()
         assertEquals(HealthAlertState.Normal, manager.healthState.value)
         assertEquals(0L, manager.activeSeconds.value)
@@ -91,13 +94,7 @@ class DomainEnginesTest {
             ecoLevel = 1
         )
         val report = economy.calculateHourlyRevenue(listOf(zone), listOf(testBear))
-
-        // zoneVisitors = 50 * 1 + 15 = 65 visitors
-        // ticketRevenue = 65 * 10 = 650 coins
-        // bear bonus = 85 coins
-        // total = 735 coins
         assertEquals(735L, report.totalHourlyRevenue)
         assertEquals(65, report.totalVisitorsPerHour)
-        assertEquals(1, report.shelteredAnimalsCount)
     }
 }

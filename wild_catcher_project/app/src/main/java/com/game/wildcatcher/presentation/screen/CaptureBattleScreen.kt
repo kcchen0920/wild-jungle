@@ -5,7 +5,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,11 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,27 +50,37 @@ fun CaptureBattleScreen(
 
     var qteState by remember { mutableStateOf(captureEngine.getCurrentState()) }
     var isNetFired by remember { mutableStateOf(false) }
-    var currentIncenseCount by remember { mutableStateOf(incenseAmmoCount) }
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showEscapeDialog by remember { mutableStateOf(false) }
 
     // Dynamic directional light rotation angle for PBR rendering
     val infiniteTransition = rememberInfiniteTransition(label = "pbr_light")
     val dynamicLightAngle by infiniteTransition.animateFloat(
-        initialValue = 30f,
-        targetValue = 150f,
+        initialValue = 35f,
+        targetValue = 145f,
         animationSpec = infiniteRepeatable(
-            animation = tween(8000, easing = LinearEasing),
+            animation = tween(9000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "lightAngle"
     )
 
-    // QTE Engine frame loop
+    // Gentle physical breathing floating bounce
+    val floatBounce by infiniteTransition.animateFloat(
+        initialValue = -8f,
+        targetValue = 8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "floatBounce"
+    )
+
+    // QTE Engine frame loop (~60 FPS)
     LaunchedEffect(isNetFired, qteState.isCompleted, qteState.isEscaped) {
         if (!isNetFired) return@LaunchedEffect
         while (!qteState.isCompleted && !qteState.isEscaped) {
-            delay(16) // ~60 FPS
+            delay(16)
             captureEngine.tick(0.016f)
             qteState = captureEngine.getCurrentState()
 
@@ -92,13 +99,13 @@ fun CaptureBattleScreen(
                 Brush.verticalGradient(
                     colors = when (environment.timeOfDay.isNight) {
                         true -> listOf(Color(0xFF0F1B29), Color(0xFF1E2D3D))
-                        false -> listOf(Color(0xFF335C67), Color(0xFF1D3557))
+                        false -> listOf(Color(0xFF264653), Color(0xFF1B3B48))
                     }
                 )
             )
-            .padding(16.dp)
+            .padding(14.dp)
     ) {
-        // Top HUD Bar
+        // Top HUD Bar: Tablet Landscape Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -111,10 +118,12 @@ fun CaptureBattleScreen(
                 IconButton(
                     onClick = onBackToMenu,
                     modifier = Modifier
+                        .size(42.dp)
                         .clip(CircleShape)
-                        .background(LeatherDark.copy(alpha = 0.7f))
+                        .background(LeatherDark.copy(alpha = 0.8f))
+                        .border(1.dp, VintageBrass, CircleShape)
                 ) {
-                    Text("◀", color = VintageBrass, fontSize = 16.sp)
+                    Text("◀", color = VintageBrass, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -147,66 +156,75 @@ fun CaptureBattleScreen(
                 }
             }
 
-            // Weather & Day/Night Indicator
+            // Toddler Dual-Hand Guidance Pill
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
-                    .background(LeatherDark.copy(alpha = 0.75f))
+                    .background(SunsetAmber.copy(alpha = 0.25f))
+                    .border(1.dp, SunsetAmber, RoundedCornerShape(12.dp))
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "🌤️ ${environment.timeOfDay.label} · ${environment.weather.label}",
+                    text = "👐 幼兒雙手協同訓練模式：左手穩住 · 右手收網",
                     color = BrassHighlight,
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
 
-        // Center Battlefield: Dynamic PBR Realistic Animal Renderer
+        // Center Arena: Squishy Bouncy PBR Realistic Animal Renderer with Spring Physics
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 50.dp),
+                .padding(bottom = 90.dp),
             contentAlignment = Alignment.Center
         ) {
-            PbrAnimalRenderer(
-                animal = animal,
-                lightAngleDeg = dynamicLightAngle,
+            Box(
                 modifier = Modifier
-                    .size(280.dp)
-                    .clickable {
-                        if (!isNetFired) {
-                            isNetFired = true
-                        }
-                    }
-            )
-
-            // Fired Dream Bubble Net Visual Effect
-            if (isNetFired) {
-                Box(
+                    .offset(y = floatBounce.dp)
+                    .scale(scaleX = qteState.squishScaleX, scaleY = qteState.squishScaleY)
+            ) {
+                PbrAnimalRenderer(
+                    animal = animal,
+                    lightAngleDeg = dynamicLightAngle,
                     modifier = Modifier
-                        .size(310.dp)
-                        .clip(CircleShape)
-                        .border(3.dp, BubbleCyan.copy(alpha = 0.7f), CircleShape)
-                        .background(BubbleCyan.copy(alpha = 0.12f))
+                        .size(260.dp)
+                        .clickable {
+                            if (!isNetFired) {
+                                isNetFired = true
+                            }
+                        }
                 )
+
+                // Dream Bubble Net Visual Overlay
+                if (isNetFired) {
+                    Box(
+                        modifier = Modifier
+                            .size(290.dp)
+                            .align(Alignment.Center)
+                            .clip(CircleShape)
+                            .border(3.5.dp, BubbleCyan.copy(alpha = 0.85f), CircleShape)
+                            .background(BubbleCyan.copy(alpha = 0.12f))
+                    )
+                }
             }
 
-            // Initial Launch Aiming Hint (before first click)
+            // Initial Launch Hint
             if (!isNetFired) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .offset(y = 130.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(LeatherDark.copy(alpha = 0.8f))
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                        .offset(y = 145.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(LeatherDark.copy(alpha = 0.85f))
+                        .border(1.dp, VintageBrass, RoundedCornerShape(12.dp))
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = "🎯 點擊動物發射「夢幻泡泡網」開始捕捉！",
+                        text = "🎯 點一下動物發射「夢幻泡泡網」，開啟雙手訓練！",
                         color = Color.White,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
@@ -215,45 +233,41 @@ fun CaptureBattleScreen(
             }
         }
 
-        // Bottom QTE Bar (Appears upon net hit)
+        // Bottom Bimanual Early Childhood Controller
         if (isNetFired && !showSuccessDialog && !showEscapeDialog) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth(0.85f)
+                    .fillMaxWidth(0.92f)
             ) {
                 QTECaptureBar(
                     qteState = qteState,
-                    onReelTap = {
-                        captureEngine.onUserReelAction()
+                    onLeftHandPressChanged = { isHolding ->
+                        captureEngine.setLeftHandStabilizing(isHolding)
+                        qteState = captureEngine.getCurrentState()
+                    },
+                    onRightHandTap = {
+                        captureEngine.onRightHandTap()
                         qteState = captureEngine.getCurrentState()
                         if (qteState.isCompleted) showSuccessDialog = true
                         if (qteState.isEscaped) showEscapeDialog = true
-                    },
-                    onUseIncenseDart = {
-                        if (currentIncenseCount > 0) {
-                            currentIncenseCount -= 1
-                            captureEngine.applyBambooIncenseDart()
-                            qteState = captureEngine.getCurrentState()
-                        }
-                    },
-                    incenseAmmoCount = currentIncenseCount
+                    }
                 )
             }
         }
 
-        // Victory Dialog: Animal Captured!
+        // Victory Dialog with Motor Skill Encouragement
         if (showSuccessDialog) {
             AlertDialog(
-                onDismissRequest = { /* forced action */ },
+                onDismissRequest = { /* forced */ },
                 containerColor = ParchmentBg,
                 shape = RoundedCornerShape(18.dp),
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🎉", fontSize = 24.sp)
+                        Text("🌟", fontSize = 28.sp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "成功捕捉：${animal.name}！",
+                            text = "捕獲成功！${animal.name}",
                             style = WildTypography.titleLarge.copy(color = BambooGreen, fontWeight = FontWeight.Bold)
                         )
                     }
@@ -261,13 +275,21 @@ fun CaptureBattleScreen(
                 text = {
                     Column {
                         Text(
-                            text = "「太棒了戴夫！這隻${animal.name}已經溫和地被收納進庇護所，每小時將為園區帶來 +${animal.coinYieldPerHour} 竹幣的門票收益！」",
+                            text = "太厲害了！你的左右手配合得天衣無縫！",
                             color = InkBlack,
-                            fontSize = 14.sp
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "💡 生態小科普：${animal.funFact}",
+                            text = "雙手協調評級：${qteState.fingerAgilityLevel} · 達成 ${qteState.rightHandTapCount} 次靈活點擊！",
+                            color = SunsetAmber,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "💡 生態小百科：${animal.funFact}",
                             color = InkGrey,
                             fontSize = 12.sp
                         )
@@ -276,29 +298,30 @@ fun CaptureBattleScreen(
                 confirmButton = {
                     Button(
                         onClick = { onCaptureSuccess(animal) },
-                        colors = ButtonDefaults.buttonColors(containerColor = BambooGreen)
+                        colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
+                        shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("帶回庇護所安置")
+                        Text("送入庇護所，領取榮譽徽章！")
                     }
                 }
             )
         }
 
-        // Escape Dialog: Gentle fallback (Encouraging and DDA friendly)
+        // Gentle Escape Fallback
         if (showEscapeDialog) {
             AlertDialog(
-                onDismissRequest = { /* forced action */ },
+                onDismissRequest = { /* forced */ },
                 containerColor = ParchmentBg,
                 shape = RoundedCornerShape(18.dp),
                 title = {
                     Text(
-                        text = "🍃 動物機警地掙脫了...",
+                        text = "🐾 動物跑去休息囉～",
                         style = WildTypography.titleLarge.copy(color = LeatherBrown, fontWeight = FontWeight.Bold)
                     )
                 },
                 text = {
                     Text(
-                        text = "小熊貓波波安慰道：「沒關係的戴夫！野生動物天生就充滿警覺心～波波已經記錄了牠的動態，下次捕捉甜蜜點會大幅放寬喔！」",
+                        text = "波波為你拍拍手：「小手指頭動得非常好喔！下次我們左手按得更穩一點，一定能順利收網！」",
                         color = InkBlack,
                         fontSize = 14.sp
                     )
@@ -306,9 +329,10 @@ fun CaptureBattleScreen(
                 confirmButton = {
                     Button(
                         onClick = onCaptureFailed,
-                        colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber)
+                        colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
+                        shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("重整旗鼓，再次嘗試")
+                        Text("再來一次小手指體操！")
                     }
                 }
             )

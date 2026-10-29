@@ -398,22 +398,39 @@
         <div id="target-info-card" style="background:rgba(0,0,0,0.7); border:1.5px solid var(--vintage-brass); border-radius:10px; padding:6px 14px; text-align:right;">
           <div style="font-weight:bold; font-size:16px;" id="battle-target-name">台灣黑熊</div>
           <div style="font-size:11px; color:#CCC;" id="battle-target-habitat">棲地：高山原始針闊葉林</div>
+          <div style="font-size:11px; color:var(--brass-highlight); margin-top:2px;">👐 雙手訓練：左手按住 · 右手點擊</div>
         </div>
       </div>
 
       <!-- QTE Bar -->
       <div class="qte-control-panel">
-        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:bold; margin-bottom:4px;">
           <span style="color:var(--bubble-cyan);">🌐 泡泡網收攏度: <span id="qte-progress-num">0%</span></span>
-          <span style="color:var(--danger-coral);">⚠️ 掙脫警戒度: <span id="qte-tension-num">0%</span></span>
+          <span style="color:var(--brass-highlight); background:rgba(255,143,0,0.25); padding:2px 8px; border-radius:8px;">🌱 評級: <span id="bimanual-rank">探索小萌手</span></span>
+          <span style="color:var(--danger-coral);">⚠️ 警覺度: <span id="qte-tension-num">0%</span></span>
         </div>
         <div class="qte-bar-track">
           <div class="qte-sweet-spot" id="qte-sweet-spot" style="left:35%; width:30%;"></div>
           <div class="qte-cursor" id="qte-cursor" style="left:50%;"></div>
         </div>
-        <div style="display:flex; gap:12px; margin-top:8px;">
-          <button class="btn-incense" onclick="useIncenseDart()">🎋 竹香安撫彈 (<span id="incense-count">3</span>)</button>
-          <button class="btn-reel" id="btn-reel" onclick="reelCapture()">⚡ 壓制收線！(點擊綠色區)</button>
+        <!-- Bimanual Dual Wings for Toddlers -->
+        <div style="display:flex; gap:14px; margin-top:10px;">
+          <!-- Left Wing: Holding force -->
+          <button id="btn-left-hold"
+            onmousedown="leftHandPress(true)" onmouseup="leftHandPress(false)" onmouseleave="leftHandPress(false)"
+            ontouchstart="leftHandPress(true); event.preventDefault();" ontouchend="leftHandPress(false); event.preventDefault();"
+            style="flex:1; background:linear-gradient(180deg, #6D4C41, #3E2723); border:2.5px solid var(--parchment-border); color:white; border-radius:14px; padding:12px; cursor:pointer; font-size:13px; font-weight:bold; transition:all 0.1s;">
+            <div style="font-size:20px;">✋</div>
+            <div>左手【長按住】安撫</div>
+            <div style="font-size:10px; opacity:0.8; font-weight:normal;">指力持續施力 · 穩定游標</div>
+          </button>
+          <!-- Right Wing: Precision rhythmic tapping -->
+          <button id="btn-right-tap" onclick="rightHandTap()"
+            style="flex:1; background:linear-gradient(180deg, #2E7D32, #1B5E20); border:2.5px solid var(--vintage-brass); color:white; border-radius:14px; padding:12px; cursor:pointer; font-size:13px; font-weight:bold; box-shadow:0 6px 14px rgba(0,0,0,0.3); transition:all 0.1s;">
+            <div style="font-size:20px;">👆</div>
+            <div>右手【節奏輕點】收網</div>
+            <div style="font-size:10px; opacity:0.8; font-weight:normal;">甜蜜點點擊 · 鍛鍊手指靈活</div>
+          </button>
         </div>
       </div>
     </div>
@@ -633,47 +650,51 @@ function collectTicketCoins() {
 let battleAnimId = null;
 let qte = {
   cursor: 0.5,
-  velocity: 1.2,
+  velocity: 1.1,
   sweetCenter: 0.5,
-  sweetWidth: 0.25,
+  sweetWidth: 0.32,
   progress: 0.0,
   tension: 0.0,
   inSweet: false,
-  incenseBuff: false
+  leftHolding: false,
+  rightTaps: 0,
+  holdSeconds: 0,
+  squishX: 1.0,
+  squishY: 1.0
 };
 
 function startBattle() {
-  // Random select animal
   gameState.targetAnimal = ALL_32_ANIMALS[Math.floor(Math.random() * ALL_32_ANIMALS.length)];
   document.getElementById("battle-target-name").innerText = gameState.targetAnimal.name;
   document.getElementById("battle-target-habitat").innerText = "棲地：" + gameState.targetAnimal.habitat;
 
-  // Apply DDA (Dynamic Difficulty Adjustment)
   let ddaBonus = 0;
-  if (gameState.consecutiveFailures >= 3) ddaBonus = 0.18;
-  else if (gameState.consecutiveFailures >= 2) ddaBonus = 0.12;
-  else if (gameState.consecutiveFailures >= 1) ddaBonus = 0.06;
+  if (gameState.consecutiveFailures >= 3) ddaBonus = 0.20;
+  else if (gameState.consecutiveFailures >= 2) ddaBonus = 0.14;
+  else if (gameState.consecutiveFailures >= 1) ddaBonus = 0.08;
 
-  qte.sweetWidth = Math.min(0.55, 0.22 + ddaBonus);
+  qte.sweetWidth = Math.min(0.60, 0.28 + ddaBonus);
   qte.sweetCenter = 0.5;
   qte.progress = 0.0;
   qte.tension = 0.0;
   qte.cursor = 0.5;
-  qte.incenseBuff = false;
-  qte.velocity = 1.35 * (gameState.consecutiveFailures > 0 ? 0.8 : 1.0);
+  qte.leftHolding = false;
+  qte.rightTaps = 0;
+  qte.holdSeconds = 0;
+  qte.squishX = 1.0;
+  qte.squishY = 1.0;
+  qte.velocity = 1.15 * (gameState.consecutiveFailures > 0 ? 0.75 : 0.95);
 
-  // Update Sweet spot element in DOM
   const leftPct = (qte.sweetCenter - qte.sweetWidth / 2) * 100;
   const widthPct = qte.sweetWidth * 100;
   const sweetEl = document.getElementById("qte-sweet-spot");
   sweetEl.style.left = leftPct + "%";
   sweetEl.style.width = widthPct + "%";
 
-  document.getElementById("incense-count").innerText = gameState.incenseAmmo;
-
+  updateBimanualRank();
   switchScreen("screen-battle");
   startBattleLoop();
-  setBoboSpeech(`發現【${gameState.targetAnimal.name}】！瞄準甜蜜點收線捕捉！`);
+  setBoboSpeech(`發現【${gameState.targetAnimal.name}】！雙手並用：左手按住安撫、右手連點收網！`);
 }
 
 function startBattleLoop() {
@@ -685,12 +706,14 @@ function startBattleLoop() {
   let time = 0;
   function loop() {
     time += 0.02;
-    // Oscillate cursor
-    const speed = qte.incenseBuff ? qte.velocity * 0.6 : qte.velocity;
-    qte.cursor = 0.5 + (Math.sin(time * speed * 3) + Math.sin(time * speed * 1.5) * 0.3) * 0.38;
-    qte.cursor = Math.max(0.05, Math.min(0.95, qte.cursor));
+    if (qte.leftHolding) qte.holdSeconds += 0.02;
 
-    // Check sweet spot
+    // Left hand holding slows struggle down by 50%!
+    const speed = qte.leftHolding ? qte.velocity * 0.5 : qte.velocity;
+    qte.cursor = 0.5 + (Math.sin(time * speed * 2.8) + Math.sin(time * speed * 1.4) * 0.3) * 0.36;
+    qte.cursor = Math.max(0.04, Math.min(0.96, qte.cursor));
+
+    // Sweet spot detection
     const minS = qte.sweetCenter - qte.sweetWidth / 2;
     const maxS = qte.sweetCenter + qte.sweetWidth / 2;
     qte.inSweet = (qte.cursor >= minS && qte.cursor <= maxS);
@@ -700,9 +723,13 @@ function startBattleLoop() {
     curEl.style.left = (qte.cursor * 100) + "%";
     curEl.classList.toggle("in-sweet", qte.inSweet);
 
-    // Tension gradual tick
-    if (!qte.inSweet) qte.tension = Math.min(1.0, qte.tension + 0.0008);
+    // Tension management (Left holding prevents fast escape)
+    if (!qte.inSweet) qte.tension = Math.min(1.0, qte.tension + (qte.leftHolding ? 0.0004 : 0.0008));
     else qte.tension = Math.max(0.0, qte.tension - 0.0006);
+
+    // Squish spring return
+    qte.squishX += (1.0 - qte.squishX) * 0.12;
+    qte.squishY += (1.0 - qte.squishY) * 0.12;
 
     document.getElementById("qte-progress-num").innerText = Math.floor(qte.progress * 100) + "%";
     document.getElementById("qte-tension-num").innerText = Math.floor(qte.tension * 100) + "%";
@@ -712,14 +739,12 @@ function startBattleLoop() {
       stopBattleLoop();
       gameState.consecutiveFailures++;
       updateDdaUi();
-      alert(`🍃 ${gameState.targetAnimal.name} 掙脫了！波波安慰道：別灰心，下次甜蜜點會放寬！`);
+      alert(`🍃 ${gameState.targetAnimal.name} 跑去休息了！波波拍拍手：小手指表現很棒，下次左手再按穩一點！`);
       backToMenu();
       return;
     }
 
-    // Render Canvas Realistic PBR Animal
     renderPbrAnimal(ctx, canvas.width, canvas.height, time, gameState.targetAnimal);
-
     battleAnimId = requestAnimationFrame(loop);
   }
   battleAnimId = requestAnimationFrame(loop);
@@ -732,12 +757,80 @@ function stopBattleLoop() {
   }
 }
 
+function leftHandPress(isHolding) {
+  qte.leftHolding = isHolding;
+  const btn = document.getElementById("btn-left-hold");
+  if (isHolding) {
+    btn.style.transform = "scale(0.95)";
+    btn.style.borderColor = "var(--brass-highlight)";
+    btn.style.background = "linear-gradient(180deg, #8D6E63, #4E342E)";
+    qte.squishX = 1.08;
+    qte.squishY = 0.92;
+    setBoboSpeech("✋ 左手穩住氣場！動物動作變慢50%，右手趁現在點擊！");
+  } else {
+    btn.style.transform = "scale(1)";
+    btn.style.borderColor = "var(--parchment-border)";
+    btn.style.background = "linear-gradient(180deg, #6D4C41, #3E2723)";
+  }
+  updateBimanualRank();
+}
+
+function rightHandTap() {
+  qte.rightTaps++;
+  const btn = document.getElementById("btn-right-tap");
+  btn.style.transform = "scale(0.92)";
+  setTimeout(() => btn.style.transform = "scale(1)", 100);
+
+  // Bimanual power multiplier: +40% bonus when left hand is holding!
+  const bimanualMult = qte.leftHolding ? 1.45 : 1.0;
+
+  if (qte.inSweet) {
+    qte.progress += 0.18 * bimanualMult;
+    qte.tension = Math.max(0, qte.tension - 0.10);
+    qte.squishX = 0.88;
+    qte.squishY = 1.16; // Bouncy spring stretch
+    setBoboSpeech(qte.leftHolding ? "🌟 太強了！雙手合力！泡泡網收攏暴增 +45%！" : "🎯 命中甜蜜點！若左手同時按住效果更強喔！");
+
+    if (qte.progress >= 1.0) {
+      stopBattleLoop();
+      gameState.consecutiveFailures = 0;
+      updateDdaUi();
+      gameState.coins += gameState.targetAnimal.coins * 2;
+      document.getElementById("hud-coins").innerText = gameState.coins;
+      alert(`🎉 恭喜！成功捕獲【${gameState.targetAnimal.name}】！\n🏆 雙手協調評級：${document.getElementById("bimanual-rank").innerText}\n共達成 ${qte.rightTaps} 次節奏連擊！`);
+      backToMenu();
+    }
+  } else {
+    qte.tension += 0.05;
+    qte.squishX = 1.05;
+    qte.squishY = 0.95;
+    setBoboSpeech("👀 等游標游進綠色甜蜜區再點右手喔～");
+  }
+  updateBimanualRank();
+}
+
+function updateBimanualRank() {
+  const syncScore = (qte.holdSeconds * 0.2 + qte.rightTaps * 0.08);
+  let rank = "🐾 探索小萌手";
+  if (syncScore >= 1.5) rank = "🌟 雙手協同大師";
+  else if (syncScore >= 0.8) rank = "✨ 靈活指尖探險家";
+  else if (syncScore >= 0.3) rank = "🌱 雙手合力小能手";
+
+  const rankEl = document.getElementById("bimanual-rank");
+  if (rankEl) rankEl.innerText = rank;
+}
+
 function renderPbrAnimal(ctx, w, h, time, animal) {
   ctx.clearRect(0, 0, w, h);
 
   const cx = w / 2;
   const cy = h / 2 - 30 + Math.sin(time * 2) * 8;
-  const radius = 100;
+  const radius = 95;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(qte.squishX, qte.squishY);
+  ctx.translate(-cx, -cy);
 
   // Dynamic light direction
   const lx = Math.cos(time * 0.8) * 0.5;
@@ -783,39 +876,11 @@ function renderPbrAnimal(ctx, w, h, time, animal) {
   // Bubble Net Ring
   ctx.beginPath();
   ctx.arc(cx, cy, radius * 1.15, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(0, 172, 193, 0.75)";
-  ctx.lineWidth = 4;
+  ctx.strokeStyle = qte.leftHolding ? "rgba(255, 213, 122, 0.9)" : "rgba(0, 172, 193, 0.75)";
+  ctx.lineWidth = qte.leftHolding ? 6 : 4;
   ctx.stroke();
-}
 
-function reelCapture() {
-  if (qte.inSweet) {
-    qte.progress += 0.22;
-    qte.tension = Math.max(0, qte.tension - 0.12);
-    setBoboSpeech("🎯 漂亮！完美命中甜蜜點！壓制力提升！");
-    if (qte.progress >= 1.0) {
-      stopBattleLoop();
-      gameState.consecutiveFailures = 0;
-      updateDdaUi();
-      gameState.coins += gameState.targetAnimal.coins * 2;
-      document.getElementById("hud-coins").innerText = gameState.coins;
-      alert(`🎉 恭喜！成功捕獲【${gameState.targetAnimal.name}】！已送入庇護所，每小時產生 +${gameState.targetAnimal.coins} 竹幣！`);
-      backToMenu();
-    }
-  } else {
-    qte.tension += 0.15;
-    setBoboSpeech("⚠️ 哎呀！游標不在綠色區，動物掙扎劇烈！");
-  }
-}
-
-function useIncenseDart() {
-  if (gameState.incenseAmmo > 0 && !qte.incenseBuff) {
-    gameState.incenseAmmo--;
-    document.getElementById("incense-count").innerText = gameState.incenseAmmo;
-    qte.incenseBuff = true;
-    qte.tension = Math.max(0, qte.tension - 0.25);
-    setBoboSpeech("🎋 竹香彈奏效！動物大幅平靜 (-40% 掙扎速度)！");
-  }
+  ctx.restore();
 }
 
 function updateDdaUi() {
