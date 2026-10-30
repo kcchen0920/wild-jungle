@@ -3,10 +3,21 @@ $ErrorActionPreference = "Stop"
 
 $scriptRoot = $PSScriptRoot
 $javaHome = "C:\Program Files\Microsoft\jdk-17.0.21.21-hotspot"
-$androidHome = Join-Path (Split-Path -Parent $scriptRoot) "android車機\tools\android-sdk"
-if (-not (Test-Path -LiteralPath $androidHome)) {
+
+# 自動定位本機共用 Android SDK 與 Gradle 工具目錄
+$parent = Split-Path -Parent $scriptRoot
+$sdkFolder = Get-ChildItem -Path $parent -Directory | Where-Object { Test-Path (Join-Path $_.FullName "tools\android-sdk") } | Select-Object -First 1
+
+if ($sdkFolder) {
+    $androidHome = Join-Path $sdkFolder.FullName "tools\android-sdk"
+    $toolsGradle = Join-Path $sdkFolder.FullName "tools\gradle\bin"
+    if (Test-Path $toolsGradle) {
+        $env:PATH = "$toolsGradle;$env:PATH"
+    }
+} else {
     $androidHome = "$env:LOCALAPPDATA\Android\Sdk"
 }
+
 $projectDir = Join-Path $scriptRoot "wild_catcher_project"
 $gradleBat = Join-Path $projectDir "gradlew.bat"
 
@@ -17,6 +28,11 @@ $env:ANDROID_HOME = $androidHome
 $env:ANDROID_SDK_ROOT = $androidHome
 $env:JAVA_TOOL_OPTIONS = ""
 $env:PATH = "$javaHome\bin;$env:PATH"
+
+# 自動配置 local.properties 供 Gradle 讀取 Android SDK
+$localProp = Join-Path $projectDir "local.properties"
+$forwardSlashSdk = $androidHome.Replace('\', '/')
+[System.IO.File]::WriteAllText($localProp, "sdk.dir=$forwardSlashSdk`n", [System.Text.Encoding]::ASCII)
 
 Set-Location -LiteralPath $projectDir
 
