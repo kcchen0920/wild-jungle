@@ -7,6 +7,6 @@ git commit -m "<清楚描述改動與修復內容的 commit message>"
 git push origin main
 ```
 
-- 遠端網址：`https://github.com/kcchen0920/wild-catcher-project`
-- SSH 推送網址：`git@github.com:kcchen0920/wild-catcher-project.git`
+- 遠端網址：`https://github.com/kcchen0920/wild-jungle`
+- SSH 推送網址：`git@github.com:kcchen0920/wild-jungle.git`
 - 目的：確保 GitHub 上的原始碼與本地工作區隨時保持 100% 一致與最新狀態。

@@ -2,9 +2,9 @@
 
 ## 1. Mandatory GitHub Continuous Maintenance (GitHub 維護與即時同步規範)
 - **Repository Remote**:
-  - Web URL: `https://github.com/kcchen0920/wild-catcher-project`
-  - Push URL (SSH, recommended): `git@github.com:kcchen0920/wild-catcher-project.git`
-  - HTTPS: `https://github.com/kcchen0920/wild-catcher-project.git`
+  - Web URL: `https://github.com/kcchen0920/wild-jungle`
+  - Push URL (SSH, recommended): `git@github.com:kcchen0920/wild-jungle.git`
+  - HTTPS: `https://github.com/kcchen0920/wild-jungle.git`
 - **Default Main Branch**: `main`
 
 ## 2. Change & Push Workflow (每次改正後即時同步流程)
