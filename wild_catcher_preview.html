@@ -223,6 +223,43 @@
   }
 
   /* Mobile Touch Controls */
+  .joystick-container {
+    position: absolute;
+    bottom: 24px; left: 24px;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: rgba(14, 26, 18, 0.55);
+    border: 2px dashed rgba(129, 199, 132, 0.7);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 45;
+    touch-action: none;
+    user-select: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  }
+  .joystick-thumb {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #81C784 0%, #2E7D32 100%);
+    border: 2.5px solid #C8E6C9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    pointer-events: none;
+    transform: translate(0px, 0px);
+    will-change: transform;
+  }
+  .joystick-label {
+    position: absolute;
+    bottom: -20px;
+    font-size: 11px;
+    color: #A5D6A7;
+    font-weight: bold;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
   .touch-actions-zone {
     position: absolute;
     bottom: 24px; right: 24px;
@@ -556,6 +593,12 @@
         </div>
       </div>
 
+      <!-- Virtual Joystick (Left Hand Movement for Pad / Mobile) -->
+      <div class="joystick-container" id="joystick-zone">
+        <div class="joystick-thumb" id="joystick-knob"></div>
+        <div class="joystick-label">🕹️ 滑動搖桿移動</div>
+      </div>
+
       <!-- Mobile Touch Controls -->
       <div class="touch-actions-zone">
         <div class="btn-touch-action" onclick="toggleSprintMobile()" id="btn-mobile-sprint" title="衝刺">⚡</div>
@@ -779,10 +822,108 @@
     };
 
     // ========================================================
-    // INITIALIZATION & KEYBOARD LISTENERS
+    // INITIALIZATION & KEYBOARD / JOYSTICK LISTENERS
     // ========================================================
+    const joystick = {
+      active: false,
+      x: 0,
+      y: 0,
+      touchId: null
+    };
+
+    function initVirtualJoystick() {
+      const zone = document.getElementById('joystick-zone');
+      const knob = document.getElementById('joystick-knob');
+      if (!zone || !knob) return;
+
+      const maxRadius = 45;
+
+      function updateKnobPosition(clientX, clientY) {
+        const rect = zone.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const dx = clientX - centerX;
+        const dy = clientY - centerY;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist === 0) {
+          joystick.x = 0;
+          joystick.y = 0;
+          knob.style.transform = 'translate(0px, 0px)';
+          return;
+        }
+
+        const angle = Math.atan2(dy, dx);
+        const clampedDist = Math.min(dist, maxRadius);
+        const kx = Math.cos(angle) * clampedDist;
+        const ky = Math.sin(angle) * clampedDist;
+
+        knob.style.transform = `translate(${kx}px, ${ky}px)`;
+        joystick.x = kx / maxRadius;
+        joystick.y = ky / maxRadius;
+        joystick.active = true;
+      }
+
+      zone.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.changedTouches[0];
+        joystick.touchId = touch.identifier;
+        updateKnobPosition(touch.clientX, touch.clientY);
+      }, { passive: false });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!joystick.active && joystick.touchId === null) return;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === joystick.touchId) {
+            e.preventDefault();
+            updateKnobPosition(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
+            break;
+          }
+        }
+      }, { passive: false });
+
+      const onTouchEnd = (e) => {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === joystick.touchId) {
+            joystick.active = false;
+            joystick.x = 0;
+            joystick.y = 0;
+            joystick.touchId = null;
+            knob.style.transform = 'translate(0px, 0px)';
+            break;
+          }
+        }
+      };
+
+      window.addEventListener('touchend', onTouchEnd, { passive: false });
+      window.addEventListener('touchcancel', onTouchEnd, { passive: false });
+
+      // Mouse drag support for PC browser
+      let isMouseDown = false;
+      zone.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        updateKnobPosition(e.clientX, e.clientY);
+        const onMouseMove = (ev) => {
+          if (isMouseDown) updateKnobPosition(ev.clientX, ev.clientY);
+        };
+        const onMouseUp = () => {
+          isMouseDown = false;
+          joystick.active = false;
+          joystick.x = 0;
+          joystick.y = 0;
+          knob.style.transform = 'translate(0px, 0px)';
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        };
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       initExplorationEngine();
+      initVirtualJoystick();
       renderJournalGrid();
       renderUpgradeModal();
     });
@@ -909,6 +1050,19 @@
       window.addEventListener('resize', resize);
       resize();
 
+      canvas.addEventListener('pointerdown', (e) => {
+        if (captureState.active) return;
+        const rect = canvas.getBoundingClientRect();
+        const screenX = e.clientX - rect.left;
+        const screenY = e.clientY - rect.top;
+        if (screenX < 200 && screenY > canvas.height - 200) return; // joystick deadzone
+        const targetWorldX = screenX + camera.x;
+        const targetWorldY = screenY + camera.y;
+        player.aimAngle = Math.atan2(targetWorldY - (player.y - 14), targetWorldX - player.x);
+        player.facing = targetWorldX >= player.x ? 1 : -1;
+        handleFirePandaGun();
+      });
+
       let lastT = performance.now();
 
       function gameLoop(now) {
@@ -926,7 +1080,7 @@
     }
 
     function updateGameState(t) {
-      const isSprinting = keys.shift && player.stamina > 5;
+      const isSprinting = (keys.shift || player.isMobileSprinting) && player.stamina > 5;
       const speed = player.baseSpeed * (isSprinting ? player.sprintMult : 1.0);
 
       let moveX = 0; let moveY = 0;
@@ -935,7 +1089,10 @@
       if (keys.left) moveX -= 1;
       if (keys.right) moveX += 1;
 
-      if (moveX !== 0 && moveY !== 0) {
+      if (joystick.active) {
+        moveX = joystick.x;
+        moveY = joystick.y;
+      } else if (moveX !== 0 && moveY !== 0) {
         moveX *= 0.7071; moveY *= 0.7071;
       }
 
@@ -946,7 +1103,7 @@
         player.x = Math.max(40, Math.min(MAP_W - 40, player.x + moveX * speed * terrainMult));
         player.y = Math.max(40, Math.min(MAP_H - 40, player.y + moveY * speed * terrainMult));
         player.isMoving = true;
-        player.facing = moveX > 0 ? 1 : (moveX < 0 ? -1 : player.facing);
+        player.facing = moveX > 0.05 ? 1 : (moveX < -0.05 ? -1 : player.facing);
         player.aimAngle = Math.atan2(moveY, moveX);
         player.walkFrame += 0.28;
 
