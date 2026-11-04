@@ -43,8 +43,8 @@ fun AdventureJournalScreen(
     }
 
     DaveNotebookFrame(
-        title = "📖 野生生態冒險筆記本",
-        subtitle = "共收錄 ${animals.size} 種寫實野生動物物種  |  已發現：${animals.count { it.isCaptured }} 種",
+        title = "📖 100種野生動物彩色貼紙簿",
+        subtitle = "已收集 ${animals.count { it.isCaptured }} 隻好朋友貼紙  |  點擊小動物聽波波說故事！",
         actions = {
             IconButton(
                 onClick = onBack,
@@ -172,9 +172,9 @@ fun AdventureJournalScreen(
                         }
 
                         if (animal.isCaptured) {
-                            Text("✓ 已捕獲", fontSize = 10.sp, color = BambooGreen, fontWeight = FontWeight.Bold)
+                            Text("⭐ 好朋友貼紙", fontSize = 10.sp, color = BambooGreen, fontWeight = FontWeight.Bold)
                         } else {
-                            Text("待探索", fontSize = 10.sp, color = InkGrey)
+                            Text("🌱 待尋找", fontSize = 10.sp, color = InkGrey)
                         }
                     }
                 }

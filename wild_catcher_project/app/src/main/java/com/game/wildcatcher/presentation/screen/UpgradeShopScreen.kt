@@ -39,45 +39,45 @@ fun UpgradeShopScreen(
     val items = listOf(
         UpgradeItem(
             id = "gun_power",
-            title = "熊貓槍 · 氣壓收線馬達",
+            title = "🌈 彩虹魔法泡泡槍",
             icon = "🔫",
             currentLevel = profile.pandaGunPowerLevel,
             maxLevel = 5,
-            description = "提升甜蜜點點擊壓制效率 (+15% 捕捉能量累積速度)",
+            description = "發射七彩星星光芒，拍拍手收線變得超級快！(+15% 收網速度)",
             upgradeCost = (profile.pandaGunPowerLevel * 300L)
         ),
         UpgradeItem(
             id = "ammo_capacity",
-            title = "多功能戰術背包 · 泡泡網擴容",
+            title = "🎒 波波的探險百寶袋",
             icon = "🎒",
             currentLevel = profile.maxAmmoCapacity / 50,
             maxLevel = 4,
-            description = "擴充夢幻泡泡網上限至 ${profile.maxAmmoCapacity + 50} 發",
+            description = "裝入更多好玩的夢幻彩色泡泡！(上限擴充至 ${profile.maxAmmoCapacity + 50} 發)",
             upgradeCost = 250L
         ),
         UpgradeItem(
             id = "net_radius",
-            title = "竹香彈霧化噴頭",
-            icon = "🎋",
+            title = "🍓 草莓果香安撫噴霧",
+            icon = "🍓",
             currentLevel = profile.bubbleNetRadiusLevel,
             maxLevel = 3,
-            description = "加強安撫竹香擴散效果，動物掙扎幅度額外降低 15%",
+            description = "香香甜甜的草莓味，小動物最喜歡靠近跟你抱抱！",
             upgradeCost = 400L
         ),
         UpgradeItem(
             id = "safari_vehicle",
-            title = "叢林探險越野吉普車",
-            icon = "🚙",
+            title = "🚙 彩色探險歡樂巴士",
+            icon = "🚌",
             currentLevel = profile.vehicleLevel,
             maxLevel = 3,
-            description = "提高前往深山與雲海探索生態區的速度與穩定度",
+            description = "載著波波和小朋友開向森林、高山跟小動物玩捉迷藏！",
             upgradeCost = 800L
         )
     )
 
     DaveNotebookFrame(
-        title = "🛠️ 野生裝備升級工作檯",
-        subtitle = "可用竹幣：${profile.coins}  |  金竹種子：${profile.goldenBambooSeeds}",
+        title = "🎨 波波的歡樂探險更衣室與道具屋",
+        subtitle = "快樂竹幣：${profile.coins} 🎋 | 金竹種子：${profile.goldenBambooSeeds} ⭐",
         actions = {
             IconButton(
                 onClick = onBack,

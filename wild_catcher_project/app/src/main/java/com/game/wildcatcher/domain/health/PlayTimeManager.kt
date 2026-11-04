@@ -8,13 +8,13 @@ sealed class HealthAlertState {
     object Normal : HealthAlertState()
     data class NearThreshold(val minutesRemaining: Int) : HealthAlertState()
     data class RestTimeTriggered(
-        val message: String = "太陽要下山囉，讓眼睛休息一下，明天再來探索！",
+        val message: String = "太陽公公要下山囉，小動物要閉上眼睛睡覺了，讓眼睛休息一下，明天再來玩！",
         val warmFilterActive: Boolean = true
     ) : HealthAlertState()
 }
 
 class PlayTimeManager(
-    private val thresholdSeconds: Long = 30 * 60L // 30 minutes
+    private val thresholdSeconds: Long = 20 * 60L // 20 minutes tailored for 4-year-old toddlers
 ) {
     private val _activeSeconds = MutableStateFlow(0L)
     val activeSeconds: StateFlow<Long> = _activeSeconds.asStateFlow()

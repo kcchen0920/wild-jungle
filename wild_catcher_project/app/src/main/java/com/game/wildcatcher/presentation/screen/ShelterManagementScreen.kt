@@ -35,15 +35,23 @@ fun ShelterManagementScreen(
     modifier: Modifier = Modifier
 ) {
     DaveNotebookFrame(
-        title = "🏡 綠色野生生態庇護所",
-        subtitle = "門票收益：${revenueReport.totalHourlyRevenue} 竹幣/小時  |  當前收容：${revenueReport.shelteredAnimalsCount} 隻野生動物",
+        title = "🏡 小動物好朋友遊樂園",
+        subtitle = "💖 住著 ${revenueReport.shelteredAnimalsCount} 隻可愛野生動物  |  快樂竹幣：$playerCoins 🎋",
         actions = {
+            Button(
+                onClick = { onCollectRevenue(50L) },
+                colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text("🍎 餵小動物吃點心 (+50)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.width(6.dp))
             Button(
                 onClick = { onCollectRevenue(revenueReport.totalHourlyRevenue) },
                 colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text("💰 結算參觀門票 (+${revenueReport.totalHourlyRevenue})", fontSize = 12.sp)
+                Text("💰 收取快樂幣 (+${revenueReport.totalHourlyRevenue})", fontSize = 12.sp)
             }
             Spacer(modifier = Modifier.width(6.dp))
             IconButton(

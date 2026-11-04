@@ -42,7 +42,7 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
     val weatherEngine = WeatherDayNightEngine()
     val shelterEngine = ShelterEconomyEngine()
 
-    private val _restThresholdMinutes = MutableStateFlow(30)
+    private val _restThresholdMinutes = MutableStateFlow(20) // Default 20 mins for 4-year-olds
     val restThresholdMinutes: StateFlow<Int> = _restThresholdMinutes.asStateFlow()
 
     private val _currentScreen = MutableStateFlow(ScreenState.MAIN_MENU)

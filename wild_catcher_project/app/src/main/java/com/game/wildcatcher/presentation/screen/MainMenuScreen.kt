@@ -242,8 +242,8 @@ fun MainMenuScreen(
                                     Text("🎯", fontSize = 24.sp)
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column {
-                                        Text("出發捕捉動物 (出征叢林與天空)", fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                        Text("出動熊貓槍發射泡泡網，展開寫實生態捕捉！", fontSize = 11.sp, color = BambooLight)
+                                        Text("出發和小動物做朋友 (去森林交朋友)", fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                        Text("吹出七彩夢幻泡泡網，展開雙手小手指體操！", fontSize = 11.sp, color = BambooLight)
                                     }
                                 }
                                 Text("出發 ▶", fontWeight = FontWeight.Bold, color = BrassHighlight, fontSize = 16.sp)
@@ -269,9 +269,9 @@ fun MainMenuScreen(
                                     modifier = Modifier.padding(12.dp),
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    Text("🏡 自然生態庇護所", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = LeatherDark)
+                                    Text("🏡 小動物好朋友樂園", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = LeatherDark)
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    Text("安置已捕獲動物，接待遊客獲取門票收益！", fontSize = 10.sp, color = InkGrey)
+                                    Text("餵小動物吃點心，跟動物開心做好朋友！", fontSize = 10.sp, color = InkGrey)
                                 }
                             }
 
@@ -289,9 +289,9 @@ fun MainMenuScreen(
                                     modifier = Modifier.padding(12.dp),
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    Text("📖 100種寫實動物圖鑑", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = LeatherDark)
+                                    Text("📖 100種動物彩色貼紙簿", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = LeatherDark)
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    Text("保育燈號、PBR寫實模型與真實叫聲檔案！", fontSize = 10.sp, color = InkGrey)
+                                    Text("聽叫聲、聽語音說故事，收集閃亮貼紙！", fontSize = 10.sp, color = InkGrey)
                                 }
                             }
                         }
@@ -315,11 +315,11 @@ fun MainMenuScreen(
                                     modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("🛠️", fontSize = 20.sp)
+                                    Text("🎨", fontSize = 20.sp)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Column {
-                                        Text("裝備升級工作檯", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = BrassHighlight)
-                                        Text("強化熊貓槍壓制力與彈藥", fontSize = 10.sp, color = Color.LightGray)
+                                        Text("泡泡與歡樂裝備屋", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = BrassHighlight)
+                                        Text("換彩虹泡泡槍與可愛帽子", fontSize = 10.sp, color = Color.LightGray)
                                     }
                                 }
                             }
@@ -338,11 +338,11 @@ fun MainMenuScreen(
                                     modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("💡", fontSize = 20.sp)
+                                    Text("❓", fontSize = 20.sp)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Column {
-                                        Text("科普小學堂問答", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color.White)
-                                        Text("答對領取竹幣獎勵", fontSize = 10.sp, color = BambooLight)
+                                        Text("動物好朋友大猜謎", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = BambooLight)
+                                        Text("跟波波一起聽聽這是什麼動物", fontSize = 10.sp, color = Color.LightGray)
                                     }
                                 }
                             }

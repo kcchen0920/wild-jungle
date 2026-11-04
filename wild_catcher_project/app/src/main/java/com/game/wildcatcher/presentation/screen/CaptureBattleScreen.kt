@@ -5,6 +5,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,8 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +41,7 @@ fun CaptureBattleScreen(
     onCaptureSuccess: (AnimalEntity) -> Unit,
     onCaptureFailed: () -> Unit,
     onBackToMenu: () -> Unit,
+    onSpeakVoice: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val captureEngine = remember(animal.id) {
@@ -52,6 +56,21 @@ fun CaptureBattleScreen(
     var isNetFired by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showEscapeDialog by remember { mutableStateOf(false) }
+    var rightTapParticleCount by remember { mutableStateOf(0) }
+
+    // Toddler voice guidance triggers
+    LaunchedEffect(isNetFired) {
+        if (isNetFired) {
+            onSpeakVoice("伸出左手按住抱抱，右手拍拍吹大泡泡！")
+        }
+    }
+
+    LaunchedEffect(qteState.isCompleted) {
+        if (qteState.isCompleted) {
+            showSuccessDialog = true
+            onSpeakVoice("哇！太棒了！小動物成為你的好朋友了！")
+        }
+    }
 
     // Dynamic directional light rotation angle for PBR rendering
     val infiniteTransition = rememberInfiniteTransition(label = "pbr_light")
@@ -233,6 +252,74 @@ fun CaptureBattleScreen(
             }
         }
 
+        // --- Full Screen Split Blind-Touch Overlay for 4-year-olds (左右全螢幕大面積盲按與防掌壓) ---
+        if (isNetFired && !showSuccessDialog) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp) // 24dp Tablet Edge Palm Rejection
+            ) {
+                // Left Half: Blind Palm / Thumb Holding Zone
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onPress = {
+                                    captureEngine.setLeftHandStabilizing(true)
+                                    qteState = captureEngine.getCurrentState()
+                                    tryAwaitRelease()
+                                    captureEngine.setLeftHandStabilizing(false)
+                                    qteState = captureEngine.getCurrentState()
+                                }
+                            )
+                        }
+                ) {
+                    if (qteState.isLeftHandStabilizing) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                .size(160.dp)
+                                .clip(CircleShape)
+                                .background(Brush.radialGradient(listOf(SunsetAmber.copy(alpha = 0.45f), Color.Transparent)))
+                        )
+                    }
+                }
+
+                // Right Half: Blind Tapping Zone (隨手拍打即吹泡泡收網)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = {
+                                    captureEngine.onRightHandTap()
+                                    qteState = captureEngine.getCurrentState()
+                                    rightTapParticleCount++
+                                    if (qteState.isCompleted) showSuccessDialog = true
+                                }
+                            )
+                        }
+                ) {
+                    // Floating celebratory star particles on tapping
+                    if (rightTapParticleCount > 0) {
+                        Text(
+                            text = if (rightTapParticleCount % 2 == 0) "⭐✨" else "🫧💖",
+                            fontSize = 32.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .offset(
+                                    x = ((rightTapParticleCount * 29) % 100 - 50).dp,
+                                    y = ((rightTapParticleCount * 19) % 80 - 40).dp
+                                )
+                        )
+                    }
+                }
+            }
+        }
+
         // Bottom Bimanual Early Childhood Controller
         if (isNetFired && !showSuccessDialog && !showEscapeDialog) {
             Box(
@@ -249,8 +336,8 @@ fun CaptureBattleScreen(
                     onRightHandTap = {
                         captureEngine.onRightHandTap()
                         qteState = captureEngine.getCurrentState()
+                        rightTapParticleCount++
                         if (qteState.isCompleted) showSuccessDialog = true
-                        if (qteState.isEscaped) showEscapeDialog = true
                     }
                 )
             }
@@ -264,10 +351,10 @@ fun CaptureBattleScreen(
                 shape = RoundedCornerShape(18.dp),
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🌟", fontSize = 28.sp)
+                        Text("🎉", fontSize = 28.sp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "捕獲成功！${animal.name}",
+                            text = "交到好朋友囉！${animal.name}",
                             style = WildTypography.titleLarge.copy(color = BambooGreen, fontWeight = FontWeight.Bold)
                         )
                     }
@@ -275,21 +362,21 @@ fun CaptureBattleScreen(
                 text = {
                     Column {
                         Text(
-                            text = "太厲害了！你的左右手配合得天衣無縫！",
+                            text = "太棒了！小動物超級喜歡你！",
                             color = InkBlack,
-                            fontSize = 15.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "雙手協調評級：${qteState.fingerAgilityLevel} · 達成 ${qteState.rightHandTapCount} 次靈活點擊！",
+                            text = "雙手協調評級：${qteState.fingerAgilityLevel} · 達成 ${qteState.rightHandTapCount} 次拍手！",
                             color = SunsetAmber,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "💡 生態小百科：${animal.funFact}",
+                            text = "💡 小動物悄悄話：${animal.funFact}",
                             color = InkGrey,
                             fontSize = 12.sp
                         )
@@ -301,13 +388,13 @@ fun CaptureBattleScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("送入庇護所，領取榮譽徽章！")
+                        Text("領取好朋友貼紙！送入森林樂園 🐾")
                     }
                 }
             )
         }
 
-        // Gentle Escape Fallback
+        // Gentle Departure Fallback (Zero Frustration)
         if (showEscapeDialog) {
             AlertDialog(
                 onDismissRequest = { /* forced */ },
@@ -315,13 +402,13 @@ fun CaptureBattleScreen(
                 shape = RoundedCornerShape(18.dp),
                 title = {
                     Text(
-                        text = "🐾 動物跑去休息囉～",
+                        text = "🍓 小動物吃飽飽去休息囉～",
                         style = WildTypography.titleLarge.copy(color = LeatherBrown, fontWeight = FontWeight.Bold)
                     )
                 },
                 text = {
                     Text(
-                        text = "波波為你拍拍手：「小手指頭動得非常好喔！下次我們左手按得更穩一點，一定能順利收網！」",
+                        text = "小動物送你一顆幸運紅草莓：「謝謝你跟我玩～明天見！」",
                         color = InkBlack,
                         fontSize = 14.sp
                     )
@@ -332,7 +419,7 @@ fun CaptureBattleScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("再來一次小手指體操！")
+                        Text("收下禮物！再找下一隻小動物 🌟")
                     }
                 }
             )

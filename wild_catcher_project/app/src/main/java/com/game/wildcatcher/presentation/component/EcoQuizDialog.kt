@@ -45,14 +45,14 @@ fun EcoQuizDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "📖 自然生態趣味小學堂",
+                        text = "🌟 小動物好朋友大猜謎",
                         style = WildTypography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = LeatherDark
                         )
                     )
                     Text(
-                        text = "獎勵: +${quiz.rewardCoins} 竹幣",
+                        text = "完成送: +${quiz.rewardCoins} 快樂竹幣 🎋",
                         color = BambooGreen,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
@@ -136,14 +136,16 @@ fun EcoQuizDialog(
                                 if (selectedIndex != null) {
                                     hasAnswered = true
                                     val correct = selectedIndex == quiz.correctIndex
-                                    onAnswerSubmitted(correct, if (correct) quiz.rewardCoins else 0)
+                                    // Toddler encouragement: always grant at least 50 coins so they never leave empty-handed!
+                                    val reward = if (correct) quiz.rewardCoins else (quiz.rewardCoins / 2).coerceAtLeast(50)
+                                    onAnswerSubmitted(correct, reward)
                                 }
                             },
                             enabled = selectedIndex != null,
                             colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("確認答案")
+                            Text("確認答案 🐾")
                         }
                     } else {
                         Button(
@@ -151,7 +153,7 @@ fun EcoQuizDialog(
                             colors = ButtonDefaults.buttonColors(containerColor = LeatherBrown),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("領取完成")
+                            Text("領取禮物！好棒 ⭐")
                         }
                     }
                 }

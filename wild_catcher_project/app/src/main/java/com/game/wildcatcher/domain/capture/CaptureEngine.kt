@@ -34,14 +34,15 @@ class CaptureEngine(
     private var internalTime = 0.0f
 
     init {
-        // Generous base width and DDA for early childhood confidence building
+        // Extra generous base width and toddler-adapted DDA (Zero-frustration policy)
         val ddaBonus = when {
-            consecutiveFailures >= 3 -> 0.22f // Extra generous for toddlers
-            consecutiveFailures >= 2 -> 0.15f
-            consecutiveFailures >= 1 -> 0.08f
-            else -> 0.04f                     // Default toddler comfort margin
+            consecutiveFailures >= 3 -> 0.30f
+            consecutiveFailures >= 2 -> 0.22f
+            consecutiveFailures >= 1 -> 0.15f
+            else -> 0.10f
         }
-        val calculatedWidth = (targetAnimal.sweetSpotWidth + ddaBonus).coerceIn(0.28f, 0.70f)
+        // Toddlers aged 4 get 48% ~ 85% wide sweet spot for effortless success
+        val calculatedWidth = (targetAnimal.sweetSpotWidth + 0.20f + ddaBonus).coerceIn(0.48f, 0.85f)
         state = state.copy(
             sweetSpotCenter = 0.5f,
             sweetSpotWidth = calculatedWidth,
@@ -70,13 +71,14 @@ class CaptureEngine(
             0.85f // Gentle baseline speed tailored for toddler reaction times
         }
 
-        val baseSpeed = targetAnimal.struggleVelocity * leftHandDamping * ddaVelocityDamping
+        // Extra gentle floating motion suitable for 4-year-olds
+        val baseSpeed = targetAnimal.struggleVelocity * leftHandDamping * ddaVelocityDamping * 0.55f
 
         // Harmonic gentle floating motion (simulating peaceful bubbles and wildlife bobbing)
-        val osc1 = sin(internalTime * baseSpeed * 2.8f)
-        val osc2 = sin(internalTime * baseSpeed * 1.2f + 0.8f) * 0.3f
-        val rawPos = 0.5f + (osc1 + osc2) * 0.40f
-        val newCursorPos = rawPos.coerceIn(0.04f, 0.96f)
+        val osc1 = sin(internalTime * baseSpeed * 1.8f)
+        val osc2 = sin(internalTime * baseSpeed * 0.8f + 0.5f) * 0.2f
+        val rawPos = 0.5f + (osc1 + osc2) * 0.35f
+        val newCursorPos = rawPos.coerceIn(0.08f, 0.92f)
 
         // Sweet spot detection
         val halfW = state.sweetSpotWidth / 2.0f
@@ -84,14 +86,8 @@ class CaptureEngine(
         val maxSweet = state.sweetSpotCenter + halfW
         val inSweet = newCursorPos in minSweet..maxSweet
 
-        // Passive tension decay: Left-hand holding prevents rapid escape
-        var newTension = state.animalTension
-        if (!inSweet) {
-            val tensionRate = if (state.isLeftHandStabilizing) 0.02f else 0.04f
-            newTension = (newTension + deltaSec * tensionRate).coerceIn(0.0f, 1.0f)
-        } else {
-            newTension = (newTension - deltaSec * 0.06f).coerceIn(0.0f, 1.0f)
-        }
+        // Passive tension decay: for 4-year-olds, animal never gets overly tense
+        var newTension = (state.animalTension - deltaSec * 0.08f).coerceIn(0.0f, 0.5f)
 
         // Bimanual Synchrony calculation
         val syncScore = if (state.isLeftHandStabilizing && state.rightHandTapCount > 0) {
@@ -113,7 +109,8 @@ class CaptureEngine(
         val currentScaleX = state.squishScaleX + (targetScaleX - state.squishScaleX) * 0.15f
         val currentScaleY = state.squishScaleY + (targetScaleY - state.squishScaleY) * 0.15f
 
-        val escaped = newTension >= 1.0f
+        // Zero-frustration policy for 4-year-olds: animals never escape!
+        val escaped = false
 
         state = state.copy(
             currentCursorPos = newCursorPos,
@@ -142,40 +139,42 @@ class CaptureEngine(
 
     /**
      * Right Hand: Rhythmic Precision Tapping (右手節奏點擊與微調靈活性)
+     * 專為 4 歲幼兒打造：隨意點擊均能前進，絕無懲罰與挫折
      */
     fun onRightHandTap() {
-        if (state.isCompleted || state.isEscaped) return
+        if (state.isCompleted) return
 
         val newTaps = state.rightHandTapCount + 1
+        val bimanualBonus = if (state.isLeftHandStabilizing) 1.50f else 1.0f
+        val powerBonus = (1.0f + (gunPowerLevel - 1) * 0.15f) * bimanualBonus
 
         if (state.isInSweetSpot) {
-            // Dual-hand synergy bonus: When left hand is stabilizing, capture power is boosted +40%!
-            val bimanualBonus = if (state.isLeftHandStabilizing) 1.40f else 1.0f
-            val powerBonus = (1.0f + (gunPowerLevel - 1) * 0.15f) * bimanualBonus
-            val baseGain = 0.14f * powerBonus
+            // Sweet spot hit: rapid positive progress (+22%)
+            val baseGain = 0.22f * powerBonus
             val newProgress = (state.captureProgress + baseGain).coerceIn(0.0f, 1.0f)
             val newCombo = state.comboCount + 1
-            val newTension = (state.animalTension - 0.10f).coerceAtLeast(0.0f)
 
             state = state.copy(
                 captureProgress = newProgress,
                 comboCount = newCombo,
                 rightHandTapCount = newTaps,
-                animalTension = newTension,
-                squishScaleX = 0.88f, // Spring bouncy squish on hit
-                squishScaleY = 1.15f,
+                animalTension = 0.0f,
+                squishScaleX = 0.85f, // Bouncy squish
+                squishScaleY = 1.18f,
                 isCompleted = newProgress >= 1.0f
             )
         } else {
-            // Gentle feedback: small tension increase without harsh penalties for kids
-            val mildTension = (state.animalTension + 0.05f).coerceIn(0.0f, 1.0f)
+            // Outside sweet spot: STILL grants +10% friendly progress so toddler never fails!
+            val baseGain = 0.10f * powerBonus
+            val newProgress = (state.captureProgress + baseGain).coerceIn(0.0f, 1.0f)
             state = state.copy(
+                captureProgress = newProgress,
                 rightHandTapCount = newTaps,
                 comboCount = 0,
-                animalTension = mildTension,
+                animalTension = 0.05f,
                 squishScaleX = 1.05f,
                 squishScaleY = 0.95f,
-                isEscaped = mildTension >= 1.0f
+                isCompleted = newProgress >= 1.0f
             )
         }
     }
