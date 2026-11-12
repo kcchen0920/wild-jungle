@@ -49,6 +49,9 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
     private val _currentScreen = MutableStateFlow(ScreenState.MAIN_MENU)
     val currentScreen: StateFlow<ScreenState> = _currentScreen.asStateFlow()
 
+    private val _captureOriginScreen = MutableStateFlow(ScreenState.MAIN_MENU)
+    val captureOriginScreen: StateFlow<ScreenState> = _captureOriginScreen.asStateFlow()
+
     private val _currentTargetAnimal = MutableStateFlow<AnimalEntity?>(null)
     val currentTargetAnimal: StateFlow<AnimalEntity?> = _currentTargetAnimal.asStateFlow()
 
@@ -90,19 +93,54 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun startRandomExpedition() {
+        _captureOriginScreen.value = ScreenState.MAIN_MENU
         val list = allAnimals.value
         val target = list.shuffled().firstOrNull() ?: WildRepository.FULL_100_REALISTIC_ANIMALS[0]
         _currentTargetAnimal.value = target
         navigateTo(ScreenState.CAPTURE_BATTLE)
     }
 
-    fun onCaptureSuccess(animal: AnimalEntity) {
+    fun startJungleEncounter(animalNameHint: String) {
+        _captureOriginScreen.value = ScreenState.JUNGLE_EXPLORE
+        val list = allAnimals.value.ifEmpty { WildRepository.FULL_100_REALISTIC_ANIMALS }
+        val matched = list.firstOrNull {
+            animalNameHint.isNotBlank() && (it.name.contains(animalNameHint) || animalNameHint.contains(it.name))
+        } ?: list.shuffled().first()
+        _currentTargetAnimal.value = matched
+        navigateTo(ScreenState.CAPTURE_BATTLE)
+    }
+
+    fun onCaptureSuccess(animal: AnimalEntity, destination: ScreenState = _captureOriginScreen.value) {
         soundManager.playSound(SoundEffect.NET_CATCH_SUCCESS)
         viewModelScope.launch {
             repository.markCaptured(animal.id)
             repository.addCoins(animal.coinYieldPerHour * 2L)
             repository.updateFailures(0)
-            _boboSpeech.value = "哇！成功收納了珍貴的${animal.name}！庇護所的遊客一定會超高興的！"
+            _boboSpeech.value = "哇！成功跟可愛的${animal.name}成為好朋友囉！"
+            navigateTo(destination)
+        }
+    }
+
+    fun onCaptureSuccessNextAnimal(animal: AnimalEntity) {
+        soundManager.playSound(SoundEffect.NET_CATCH_SUCCESS)
+        viewModelScope.launch {
+            repository.markCaptured(animal.id)
+            repository.addCoins(animal.coinYieldPerHour * 2L)
+            repository.updateFailures(0)
+            _boboSpeech.value = "太棒了！又一位新朋友加入！來看看下一隻小動物是誰吧！"
+            val list = allAnimals.value.ifEmpty { WildRepository.FULL_100_REALISTIC_ANIMALS }
+            val nextTarget = list.filter { it.id != animal.id }.shuffled().firstOrNull() ?: list.first()
+            _currentTargetAnimal.value = nextTarget
+        }
+    }
+
+    fun claimRestBonusAndReset() {
+        soundManager.playSound(SoundEffect.COIN_REWARD)
+        viewModelScope.launch {
+            repository.addCoins(500L)
+            playTimeManager.resetTimerAfterRest()
+            playTimeManager.dismissRestAlert(true)
+            _boboSpeech.value = "乖寶寶獲得 +500 快樂竹幣！已開啟柔和護眼模式！"
             navigateTo(ScreenState.MAIN_MENU)
         }
     }

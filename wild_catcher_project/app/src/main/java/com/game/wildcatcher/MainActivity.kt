@@ -54,6 +54,7 @@ fun MainGameContainer(
     warmFilterActive: Boolean
 ) {
     val screen by viewModel.currentScreen.collectAsState()
+    val captureOrigin by viewModel.captureOriginScreen.collectAsState()
     val profile by viewModel.playerProfile.collectAsState()
     val allAnimals by viewModel.allAnimals.collectAsState()
     val shelteredAnimals by viewModel.shelteredAnimals.collectAsState()
@@ -86,6 +87,15 @@ fun MainGameContainer(
             }
             ScreenState.JUNGLE_EXPLORE -> {
                 JungleExploreScreen(
+                    playerCoins = profile?.coins ?: 0L,
+                    capturedAnimalsCount = shelteredAnimals.size,
+                    onEncounterAnimal = { animalName ->
+                        viewModel.startJungleEncounter(animalName)
+                    },
+                    onCrateReward = { coins, crateName ->
+                        viewModel.collectShelterRevenue(coins)
+                        viewModel.ttsManager.speakCustomText("哇！打開了${crateName}！送給你 $coins 個快樂竹幣喔！")
+                    },
                     onBackToMenu = { viewModel.navigateTo(ScreenState.MAIN_MENU) }
                 )
             }
@@ -97,9 +107,14 @@ fun MainGameContainer(
                         gunPowerLevel = profile?.pandaGunPowerLevel ?: 1,
                         incenseAmmoCount = profile?.bambooIncenseAmmo ?: 30,
                         environment = environment,
+                        isFromJungleMap = captureOrigin == ScreenState.JUNGLE_EXPLORE,
                         onCaptureSuccess = { viewModel.onCaptureSuccess(it) },
+                        onCaptureSuccessNextAnimal = { viewModel.onCaptureSuccessNextAnimal(it) },
+                        onCaptureSuccessGoToShelter = {
+                            viewModel.onCaptureSuccess(it, ScreenState.SHELTER_PARK)
+                        },
                         onCaptureFailed = { viewModel.onCaptureFailed() },
-                        onBackToMenu = { viewModel.navigateTo(ScreenState.MAIN_MENU) },
+                        onBackToMenu = { viewModel.navigateTo(captureOrigin) },
                         onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) },
                         onLeftHandHaptic = { viewModel.hapticManager.playLeftHandHeartbeatPulse() },
                         onRightHandHaptic = {
@@ -155,7 +170,7 @@ fun MainGameContainer(
             }
         }
 
-        // Panda Assistant Speech Balloon & Rest Time Alert
+        // Panda Assistant Speech Balloon & Rest Time Alert (with Voice & Parent Gate)
         PandaAssistantOverlay(
             healthState = healthState,
             speechBubbleText = boboSpeech,
@@ -163,9 +178,9 @@ fun MainGameContainer(
                 viewModel.playTimeManager.dismissRestAlert(activateWarm)
             },
             onRestNow = {
-                viewModel.playTimeManager.resetTimerAfterRest()
-                viewModel.navigateTo(ScreenState.MAIN_MENU)
-            }
+                viewModel.claimRestBonusAndReset()
+            },
+            onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
         )
 
         // Eco Science Quiz Dialog (Voice-first for 4yo)

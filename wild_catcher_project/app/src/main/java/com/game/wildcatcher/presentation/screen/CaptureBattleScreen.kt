@@ -36,7 +36,10 @@ fun CaptureBattleScreen(
     gunPowerLevel: Int,
     incenseAmmoCount: Int,
     environment: EnvironmentState,
+    isFromJungleMap: Boolean = false,
     onCaptureSuccess: (AnimalEntity) -> Unit,
+    onCaptureSuccessNextAnimal: (AnimalEntity) -> Unit = {},
+    onCaptureSuccessGoToShelter: (AnimalEntity) -> Unit = {},
     onCaptureFailed: () -> Unit,
     onBackToMenu: () -> Unit,
     onSpeakVoice: (String) -> Unit = {},
@@ -352,10 +355,14 @@ fun CaptureBattleScreen(
                                 onPress = {
                                     captureEngine.setLeftHandStabilizing(true)
                                     qteState = captureEngine.getCurrentState()
+                                    if (qteState.isCompleted) showSuccessDialog = true
                                     onLeftHandHaptic()
                                     tryAwaitRelease()
                                     captureEngine.setLeftHandStabilizing(false)
                                     qteState = captureEngine.getCurrentState()
+                                },
+                                onTap = {
+                                    handleRightTap()
                                 }
                             )
                         },
@@ -530,20 +537,59 @@ fun CaptureBattleScreen(
                     }
                 },
                 confirmButton = {
-                    Button(
-                        onClick = { onCaptureSuccess(animal) },
-                        colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Text(
-                            text = "🎁 貼上好朋友貼紙！帶去遊樂園玩 🐾",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color.White
-                        )
+                        if (isFromJungleMap) {
+                            Button(
+                                onClick = { onCaptureSuccess(animal) },
+                                colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
+                                shape = RoundedCornerShape(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(58.dp)
+                            ) {
+                                Text(
+                                    text = "🚙 貼上貼紙！回大森林繼續散步 🐾",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.White
+                                )
+                            }
+                        } else {
+                            Button(
+                                onClick = { onCaptureSuccessNextAnimal(animal) },
+                                colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
+                                shape = RoundedCornerShape(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(58.dp)
+                            ) {
+                                Text(
+                                    text = "🫧 貼上貼紙！再找下一隻動物玩 🌟",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = { onCaptureSuccessGoToShelter(animal) },
+                            colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp)
+                        ) {
+                            Text(
+                                text = "🏡 去動物遊樂園餵牠吃紅蘋果 🍎",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             )

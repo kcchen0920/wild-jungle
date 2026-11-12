@@ -10,17 +10,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.game.wildcatcher.domain.health.HealthAlertState
 import com.game.wildcatcher.presentation.theme.*
 
@@ -30,9 +29,10 @@ fun PandaAssistantOverlay(
     speechBubbleText: String?,
     onDismissAlert: (enableWarmMode: Boolean) -> Unit,
     onRestNow: () -> Unit,
+    onSpeakVoice: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // 1. Gentle Speech Bubble on top-right / corner
+    // 1. Gentle Speech Bubble on top-right / corner (Tap to hear Bobo speak!)
     AnimatedVisibility(
         visible = speechBubbleText != null && healthState is HealthAlertState.Normal,
         enter = fadeIn(),
@@ -46,151 +46,197 @@ fun PandaAssistantOverlay(
                     .clip(RoundedCornerShape(16.dp))
                     .background(ParchmentCard)
                     .border(2.dp, VintageBrass, RoundedCornerShape(16.dp))
+                    .clickable { onSpeakVoice(speechBubbleText) }
                     .padding(horizontal = 14.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Bobo avatar circle
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(38.dp)
                         .clip(CircleShape)
                         .background(SunsetAmber)
                         .border(1.5.dp, LeatherBrown, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "🐾", fontSize = 18.sp)
+                    Text(text = "🐼", fontSize = 20.sp)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = "小熊貓 波波",
+                        text = "小熊貓 波波 🔊",
                         color = LeatherBrown,
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.ExtraBold
                     )
                     Text(
                         text = speechBubbleText,
                         color = InkBlack,
                         fontSize = 13.sp,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
         }
     }
 
-    // 2. Health Alert Modal: Panda's Rest Time (30-minute eye care reminder)
+    // 2. Health Alert Modal: Panda's Rest Time (Voice Story + Parent Lock Gate)
     if (healthState is HealthAlertState.RestTimeTriggered) {
-        Dialog(onDismissRequest = { onDismissAlert(true) }) {
+        var showParentGate by remember { mutableStateOf(false) }
+        var gateError by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            onSpeakVoice("小獵人，太陽要下山囉！小熊貓波波想睡覺了，我們讓眼睛休息一下，送給你500個乖寶寶快樂竹幣喔！")
+        }
+
+        Dialog(
+            onDismissRequest = { /* Prevent 4yo accidental outside-tap dismiss */ },
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            )
+        ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(0.75f)
-                    .clip(RoundedCornerShape(20.dp))
+                    .fillMaxWidth(0.86f)
+                    .clip(RoundedCornerShape(24.dp))
                     .background(ParchmentBg)
-                    .border(4.dp, VintageBrass, RoundedCornerShape(20.dp))
+                    .border(4.dp, VintageBrass, RoundedCornerShape(24.dp))
                     .padding(24.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Bobo rest illustration badge
+                    // Bobo sleeping illustration badge
                     Box(
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(72.dp)
                             .clip(CircleShape)
-                            .background(SunsetAmber.copy(alpha = 0.2f))
-                            .border(2.dp, SunsetAmber, CircleShape),
+                            .background(SunsetAmber.copy(alpha = 0.25f))
+                            .border(3.dp, SunsetAmber, CircleShape)
+                            .clickable {
+                                onSpeakVoice("太陽下山囉，陪小熊貓波波一起讓眼睛休息一下，拿500個快樂竹幣吧！")
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "🌅", fontSize = 32.sp)
+                        Text(text = "🐼🌙", fontSize = 34.sp)
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
-
                     Text(
-                        text = "🌿 波波的溫馨護眼提醒",
+                        text = "🌙 波波的晚安護眼時間 🔊",
                         style = WildTypography.headlineMedium.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.ExtraBold,
                             color = LeatherDark
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
                     Text(
-                        text = "「太陽要下山囉，讓眼睛休息一下，明天再來探索！」",
+                        text = "「小動物們都蓋好棉被要去睡午覺囉！我們也讓眼睛休息一下吧！」",
                         style = WildTypography.bodyLarge.copy(
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.Bold,
                             color = InkBlack,
-                            fontSize = 15.sp
+                            fontSize = 16.sp
                         ),
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Positive Reinforcement: Sleep reward announcement
+                    // Positive Reinforcement Reward Box
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
+                            .clip(RoundedCornerShape(16.dp))
                             .background(Color(0xFFFFF8E1))
-                            .border(1.dp, SunsetAmber, RoundedCornerShape(12.dp))
-                            .padding(12.dp)
+                            .border(2.dp, SunsetAmber, RoundedCornerShape(16.dp))
+                            .padding(14.dp)
                     ) {
-                        Column {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = "🌙 睡飽飽隔日登入獎勵已預約！",
-                                color = LeatherBrown,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold
+                                text = "🎁 乖寶寶護眼大禮包：+500 快樂竹幣 🎋",
+                                color = BambooGreen,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.ExtraBold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "只要現在放下平板休息，下次登入即可獲贈 500 枚竹幣與 10 顆金竹種子，並自動啟用護眼柔光模式！",
-                                color = InkGrey,
-                                fontSize = 12.sp
+                                text = "點下方綠色大按鈕陪波波休息，立即領取 500 枚竹幣並開啟柔和護眼模式！",
+                                color = InkBlack,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Actions
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    // Giant Primary Toddler Button: Rest Now & Claim +500 Coins
+                    Button(
+                        onClick = {
+                            onSpeakVoice("你好乖喔！送給你500個快樂竹幣，眼睛休息一下，我們待會見！")
+                            onRestNow()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
+                        shape = RoundedCornerShape(18.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(62.dp)
                     ) {
-                        OutlinedButton(
-                            onClick = { onDismissAlert(true) },
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(46.dp)
-                        ) {
-                            Text(
-                                text = "啟用護眼模式繼續",
-                                color = LeatherDark,
-                                fontSize = 13.sp
-                            )
-                        }
+                        Text(
+                            text = "🌙 陪波波乖乖休息 (領 +500 🎋)",
+                            color = Color.White,
+                            fontSize = 19.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
 
-                        Button(
-                            onClick = onRestNow,
-                            colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(46.dp)
-                        ) {
+                    // Subtle Parent Arithmetic Gate to Extend Time
+                    if (!showParentGate) {
+                        TextButton(onClick = { showParentGate = true }) {
                             Text(
-                                text = "好好休息 (領取預約)",
-                                color = Color.White,
-                                fontSize = 13.sp,
+                                text = "🔒 家長延長遊玩時間 (需家長解鎖)",
+                                color = InkGrey,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
+                        }
+                    } else {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background( ParchmentCard)
+                                .border(1.dp, ParchmentBorder, RoundedCornerShape(12.dp))
+                                .padding(10.dp)
+                        ) {
+                            Text(
+                                text = "🛡️ 家長確認：4 + 3 = ？ (解鎖並開啟柔光護眼繼續)",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = LeatherDark
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                listOf("5", "6", "7", "8").forEach { ans ->
+                                    Button(
+                                        onClick = {
+                                            if (ans == "7") {
+                                                gateError = false
+                                                onDismissAlert(true)
+                                            } else {
+                                                gateError = true
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = VintageBrass),
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier.height(38.dp)
+                                    ) {
+                                        Text(ans, color = LeatherDark, fontWeight = FontWeight.ExtraBold, fontSize = 15.sp)
+                                    }
+                                }
+                            }
+                            if (gateError) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("答案不正確，請家長協助操作～", color = DangerCoral, fontSize = 11.sp)
+                            }
                         }
                     }
                 }

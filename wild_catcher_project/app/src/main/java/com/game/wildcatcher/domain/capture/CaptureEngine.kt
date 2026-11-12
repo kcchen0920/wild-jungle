@@ -112,25 +112,35 @@ class CaptureEngine(
         // Zero-frustration policy for 4-year-olds: animals never escape!
         val escaped = false
 
+        // Left-hand hold passive bubble inflation (+8% per second) so single-hand holding also succeeds!
+        val passiveHoldGain = if (state.isLeftHandStabilizing) deltaSec * 0.08f else 0.0f
+        val updatedProgress = (state.captureProgress + passiveHoldGain).coerceIn(0.0f, 1.0f)
+
         state = state.copy(
             currentCursorPos = newCursorPos,
             isInSweetSpot = inSweet,
+            captureProgress = updatedProgress,
             animalTension = newTension,
             leftHandHoldSeconds = newHoldSec,
             bimanualSyncScore = syncScore,
             fingerAgilityLevel = agilityTitle,
             squishScaleX = currentScaleX,
             squishScaleY = currentScaleY,
+            isCompleted = updatedProgress >= 1.0f,
             isEscaped = escaped
         )
     }
 
     /**
-     * Left Hand: Constant Pressure Holding (訓練左手指肌與本體感覺穩定施力)
+     * Left Hand: Constant Pressure Holding (訓練左手指肌與本體感覺穩定施力，單手點按亦可推進進度)
      */
     fun setLeftHandStabilizing(isHolding: Boolean) {
+        val tapGain = if (isHolding && !state.isLeftHandStabilizing) 0.08f else 0.0f
+        val newProgress = (state.captureProgress + tapGain).coerceIn(0.0f, 1.0f)
         state = state.copy(
             isLeftHandStabilizing = isHolding,
+            captureProgress = newProgress,
+            isCompleted = newProgress >= 1.0f,
             // Visual tactile squish feedback on press
             squishScaleX = if (isHolding) 1.08f else 1.0f,
             squishScaleY = if (isHolding) 0.92f else 1.0f

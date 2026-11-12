@@ -26,43 +26,17 @@
     overflow: hidden;
   }
 
-  /* Top Navigation Bar */
+  /* Top Navigation Bar (Hidden for 4yo Toddler Full-Screen Mode) */
   .preview-top-nav {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 52px;
-    background: rgba(10, 16, 12, 0.96);
-    backdrop-filter: blur(8px);
-    border-bottom: 2px solid var(--brass);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    z-index: 1000;
+    display: none !important;
   }
-  .nav-tabs { display: flex; gap: 8px; }
-  .nav-tab-btn {
-    background: #142218;
-    color: #C8E6C9;
-    border: 1px solid #284430;
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .nav-tab-btn.active {
-    background: var(--brass);
-    color: #1A120B;
-    border-color: #FFF;
-    box-shadow: 0 0 12px var(--brass-glow);
-  }
+  .nav-tabs { display: none; }
+  .nav-tab-btn { display: none; }
 
   /* Main Container */
   .main-viewport {
     position: absolute;
-    top: 52px; bottom: 0; left: 0; right: 0;
+    top: 0; bottom: 0; left: 0; right: 0;
     overflow: hidden;
   }
   .view-panel {
@@ -222,14 +196,17 @@
     margin-top: 2px;
   }
 
-  /* Mobile Touch Controls */
+  /* Mobile Touch Controls (Enlarged for 4yo Toddlers) */
+  .stamina-bar-container, .quest-card, .minimap-container, .stealth-indicator, .hotbar-container {
+    display: none !important;
+  }
   .joystick-container {
     position: absolute;
-    bottom: 24px; left: 24px;
-    width: 130px; height: 130px;
+    bottom: 26px; left: 26px;
+    width: 148px; height: 148px;
     border-radius: 50%;
-    background: rgba(14, 26, 18, 0.55);
-    border: 2px dashed rgba(129, 199, 132, 0.7);
+    background: rgba(14, 26, 18, 0.65);
+    border: 3px dashed rgba(129, 199, 132, 0.85);
     backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
@@ -237,13 +214,13 @@
     z-index: 45;
     touch-action: none;
     user-select: none;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.65);
   }
   .joystick-thumb {
-    width: 56px; height: 56px;
+    width: 66px; height: 66px;
     border-radius: 50%;
     background: radial-gradient(circle, #81C784 0%, #2E7D32 100%);
-    border: 2.5px solid #C8E6C9;
+    border: 3px solid #FFF;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     pointer-events: none;
     transform: translate(0px, 0px);
@@ -251,45 +228,42 @@
   }
   .joystick-label {
     position: absolute;
-    bottom: -20px;
-    font-size: 11px;
-    color: #A5D6A7;
-    font-weight: bold;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    bottom: -24px;
+    font-size: 13px;
+    color: #FFF;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     pointer-events: none;
     white-space: nowrap;
   }
 
   .touch-actions-zone {
     position: absolute;
-    bottom: 24px; right: 24px;
+    bottom: 26px; right: 28px;
     display: flex;
     gap: 12px;
     align-items: flex-end;
     z-index: 45;
   }
   .btn-touch-action {
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    background: #2E7D32;
-    border: 2px solid #81C784;
-    color: #FFF;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    cursor: pointer;
-  }
-  .btn-touch-action:active {
-    transform: scale(0.92);
-    background: #1B5E20;
+    display: none;
   }
   .btn-touch-action.btn-shoot {
-    width: 72px; height: 72px;
-    background: #E65100;
-    border-color: #FFB74D;
-    font-size: 30px;
+    display: flex !important;
+    flex-direction: column;
+    width: 112px; height: 112px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00E5FF 0%, #2E7D32 100%);
+    border: 4px solid #FBD473;
+    color: #FFF;
+    font-size: 38px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.75);
+    cursor: pointer;
+  }
+  .btn-touch-action.btn-shoot:active {
+    transform: scale(0.92);
   }
 
   /* Interaction Prompt Banner */
@@ -510,18 +484,14 @@
           </div>
           <div>
             <div style="display:flex; align-items:center; gap:6px;">
-              <span style="font-size:14px; font-weight:900; color:var(--brass-glow);">🤠 探險小獵人</span>
-              <span style="font-size:10px; background:#2E7D32; color:#FFF; padding:1px 6px; border-radius:4px; font-weight:bold;">Lv.3 巡守員</span>
+              <span style="font-size:18px; font-weight:900; color:var(--brass-glow);">🤠 小獵人 戴夫</span>
             </div>
-            <div style="font-size:12px; color:#A5D6A7; font-weight:bold; margin-top:2px;" id="hud-equipped-weapon">
-              🫧 夢幻連發衝鋒槍 Mk-1
+            <div style="display:flex; gap:14px; margin-top:6px; font-size:16px; font-weight:900;">
+              <span>🎋 <strong id="hud-coins-display" style="color:#FFD54F;">350</strong></span>
+              <span>⭐ <strong id="hud-catches-display" style="color:#81C784;">0 隻</strong></span>
             </div>
             <div class="stamina-bar-container">
               <div class="stamina-bar-fill" id="stamina-bar"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:11px;">
-              <span>💰 <strong id="hud-coins-display" style="color:#FFD54F;">350 G</strong></span>
-              <span>🎯 捕獲: <strong id="hud-catches-display" style="color:#81C784;">0 隻</strong></span>
             </div>
           </div>
         </div>
@@ -596,14 +566,17 @@
       <!-- Virtual Joystick (Left Hand Movement for Pad / Mobile) -->
       <div class="joystick-container" id="joystick-zone">
         <div class="joystick-thumb" id="joystick-knob"></div>
-        <div class="joystick-label">🕹️ 滑動搖桿移動</div>
+        <div class="joystick-label">👆 點地面或滑動搖桿散步</div>
       </div>
 
-      <!-- Mobile Touch Controls -->
+      <!-- Mobile Touch Controls: Single Giant Rainbow Bubble Button for 4yo -->
       <div class="touch-actions-zone">
         <div class="btn-touch-action" onclick="toggleSprintMobile()" id="btn-mobile-sprint" title="衝刺">⚡</div>
         <div class="btn-touch-action" onclick="triggerInteractKey()" title="互動 [E]">✋</div>
-        <div class="btn-touch-action btn-shoot" onclick="handleFirePandaGun()" title="捕捉網發射">🎯</div>
+        <div class="btn-touch-action btn-shoot" onclick="handleFirePandaGun()" title="吹彩虹泡泡">
+          <span>🌈🫧</span>
+          <span style="font-size:13px; font-weight:900; margin-top:2px;">吹泡泡</span>
+        </div>
       </div>
 
       <!-- QTE Capture Overlay -->
@@ -1126,10 +1099,15 @@
         if (isSprinting) player.stamina = Math.max(0, player.stamina - 0.45);
       } else {
         player.isMoving = false;
-        player.stamina = Math.min(100, player.stamina + 0.3);
       }
+      player.stamina = 100; // Infinite stamina for 4yo toddlers
 
-      document.getElementById('stamina-bar').style.width = player.stamina + '%';
+      if (window.AndroidJungleBridge) {
+        try {
+          document.getElementById('hud-coins-display').innerText = window.AndroidJungleBridge.getPlayerCoins();
+          document.getElementById('hud-catches-display').innerText = window.AndroidJungleBridge.getCapturedCount() + ' 隻';
+        } catch (err) {}
+      }
 
       // Stealth check
       player.isStealth = false;
@@ -1139,15 +1117,29 @@
           break;
         }
       }
-      document.getElementById('stealth-badge').style.display = player.isStealth ? 'block' : 'none';
 
       // Spring Mushrooms
       springMushrooms.forEach(m => {
-        if (Math.hypot(player.x - m.x, player.y - m.y) < 32) {
+        if (Math.hypot(player.x - m.x, player.y - m.y) < 36) {
           player.x = m.targetX; player.y = m.targetY;
+          if (player.walkTarget) player.walkTarget.active = false;
           playBouncySpringSound();
         }
       });
+
+      // Auto-open Treasure Crates on proximity for 4yo Toddlers (No [E] key or alert popup needed!)
+      for (let c of crates) {
+        if (!c.opened && Math.hypot(player.x - c.x, player.y - c.y) < 85) {
+          c.opened = true;
+          player.coins += c.reward;
+          playBouncySpringSound();
+          if (window.AndroidJungleBridge && window.AndroidJungleBridge.onCrateReward) {
+            window.AndroidJungleBridge.onCrateReward(c.reward, c.name);
+          } else {
+            document.getElementById('hud-coins-display').innerText = player.coins;
+          }
+        }
+      }
 
       // Camera Tracking
       const canvas = document.getElementById('jungle-canvas');
@@ -1158,38 +1150,14 @@
       camera.x = Math.max(0, Math.min(MAP_W - canvas.width, camera.x));
       camera.y = Math.max(0, Math.min(MAP_H - canvas.height, camera.y));
 
-      // Animal AI Updates
+      // Friendly Animal AI Updates for 4yo Toddlers (Gentle stroll, no panic fleeing or boar charges)
       animals.forEach(a => {
-        const distToPlayer = Math.hypot(a.x - player.x, a.y - player.y);
-        const alertThreshold = player.isStealth ? 85 : (isSprinting ? 280 : 160);
-
-        if (distToPlayer < alertThreshold) {
-          a.alertTimer = 60;
-          if (a.type === 'boar' && distToPlayer < 140) {
-            a.state = 'charge';
-            a.chargeSpeed = 7.5;
-            a.facing = player.x > a.x ? 1 : -1;
-          } else if (a.type !== 'bear') {
-            a.state = 'panic';
-            const runAng = Math.atan2(a.y - player.y, a.x - player.x);
-            a.vx = Math.cos(runAng) * 3.5;
-            a.vy = Math.sin(runAng) * 3.5;
-            a.facing = a.vx > 0 ? 1 : -1;
-          }
-        } else if (a.alertTimer > 0) {
-          a.alertTimer--;
-          if (a.alertTimer === 0) a.state = 'idle';
-        }
-
-        if (a.state === 'charge') {
-          a.x += a.facing * a.chargeSpeed;
-          if (a.x < 40 || a.x > MAP_W - 40) a.state = 'idle';
-        } else {
-          a.x += a.vx; a.y += a.vy;
-          if (a.x < 100 || a.x > MAP_W - 100) a.vx *= -1;
-          if (a.y < 100 || a.y > MAP_H - 100) a.vy *= -1;
-          a.facing = a.vx > 0 ? 1 : -1;
-        }
+        a.state = 'idle';
+        a.x += a.vx * 0.65;
+        a.y += a.vy * 0.65;
+        if (a.x < 100 || a.x > MAP_W - 100) a.vx *= -1;
+        if (a.y < 100 || a.y > MAP_H - 100) a.vy *= -1;
+        a.facing = a.vx > 0 ? 1 : -1;
       });
 
       // Bubbles
@@ -1199,82 +1167,65 @@
         b.life--;
 
         for (let a of animals) {
-          if (Math.hypot(b.x - a.x, b.y - a.y) < a.r + b.radius) {
-            triggerCaptureQTE(a);
+          if (Math.hypot(b.x - a.x, b.y - a.y) < a.r + b.radius + 14) {
             bubbles.splice(i, 1);
+            triggerCaptureQTE(a);
             break;
           }
         }
-        if (b.life <= 0) bubbles.splice(i, 1);
+        if (b && b.life <= 0) bubbles.splice(i, 1);
       }
-
-      updateInteractionPromptBanner();
 
       if (captureState.active) updateCaptureLoop(t);
     }
 
     function updateInteractionPromptBanner() {
       const banner = document.getElementById('interact-prompt-banner');
-      const text = document.getElementById('interact-prompt-text');
-
-      for (let c of crates) {
-        if (!c.opened && Math.hypot(player.x - c.x, player.y - c.y) < 70) {
-          text.innerText = `開啟【${c.name}】`;
-          banner.style.display = 'flex';
-          return;
-        }
-      }
-      for (let camp of campsites) {
-        if (Math.hypot(player.x - camp.x, player.y - camp.y) < 85) {
-          text.innerText = `進入【${camp.name}】休息回復`;
-          banner.style.display = 'flex';
-          return;
-        }
-      }
-      for (let cl of wildlifeClues) {
-        if (!cl.inspected && Math.hypot(player.x - cl.x, player.y - cl.y) < 65) {
-          text.innerText = `調查【${cl.name}】`;
-          banner.style.display = 'flex';
-          return;
-        }
-      }
-      banner.style.display = 'none';
+      if (banner) banner.style.display = 'none';
     }
 
     // ========================================================
-    // SHOOTING & WEAPONS
+    // SHOOTING & WEAPONS (Auto-Aim Rainbow Spread for 4yo)
     // ========================================================
     function handleFirePandaGun() {
+      // Auto-aim at nearest animal within 520px if available
+      let nearestAnimal = null;
+      let minDist = 520;
+      for (let a of animals) {
+        const d = Math.hypot(a.x - player.x, a.y - player.y);
+        if (d < minDist) {
+          minDist = d;
+          nearestAnimal = a;
+        }
+      }
+      if (nearestAnimal) {
+        player.aimAngle = Math.atan2(nearestAnimal.y - (player.y - 14), nearestAnimal.x - player.x);
+        player.facing = nearestAnimal.x >= player.x ? 1 : -1;
+      }
+
       const gun = player.weapon;
       const spawnX = player.x + Math.cos(player.aimAngle) * 36;
       const spawnY = player.y - 14 + Math.sin(player.aimAngle) * 36;
 
-      if (gun.spread === 3) {
-        [-0.22, 0, 0.22].forEach(off => {
-          bubbles.push({
-            x: spawnX, y: spawnY,
-            vx: Math.cos(player.aimAngle + off) * gun.speed,
-            vy: Math.sin(player.aimAngle + off) * gun.speed,
-            radius: gun.size,
-            color: gun.color,
-            life: 48
-          });
-        });
-      } else {
+      [-0.20, 0, 0.20].forEach(off => {
         bubbles.push({
           x: spawnX, y: spawnY,
-          vx: Math.cos(player.aimAngle) * gun.speed,
-          vy: Math.sin(player.aimAngle) * gun.speed,
-          radius: gun.size,
+          vx: Math.cos(player.aimAngle + off) * gun.speed,
+          vy: Math.sin(player.aimAngle + off) * gun.speed,
+          radius: Math.max(20, gun.size),
           color: gun.color,
-          life: 52,
-          homing: gun.homing
+          life: 55
         });
-      }
+      });
       playShootSound();
     }
 
     function triggerCaptureQTE(animal) {
+      if (window.AndroidJungleBridge && window.AndroidJungleBridge.onAnimalHitByBubble) {
+        if (player.walkTarget) player.walkTarget.active = false;
+        window.AndroidJungleBridge.onAnimalHitByBubble(animal.name);
+        return;
+      }
       captureState.active = true;
       captureState.animal = animal;
       captureState.progress = 0.25;
