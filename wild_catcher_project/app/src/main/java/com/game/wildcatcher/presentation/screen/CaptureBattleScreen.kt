@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.game.wildcatcher.data.model.AnimalEntity
 import com.game.wildcatcher.domain.capture.CaptureEngine
-import com.game.wildcatcher.domain.capture.QTEState
 import com.game.wildcatcher.domain.weather.EnvironmentState
 import com.game.wildcatcher.presentation.component.PbrAnimalRenderer
 import com.game.wildcatcher.presentation.component.QTECaptureBar
@@ -42,6 +40,8 @@ fun CaptureBattleScreen(
     onCaptureFailed: () -> Unit,
     onBackToMenu: () -> Unit,
     onSpeakVoice: (String) -> Unit = {},
+    onLeftHandHaptic: () -> Unit = {},
+    onRightHandHaptic: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val captureEngine = remember(animal.id) {
@@ -58,21 +58,39 @@ fun CaptureBattleScreen(
     var showEscapeDialog by remember { mutableStateOf(false) }
     var rightTapParticleCount by remember { mutableStateOf(0) }
 
-    // Toddler voice guidance triggers
+    // Auto-launch bubble net after 1.6s if toddler hasn't tapped yet (Zero-Frustration Entry)
+    LaunchedEffect(animal.id) {
+        onSpeakVoice("哇！發現可愛的${animal.name}！我們一起吹大泡泡跟牠做朋友吧！")
+        delay(1600)
+        if (!isNetFired) {
+            isNetFired = true
+        }
+    }
+
+    // Toddler voice guidance when bubble net activates
     LaunchedEffect(isNetFired) {
         if (isNetFired) {
-            onSpeakVoice("伸出左手按住抱抱，右手拍拍吹大泡泡！")
+            onSpeakVoice("伸出左手按住左邊抱抱，右手拍拍右邊吹大泡泡！")
+        }
+    }
+
+    // Periodic gentle heartbeat haptic while toddler holds left hand
+    LaunchedEffect(qteState.isLeftHandStabilizing, isNetFired, showSuccessDialog) {
+        while (isNetFired && qteState.isLeftHandStabilizing && !showSuccessDialog) {
+            onLeftHandHaptic()
+            delay(450)
         }
     }
 
     LaunchedEffect(qteState.isCompleted) {
         if (qteState.isCompleted) {
             showSuccessDialog = true
-            onSpeakVoice("哇！太棒了！小動物成為你的好朋友了！")
+            onRightHandHaptic()
+            onSpeakVoice("太棒了！你成功跟${animal.name}成為好朋友囉！")
         }
     }
 
-    // Dynamic directional light rotation angle for PBR rendering
+    // Dynamic directional light & animations
     val infiniteTransition = rememberInfiniteTransition(label = "pbr_light")
     val dynamicLightAngle by infiniteTransition.animateFloat(
         initialValue = 35f,
@@ -84,15 +102,25 @@ fun CaptureBattleScreen(
         label = "lightAngle"
     )
 
-    // Gentle physical breathing floating bounce
     val floatBounce by infiniteTransition.animateFloat(
         initialValue = -8f,
         targetValue = 8f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1800, easing = FastOutSlowInEasing),
+            animation = tween(1600, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "floatBounce"
+    )
+
+    // Animated Ghost Hand Guide pulse for 4yo visual imitation
+    val handCoachPulse by infiniteTransition.animateFloat(
+        initialValue = 0.90f,
+        targetValue = 1.12f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(650, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "handCoachPulse"
     )
 
     // QTE Engine frame loop (~60 FPS)
@@ -111,6 +139,17 @@ fun CaptureBattleScreen(
         }
     }
 
+    val handleRightTap = {
+        if (!isNetFired) {
+            isNetFired = true
+        }
+        captureEngine.onRightHandTap()
+        qteState = captureEngine.getCurrentState()
+        rightTapParticleCount++
+        onRightHandHaptic()
+        if (qteState.isCompleted) showSuccessDialog = true
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -118,89 +157,117 @@ fun CaptureBattleScreen(
                 Brush.verticalGradient(
                     colors = when (environment.timeOfDay.isNight) {
                         true -> listOf(Color(0xFF0F1B29), Color(0xFF1E2D3D))
-                        false -> listOf(Color(0xFF264653), Color(0xFF1B3B48))
+                        false -> listOf(Color(0xFF1E4D3B), Color(0xFF133328))
                     }
                 )
             )
+            // Full-screen tap anywhere to launch net if not fired yet
+            .pointerInput(isNetFired) {
+                if (!isNetFired) {
+                    detectTapGestures(onTap = { isNetFired = true })
+                }
+            }
             .padding(14.dp)
     ) {
-        // Top HUD Bar: Tablet Landscape Header
+        // =========================================================================
+        // TOP HUD BAR: Giant Home Button + Animal Name with Bopomofo & Voice Button
+        // =========================================================================
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Back Button & Target Info
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(
+                // Giant 58dp Home Button for 4-year-olds
+                Button(
                     onClick = onBackToMenu,
+                    colors = ButtonDefaults.buttonColors(containerColor = LeatherDark),
+                    shape = RoundedCornerShape(18.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
                     modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape)
-                        .background(LeatherDark.copy(alpha = 0.8f))
-                        .border(1.dp, VintageBrass, CircleShape)
+                        .height(54.dp)
+                        .border(2.5.dp, VintageBrass, RoundedCornerShape(18.dp))
                 ) {
-                    Text("◀", color = VintageBrass, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text("🏠", fontSize = 22.sp)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("回首頁", color = BrassHighlight, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(14.dp))
 
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                // Animal Name + Bopomofo + Voice Guide Pill
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(LeatherDark.copy(alpha = 0.82f))
+                        .border(1.5.dp, ParchmentBorder, RoundedCornerShape(16.dp))
+                        .clickable {
+                            onSpeakVoice("${animal.name}！${animal.funFact}")
+                        }
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = animal.name,
+                                color = Color.White,
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "(${animal.getFullBopomofo()})",
+                                color = BrassHighlight,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                         Text(
-                            text = animal.name,
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = animal.gradeLabel,
-                            color = when (animal.grade) {
-                                com.game.wildcatcher.data.model.ConservationGrade.GREEN -> BambooLight
-                                com.game.wildcatcher.data.model.ConservationGrade.YELLOW -> SunsetAmber
-                                com.game.wildcatcher.data.model.ConservationGrade.RED -> DangerCoral
-                            },
-                            fontSize = 11.sp,
+                            text = "🏞️ 住在：${animal.habitatName}",
+                            color = BambooLight,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Text(
-                        text = "棲地：${animal.habitatName}  |  學名：${animal.scientificName}",
-                        color = Color.LightGray,
-                        fontSize = 11.sp
-                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("🔊", fontSize = 24.sp)
                 }
             }
 
-            // Toddler Dual-Hand Guidance Pill
+            // Cheerful Visual Hint Badge
             Row(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(SunsetAmber.copy(alpha = 0.25f))
-                    .border(1.dp, SunsetAmber, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(SunsetAmber.copy(alpha = 0.28f))
+                    .border(2.dp, SunsetAmber, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 14.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "👐 幼兒雙手協同訓練模式：左手穩住 · 右手收網",
+                    text = "✋ 左手按住抱抱 · 👇 右手拍拍吹泡泡",
                     color = BrassHighlight,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
             }
         }
 
-        // Center Arena: Squishy Bouncy PBR Realistic Animal Renderer with Spring Physics
+        // =========================================================================
+        // CENTER ARENA: Bouncy Animal & Growing Rainbow Bubble Net
+        // =========================================================================
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 90.dp),
+                .padding(bottom = 125.dp),
             contentAlignment = Alignment.Center
         ) {
+            val bubbleSize = (240f + qteState.captureProgress * 85f).dp
+
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .offset(y = floatBounce.dp)
                     .scale(scaleX = qteState.squishScaleX, scaleY = qteState.squishScaleY)
@@ -209,57 +276,73 @@ fun CaptureBattleScreen(
                     animal = animal,
                     lightAngleDeg = dynamicLightAngle,
                     modifier = Modifier
-                        .size(260.dp)
-                        .clickable {
-                            if (!isNetFired) {
-                                isNetFired = true
-                            }
-                        }
+                        .size(250.dp)
+                        .clickable { handleRightTap() }
                 )
 
-                // Dream Bubble Net Visual Overlay
+                // Growing Rainbow Dream Bubble Net Visual Overlay
                 if (isNetFired) {
                     Box(
                         modifier = Modifier
-                            .size(290.dp)
-                            .align(Alignment.Center)
+                            .size(bubbleSize)
                             .clip(CircleShape)
-                            .border(3.5.dp, BubbleCyan.copy(alpha = 0.85f), CircleShape)
-                            .background(BubbleCyan.copy(alpha = 0.12f))
+                            .border(
+                                width = (4f + qteState.captureProgress * 4f).dp,
+                                brush = Brush.sweepGradient(
+                                    listOf(
+                                        BubbleCyan,
+                                         Color(0xFFFF80AB),
+                                        BrassHighlight,
+                                        BambooLight,
+                                        BubbleCyan
+                                    )
+                                ),
+                                shape = CircleShape
+                            )
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        BubbleCyan.copy(alpha = 0.18f + qteState.captureProgress * 0.15f)
+                                    )
+                                )
+                            )
                     )
                 }
             }
 
-            // Initial Launch Hint
+            // Pre-launch giant prompt if net hasn't fired yet
             if (!isNetFired) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Box(
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .offset(y = 145.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(LeatherDark.copy(alpha = 0.85f))
-                        .border(1.dp, VintageBrass, RoundedCornerShape(12.dp))
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .offset(y = 135.dp)
+                        .scale(handCoachPulse)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(BambooGreen)
+                        .border(3.dp, BrassHighlight, RoundedCornerShape(20.dp))
+                        .padding(horizontal = 22.dp, vertical = 12.dp)
                 ) {
                     Text(
-                        text = "🎯 點一下動物發射「夢幻泡泡網」，開啟雙手訓練！",
+                        text = "👆 點一下小動物吹出七彩大泡泡！🫧",
                         color = Color.White,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.ExtraBold
                     )
                 }
             }
         }
 
-        // --- Full Screen Split Blind-Touch Overlay for 4-year-olds (左右全螢幕大面積盲按與防掌壓) ---
+        // =========================================================================
+        // FULL-SCREEN SPLIT BLIND-TOUCH OVERLAY + ANIMATED GHOST HAND COACH
+        // =========================================================================
         if (isNetFired && !showSuccessDialog) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp) // 24dp Tablet Edge Palm Rejection
+                    .padding(horizontal = 24.dp, vertical = 68.dp) // 24dp Edge Palm-Rejection
             ) {
-                // Left Half: Blind Palm / Thumb Holding Zone
+                // LEFT HALF: Blind Palm/Thumb Hold Zone + Animated Giant Left Hand Coach
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -269,157 +352,244 @@ fun CaptureBattleScreen(
                                 onPress = {
                                     captureEngine.setLeftHandStabilizing(true)
                                     qteState = captureEngine.getCurrentState()
+                                    onLeftHandHaptic()
                                     tryAwaitRelease()
                                     captureEngine.setLeftHandStabilizing(false)
                                     qteState = captureEngine.getCurrentState()
                                 }
                             )
-                        }
+                        },
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    if (qteState.isLeftHandStabilizing) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .size(160.dp)
-                                .clip(CircleShape)
-                                .background(Brush.radialGradient(listOf(SunsetAmber.copy(alpha = 0.45f), Color.Transparent)))
+                    // Visual Hand Coach on Left Side
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(start = 12.dp, bottom = 80.dp)
+                            .scale(if (qteState.isLeftHandStabilizing) 1.12f else handCoachPulse)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(
+                                if (qteState.isLeftHandStabilizing)
+                                    SunsetAmber.copy(alpha = 0.45f)
+                                else
+                                    LeatherDark.copy(alpha = 0.65f)
+                            )
+                            .border(
+                                width = 3.dp,
+                                color = if (qteState.isLeftHandStabilizing) BrassHighlight else SunsetAmber.copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            .padding(horizontal = 18.dp, vertical = 14.dp)
+                    ) {
+                        Text(
+                            text = if (qteState.isLeftHandStabilizing) "💖✋💖" else "✋",
+                            fontSize = 46.sp
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = if (qteState.isLeftHandStabilizing) "好溫暖喔！" else "左手按這裡",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
 
-                // Right Half: Blind Tapping Zone (隨手拍打即吹泡泡收網)
+                // RIGHT HALF: Blind Tapping Zone + Animated Bouncing Right Hand Coach
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
                         .pointerInput(Unit) {
                             detectTapGestures(
-                                onTap = {
-                                    captureEngine.onRightHandTap()
-                                    qteState = captureEngine.getCurrentState()
-                                    rightTapParticleCount++
-                                    if (qteState.isCompleted) showSuccessDialog = true
-                                }
+                                onTap = { handleRightTap() }
                             )
-                        }
+                        },
+                    contentAlignment = Alignment.CenterEnd
                 ) {
-                    // Floating celebratory star particles on tapping
+                    // Celebratory Floating Bubble & Star Particles on Tapping
                     if (rightTapParticleCount > 0) {
                         Text(
-                            text = if (rightTapParticleCount % 2 == 0) "⭐✨" else "🫧💖",
-                            fontSize = 32.sp,
+                            text = when (rightTapParticleCount % 3) {
+                                0 -> "⭐🫧✨"
+                                1 -> "💖🎵🫧"
+                                else -> "🌈⭐💖"
+                            },
+                            fontSize = 38.sp,
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .offset(
-                                    x = ((rightTapParticleCount * 29) % 100 - 50).dp,
-                                    y = ((rightTapParticleCount * 19) % 80 - 40).dp
+                                    x = ((rightTapParticleCount * 31) % 110 - 55).dp,
+                                    y = ((rightTapParticleCount * 23) % 90 - 65).dp
                                 )
+                        )
+                    }
+
+                    // Visual Hand Coach on Right Side
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(end = 12.dp, bottom = 80.dp)
+                            .scale(handCoachPulse)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(BambooGreen.copy(alpha = 0.72f))
+                            .border(3.dp, BrassHighlight, RoundedCornerShape(24.dp))
+                            .padding(horizontal = 18.dp, vertical = 14.dp)
+                    ) {
+                        Text(
+                            text = "👇🫧",
+                            fontSize = 46.sp
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "右手拍拍我",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
             }
         }
 
-        // Bottom Bimanual Early Childhood Controller
+        // =========================================================================
+        // BOTTOM CONTROLLER BAR
+        // =========================================================================
         if (isNetFired && !showSuccessDialog && !showEscapeDialog) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth(0.92f)
+                    .fillMaxWidth(0.94f)
             ) {
                 QTECaptureBar(
                     qteState = qteState,
                     onLeftHandPressChanged = { isHolding ->
                         captureEngine.setLeftHandStabilizing(isHolding)
                         qteState = captureEngine.getCurrentState()
+                        if (isHolding) onLeftHandHaptic()
                     },
-                    onRightHandTap = {
-                        captureEngine.onRightHandTap()
-                        qteState = captureEngine.getCurrentState()
-                        rightTapParticleCount++
-                        if (qteState.isCompleted) showSuccessDialog = true
-                    }
+                    onRightHandTap = { handleRightTap() }
                 )
             }
         }
 
-        // Victory Dialog with Motor Skill Encouragement
+        // =========================================================================
+        // VICTORY CELEBRATION DIALOG (Giant Sticker & Voice Celebration)
+        // =========================================================================
         if (showSuccessDialog) {
             AlertDialog(
                 onDismissRequest = { /* forced */ },
                 containerColor = ParchmentBg,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(24.dp),
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🎉", fontSize = 28.sp)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "交到好朋友囉！${animal.name}",
-                            style = WildTypography.titleLarge.copy(color = BambooGreen, fontWeight = FontWeight.Bold)
-                        )
+                        Text("🎉🌟", fontSize = 36.sp)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "交到好朋友囉！",
+                                style = WildTypography.titleLarge.copy(
+                                    color = BambooGreen,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 24.sp
+                                )
+                            )
+                            Text(
+                                text = "${animal.name} (${animal.getFullBopomofo()})",
+                                color = LeatherDark,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 },
                 text = {
-                    Column {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            text = "太棒了！小動物超級喜歡你！",
-                            color = InkBlack,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "雙手協調評級：${qteState.fingerAgilityLevel} · 達成 ${qteState.rightHandTapCount} 次拍手！",
+                            text = "⭐⭐⭐⭐⭐ 太棒了！小動物超級喜歡你！",
                             color = SunsetAmber,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "💡 小動物悄悄話：${animal.funFact}",
-                            color = InkGrey,
-                            fontSize = 12.sp
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(Color(0xFFFFF9C4))
+                                .border(1.5.dp, SunsetAmber, RoundedCornerShape(14.dp))
+                                .clickable { onSpeakVoice(animal.funFact) }
+                                .padding(12.dp)
+                        ) {
+                            Text(
+                                text = "🔊 小動物悄悄話：${animal.funFact}",
+                                color = InkBlack,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 },
                 confirmButton = {
                     Button(
                         onClick = { onCaptureSuccess(animal) },
                         colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
                     ) {
-                        Text("領取好朋友貼紙！送入森林樂園 🐾")
+                        Text(
+                            text = "🎁 貼上好朋友貼紙！帶去遊樂園玩 🐾",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White
+                        )
                     }
                 }
             )
         }
 
-        // Gentle Departure Fallback (Zero Frustration)
+        // =========================================================================
+        // ZERO-FRUSTRATION GENTLE DEPARTURE DIALOG
+        // =========================================================================
         if (showEscapeDialog) {
             AlertDialog(
                 onDismissRequest = { /* forced */ },
                 containerColor = ParchmentBg,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(24.dp),
                 title = {
                     Text(
-                        text = "🍓 小動物吃飽飽去休息囉～",
-                        style = WildTypography.titleLarge.copy(color = LeatherBrown, fontWeight = FontWeight.Bold)
+                        text = "🍓 小動物吃飽飽去睡午覺囉～",
+                        style = WildTypography.titleLarge.copy(
+                            color = LeatherBrown,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 22.sp
+                        )
                     )
                 },
                 text = {
                     Text(
-                        text = "小動物送你一顆幸運紅草莓：「謝謝你跟我玩～明天見！」",
+                        text = "小動物送你一顆甜草莓：「謝謝你陪我玩～我們待會見喔！」",
                         color = InkBlack,
-                        fontSize = 14.sp
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 },
                 confirmButton = {
                     Button(
                         onClick = onCaptureFailed,
                         colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(58.dp)
                     ) {
-                        Text("收下禮物！再找下一隻小動物 🌟")
+                        Text(
+                            text = "🍓 收下草莓！找下一隻小動物玩 🌟",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White
+                        )
                     }
                 }
             )

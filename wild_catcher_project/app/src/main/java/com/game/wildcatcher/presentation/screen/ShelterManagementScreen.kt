@@ -1,18 +1,21 @@
 package com.game.wildcatcher.presentation.screen
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,40 +35,51 @@ fun ShelterManagementScreen(
     onCollectRevenue: (Long) -> Unit,
     onUnlockZone: (String, Long) -> Unit,
     onBack: () -> Unit,
+    onSpeakVoice: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    // Track interactive feeding/petting animations per zone for 4yo tactile joy
+    var ZoneHeartCounts by remember { mutableStateOf(mapOf<String, Int>()) }
+
     DaveNotebookFrame(
         title = "🏡 小動物好朋友遊樂園",
-        subtitle = "💖 住著 ${revenueReport.shelteredAnimalsCount} 隻可愛野生動物  |  快樂竹幣：$playerCoins 🎋",
+        subtitle = "💖 住著 ${revenueReport.shelteredAnimalsCount} 隻動物好朋友  |  快樂竹幣：$playerCoins 🎋",
         actions = {
             Button(
-                onClick = { onCollectRevenue(50L) },
+                onClick = {
+                    onCollectRevenue(50L)
+                    onSpeakVoice("哇！小動物們吃到香甜的紅蘋果，送給你50個快樂竹幣喔！")
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier.height(48.dp)
             ) {
-                Text("🍎 餵小動物吃點心 (+50)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Text("🍎 全園餵蘋果 (+50 🎋)", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
             }
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Button(
-                onClick = { onCollectRevenue(revenueReport.totalHourlyRevenue) },
+                onClick = {
+                    onCollectRevenue(revenueReport.totalHourlyRevenue)
+                    onSpeakVoice("太棒了！收到小動物送的快樂竹幣禮物囉！")
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier.height(48.dp)
             ) {
-                Text("💰 收取快樂幣 (+${revenueReport.totalHourlyRevenue})", fontSize = 12.sp)
+                Text("🎁 領取竹幣 (+${revenueReport.totalHourlyRevenue})", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
             }
-            Spacer(modifier = Modifier.width(6.dp))
-            IconButton(
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
                 onClick = onBack,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(LeatherDark.copy(alpha = 0.8f))
+                colors = ButtonDefaults.buttonColors(containerColor = LeatherDark),
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier.height(48.dp)
             ) {
-                Text("✕", color = VintageBrass, fontWeight = FontWeight.Bold)
+                Text("🏠 回首頁", color = BrassHighlight, fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
             }
         },
         modifier = modifier
     ) {
-        // Habitat Zones 2x2 Tablet Grid
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
@@ -74,18 +88,43 @@ fun ShelterManagementScreen(
         ) {
             items(zones) { zone ->
                 val animalsInZone = shelteredAnimals.filter { it.habitat == zone.habitatType }
+                val tapCount = ZoneHeartCounts[zone.zoneId] ?: 0
+                val cardBounce by animateFloatAsState(
+                    targetValue = if (tapCount % 2 == 1) 1.03f else 1.0f,
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                    label = "zoneBounce"
+                )
+
+                val zoneIcon = when (zone.zoneId) {
+                    "zone_rainforest" -> "🌴🦜"
+                    "zone_alpine" -> "🌲🐻"
+                    "zone_sky" -> "🦅☁️"
+                    else -> "💧🦦"
+                }
+
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (zone.isUnlocked) ParchmentCard else Color(0xFFE0DACB)
+                        containerColor = if (zone.isUnlocked) Color(0xFFFFFDF7) else Color(0xFFE0DACB)
                     ),
-                    border = androidx.compose.foundation.BorderStroke(
-                        width = 1.5.dp,
+                    border = BorderStroke(
+                        width = 2.5.dp,
                         color = if (zone.isUnlocked) VintageBrass else Color.Gray
                     ),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(18.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(170.dp)
+                        .height(185.dp)
+                        .scale(cardBounce)
+                        .clickable {
+                            if (zone.isUnlocked) {
+                                ZoneHeartCounts = ZoneHeartCounts + (zone.zoneId to (tapCount + 1))
+                                onCollectRevenue(25L)
+                                val animalNames = animalsInZone.take(2).joinToString("和") { it.name }.ifEmpty { "小動物" }
+                                onSpeakVoice("摸摸${zone.zoneName}的$animalNames，牠們好喜歡你喔！")
+                            } else {
+                                onSpeakVoice("這是${zone.zoneName}，收集竹幣就能打開讓小動物住進來喔！")
+                            }
+                        }
                 ) {
                     Column(
                         modifier = Modifier
@@ -93,98 +132,120 @@ fun ShelterManagementScreen(
                             .padding(14.dp),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Card Header
+                        // Top Row: Big Icon + Zone Name + Floating Hearts
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = when (zone.zoneId) {
-                                        "zone_rainforest" -> "🌴"
-                                        "zone_alpine" -> "🌲"
-                                        "zone_sky" -> "🦅"
-                                        else -> "💧"
-                                    },
-                                    fontSize = 20.sp
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(text = zoneIcon, fontSize = 28.sp)
+                                Spacer(modifier = Modifier.width(10.dp))
                                 Column {
                                     Text(
                                         text = zone.zoneName,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 17.sp,
                                         color = LeatherDark
                                     )
                                     Text(
-                                        text = if (zone.isUnlocked) "容納量: ${animalsInZone.size} / ${zone.maxCapacity}" else "尚未開闢",
-                                        fontSize = 11.sp,
+                                        text = if (zone.isUnlocked) "🐾 住著 ${animalsInZone.size} 隻好朋友" else "🔒 準備開放中",
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
                                         color = if (zone.isUnlocked) BambooGreen else DangerCoral
                                     )
                                 }
                             }
 
-                            if (zone.isUnlocked) {
-                                Surface(
-                                    color = BambooGreen.copy(alpha = 0.15f),
-                                    shape = RoundedCornerShape(6.dp)
-                                ) {
-                                    Text(
-                                        text = "生態等級 Lv.${zone.ecoLevel}",
-                                        color = BambooGreen,
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                    )
-                                }
+                            if (tapCount > 0) {
+                                Text(
+                                    text = if (tapCount % 2 == 0) "💖🍎✨" else "🥰🎋💖",
+                                    fontSize = 22.sp
+                                )
                             }
                         }
 
-                        // Description
-                        Text(
-                            text = zone.description,
-                            fontSize = 11.sp,
-                            color = InkGrey,
-                            lineHeight = 15.sp
-                        )
-
-                        // Animals List or Unlock button
+                        // Middle: Visual Animal Friends Row
                         if (zone.isUnlocked) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color(0xFFF4ECD8), RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 10.dp, vertical = 8.dp)
                             ) {
                                 Text(
-                                    text = if (animalsInZone.isEmpty()) "尚未安置動物，出發捕捉吧！" else "收容中：${animalsInZone.take(3).joinToString("、") { it.name }}",
-                                    fontSize = 11.sp,
+                                    text = if (animalsInZone.isEmpty())
+                                        "🌱 點「去森林吹泡泡」帶小動物來住喔！"
+                                    else
+                                        "🌟 好朋友：${animalsInZone.take(3).joinToString("、") { it.name }}",
+                                    fontSize = 13.sp,
                                     color = InkBlack,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Text(
-                                    text = "人流: ${zone.visitorFlowRatePerHour}/h",
-                                    fontSize = 10.sp,
-                                    color = SunsetAmber,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
-                        } else {
+
+                            // Bottom Interactive Toddler Play Buttons (Feed Apple & Pet Head)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                Text("開闢成本：${zone.unlockCost} 竹幣", fontSize = 12.sp, color = InkBlack)
                                 Button(
-                                    onClick = { onUnlockZone(zone.zoneId, zone.unlockCost) },
-                                    enabled = playerCoins >= zone.unlockCost,
-                                    colors = ButtonDefaults.buttonColors(containerColor = VintageBrass),
-                                    shape = RoundedCornerShape(6.dp),
-                                    modifier = Modifier.height(34.dp)
+                                    onClick = {
+                                        ZoneHeartCounts = ZoneHeartCounts + (zone.zoneId to (tapCount + 1))
+                                        onCollectRevenue(30L)
+                                        onSpeakVoice("啊姆啊姆！好甜的紅蘋果喔！謝謝你！送你30個竹幣！")
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(40.dp)
                                 ) {
-                                    Text("解鎖生態園區", fontSize = 11.sp, color = LeatherDark, fontWeight = FontWeight.Bold)
+                                    Text("🍎 餵蘋果 (+30)", fontSize = 13.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
                                 }
+
+                                Button(
+                                    onClick = {
+                                        ZoneHeartCounts = ZoneHeartCounts + (zone.zoneId to (tapCount + 1))
+                                        onCollectRevenue(20L)
+                                        onSpeakVoice("摸摸頭、抱抱小動物，小動物對你笑咪咪！")
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(40.dp)
+                                ) {
+                                    Text("💖 摸摸頭 (+20)", fontSize = 13.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = zone.description,
+                                fontSize = 13.sp,
+                                color = InkGrey,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Button(
+                                onClick = {
+                                    onUnlockZone(zone.zoneId, zone.unlockCost)
+                                    onSpeakVoice("太棒了！打開${zone.zoneName}囉！")
+                                },
+                                enabled = playerCoins >= zone.unlockCost,
+                                colors = ButtonDefaults.buttonColors(containerColor = VintageBrass),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                            ) {
+                                Text(
+                                    text = "🔑 打開新樂園 (${zone.unlockCost} 🎋)",
+                                    fontSize = 14.sp,
+                                    color = LeatherDark,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
                             }
                         }
                     }

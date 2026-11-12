@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 
 enum class ScreenState {
     MAIN_MENU,
+    JUNGLE_EXPLORE,
     CAPTURE_BATTLE,
     SHELTER_PARK,
     JOURNAL_ENCYCLOPEDIA,

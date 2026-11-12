@@ -1056,8 +1056,10 @@
         const screenX = e.clientX - rect.left;
         const screenY = e.clientY - rect.top;
         if (screenX < 200 && screenY > canvas.height - 200) return; // joystick deadzone
-        const targetWorldX = screenX + camera.x;
-        const targetWorldY = screenY + camera.y;
+        const targetWorldX = Math.max(50, Math.min(MAP_W - 50, screenX + camera.x));
+        const targetWorldY = Math.max(50, Math.min(MAP_H - 50, screenY + camera.y));
+        // 4yo Toddler Tap-to-Walk + Auto-Aim Bubble!
+        player.walkTarget = { x: targetWorldX, y: targetWorldY, active: true };
         player.aimAngle = Math.atan2(targetWorldY - (player.y - 14), targetWorldX - player.x);
         player.facing = targetWorldX >= player.x ? 1 : -1;
         handleFirePandaGun();
@@ -1092,8 +1094,22 @@
       if (joystick.active) {
         moveX = joystick.x;
         moveY = joystick.y;
-      } else if (moveX !== 0 && moveY !== 0) {
-        moveX *= 0.7071; moveY *= 0.7071;
+        if (player.walkTarget) player.walkTarget.active = false;
+      } else if (moveX !== 0 || moveY !== 0) {
+        if (player.walkTarget) player.walkTarget.active = false;
+        if (moveX !== 0 && moveY !== 0) {
+          moveX *= 0.7071; moveY *= 0.7071;
+        }
+      } else if (player.walkTarget && player.walkTarget.active) {
+        const dx = player.walkTarget.x - player.x;
+        const dy = player.walkTarget.y - player.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 14) {
+          moveX = dx / dist;
+          moveY = dy / dist;
+        } else {
+          player.walkTarget.active = false;
+        }
       }
 
       const inSwampZone = (player.x < 1400 && player.y > 1300);
@@ -1514,6 +1530,18 @@
     // 考究還原：米黃色寬簷探險牛仔帽、帽繩、可愛齊瀏海大眼睛笑容、鮮紅短T、黑白條紋吊帶、深藍牛仔長褲、黑紅童鞋、雙手握持熊貓槍
     // ========================================================
     function draw25DLittleRanger(ctx, p, t) {
+      if (p.walkTarget && p.walkTarget.active) {
+        ctx.save();
+        const pulseR = 18 + Math.sin(t * 7) * 5;
+        ctx.strokeStyle = '#FBD473';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(p.walkTarget.x, p.walkTarget.y, pulseR, pulseR * 0.55, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(0, 229, 255, 0.25)';
+        ctx.fill();
+        ctx.restore();
+      }
       ctx.save();
       ctx.translate(p.x, p.y);
       if (p.isStealth) ctx.globalAlpha = 0.55;

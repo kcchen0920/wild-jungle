@@ -1,5 +1,6 @@
 package com.game.wildcatcher.presentation.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,12 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.game.wildcatcher.data.model.AnimalEntity
-import com.game.wildcatcher.data.model.ConservationGrade
 import com.game.wildcatcher.data.model.HabitatType
 import com.game.wildcatcher.presentation.component.DaveNotebookFrame
 import com.game.wildcatcher.presentation.component.PbrAnimalRenderer
@@ -42,152 +40,146 @@ fun AdventureJournalScreen(
         else animals.filter { it.habitat == selectedHabitat }
     }
 
+    val habitatIcon: (HabitatType) -> String = { habitat ->
+        when (habitat) {
+            HabitatType.TROPICAL_RAINFOREST -> "🌴"
+            HabitatType.ALPINE_CONIFER -> "🌲"
+            HabitatType.CANOPY_AND_SKY -> "🦅"
+            HabitatType.RIVER_AND_STREAM -> "💧"
+            HabitatType.BAMBOO_GROVE -> "🎋"
+        }
+    }
+
     DaveNotebookFrame(
-        title = "📖 100種野生動物彩色貼紙簿",
-        subtitle = "已收集 ${animals.count { it.isCaptured }} 隻好朋友貼紙  |  點擊小動物聽波波說故事！",
+        title = "📖 100種動物有聲貼紙簿",
+        subtitle = "🌟 已收集 ${animals.count { it.isCaptured }} 張閃亮貼紙  |  點一下貼紙自動聽波波講故事喔！",
         actions = {
-            IconButton(
+            Button(
                 onClick = onBack,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(LeatherDark.copy(alpha = 0.8f))
+                colors = ButtonDefaults.buttonColors(containerColor = LeatherDark),
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier.height(48.dp)
             ) {
-                Text("✕", color = VintageBrass, fontWeight = FontWeight.Bold)
+                Text("🏠 回首頁", color = BrassHighlight, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
             }
         },
         modifier = modifier
     ) {
-        // Habitat Filter Ribbon
+        // Big Icon Habitat Filter Ribbon for 4-Year-Olds
         LazyRow(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            item {
-                FilterChip(
-                    selected = selectedHabitat == null,
-                    onClick = { selectedHabitat = null },
-                    label = { Text("全部 (${animals.size})") }
-                )
-            }
-            item {
-                FilterChip(
-                    selected = selectedHabitat == HabitatType.TROPICAL_RAINFOREST,
-                    onClick = { selectedHabitat = HabitatType.TROPICAL_RAINFOREST },
-                    label = { Text("熱帶雨林") }
-                )
-            }
-            item {
-                FilterChip(
-                    selected = selectedHabitat == HabitatType.ALPINE_CONIFER,
-                    onClick = { selectedHabitat = HabitatType.ALPINE_CONIFER },
-                    label = { Text("高山針葉") }
-                )
-            }
-            item {
-                FilterChip(
-                    selected = selectedHabitat == HabitatType.CANOPY_AND_SKY,
-                    onClick = { selectedHabitat = HabitatType.CANOPY_AND_SKY },
-                    label = { Text("天空猛禽") }
-                )
-            }
-            item {
-                FilterChip(
-                    selected = selectedHabitat == HabitatType.RIVER_AND_STREAM,
-                    onClick = { selectedHabitat = HabitatType.RIVER_AND_STREAM },
-                    label = { Text("溪流活水") }
-                )
-            }
-            item {
-                FilterChip(
-                    selected = selectedHabitat == HabitatType.BAMBOO_GROVE,
-                    onClick = { selectedHabitat = HabitatType.BAMBOO_GROVE },
-                    label = { Text("淺山竹林") }
-                )
+            val filters = listOf(
+                null to "🌍 全部 (${animals.size})",
+                HabitatType.TROPICAL_RAINFOREST to "🌴 雨林",
+                HabitatType.ALPINE_CONIFER to "🌲 高山",
+                HabitatType.CANOPY_AND_SKY to "🦅 天空",
+                HabitatType.RIVER_AND_STREAM to "💧 溪流",
+                HabitatType.BAMBOO_GROVE to "🎋 竹林"
+            )
+            items(filters) { (hab, label) ->
+                val isSelected = selectedHabitat == hab
+                Button(
+                    onClick = { selectedHabitat = hab },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isSelected) BambooGreen else ParchmentCard
+                    ),
+                    shape = RoundedCornerShape(14.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                    modifier = Modifier.height(42.dp)
+                ) {
+                    Text(
+                        text = label,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = if (isSelected) Color.White else LeatherDark
+                    )
+                }
             }
         }
 
-        // Split Page Tablet Layout: Left List (35%) & Right Detailed Showcase (65%)
+        // Split Page Tablet Layout: Left Sticker Cards (40%) & Right Audio Storybook Page (60%)
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Left Index Column
+            // Left Sticker Column (Auto-Speaks when Tapped!)
             LazyColumn(
                 modifier = Modifier
-                    .weight(0.38f)
+                    .weight(0.40f)
                     .fillMaxHeight()
-                    .clip(RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(16.dp))
                     .background(ParchmentCard)
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredList) { animal ->
                     val isSelected = animal.id == selectedAnimal?.id
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
+                            .heightIn(min = 58.dp)
+                            .clip(RoundedCornerShape(14.dp))
                             .background(
-                                if (isSelected) VintageBrass.copy(alpha = 0.25f) else Color.Transparent
+                                if (isSelected) Color(0xFFFFF8E1) else Color(0xFFFFFDF7)
                             )
                             .border(
-                                width = if (isSelected) 1.5.dp else 0.5.dp,
-                                color = if (isSelected) VintageBrass else ParchmentBorder,
-                                shape = RoundedCornerShape(8.dp)
+                                width = if (isSelected) 2.5.dp else 1.dp,
+                                color = if (isSelected) SunsetAmber else ParchmentBorder,
+                                shape = RoundedCornerShape(14.dp)
                             )
-                            .clickable { selectedAnimal = animal }
-                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                            .clickable {
+                                selectedAnimal = animal
+                                onSpeakGuide(animal)
+                            }
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Conservation traffic light indicator dot
-                            Box(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        when (animal.grade) {
-                                            ConservationGrade.GREEN -> BambooLight
-                                            ConservationGrade.YELLOW -> SunsetAmber
-                                            ConservationGrade.RED -> DangerCoral
-                                        }
-                                    )
+                            Text(
+                                text = habitatIcon(animal.habitat),
+                                fontSize = 24.sp
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
                             Column {
                                 Text(
                                     text = animal.name,
-                                    fontSize = 13.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.ExtraBold,
                                     color = LeatherDark
                                 )
-                                Text(
-                                    text = animal.scientificName,
-                                    fontSize = 10.sp,
-                                    color = InkGrey,
-                                    fontFamily = FontFamily.Serif
-                                )
+                                if (animal.getFullBopomofo().isNotEmpty()) {
+                                    Text(
+                                        text = animal.getFullBopomofo(),
+                                        fontSize = 12.sp,
+                                        color = SunsetAmber,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                         }
 
                         if (animal.isCaptured) {
-                            Text("⭐ 好朋友貼紙", fontSize = 10.sp, color = BambooGreen, fontWeight = FontWeight.Bold)
+                            Text("🌟 貼紙", fontSize = 13.sp, color = BambooGreen, fontWeight = FontWeight.ExtraBold)
                         } else {
-                            Text("🌱 待尋找", fontSize = 10.sp, color = InkGrey)
+                            Text("🔊 點聽", fontSize = 13.sp, color = InkGrey, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
             }
 
-            // Right Large Page: Animal Specimen Details & 3D PBR Model
+            // Right Large Page: Big 3D Animal + Giant Voice Story Buttons
             Box(
                 modifier = Modifier
-                    .weight(0.62f)
+                    .weight(0.60f)
                     .fillMaxHeight()
-                    .clip(RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(16.dp))
                     .background(ParchmentCard)
-                    .border(1.dp, ParchmentBorder, RoundedCornerShape(10.dp))
+                    .border(2.dp, VintageBrass, RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 if (selectedAnimal != null) {
@@ -196,7 +188,7 @@ fun AdventureJournalScreen(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Title & Conservation Banner
+                        // Top Title & Bopomofo Banner
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -205,80 +197,60 @@ fun AdventureJournalScreen(
                             Column {
                                 if (curr.getFullBopomofo().isNotEmpty()) {
                                     Text(
-                                        text = curr.getFullBopomofo(),
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
+                                        text = "注音：${curr.getFullBopomofo()}",
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.ExtraBold,
                                         color = SunsetAmber
                                     )
                                 }
                                 Text(
-                                    text = curr.name,
+                                    text = "${habitatIcon(curr.habitat)} ${curr.name}",
                                     style = WildTypography.headlineMedium.copy(
-                                        fontSize = 24.sp,
-                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 26.sp,
+                                        fontWeight = FontWeight.ExtraBold,
                                         color = LeatherDark
-                                    )
-                                )
-                                Text(
-                                    text = "學名: ${curr.scientificName}",
-                                    style = WildTypography.bodyMedium.copy(
-                                        fontFamily = FontFamily.Serif,
-                                        fontSize = 12.sp,
-                                        color = InkGrey
                                     )
                                 )
                             }
 
-                            // Conservation Badge
                             Surface(
-                                color = when (curr.grade) {
-                                    ConservationGrade.GREEN -> Color(0xFFE8F5E9)
-                                    ConservationGrade.YELLOW -> Color(0xFFFFF8E1)
-                                    ConservationGrade.RED -> Color(0xFFFFEBEE)
-                                },
-                                shape = RoundedCornerShape(8.dp),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    when (curr.grade) {
-                                        ConservationGrade.GREEN -> BambooGreen
-                                        ConservationGrade.YELLOW -> SunsetAmber
-                                        ConservationGrade.RED -> DangerCoral
-                                    }
-                                )
+                                color = if (curr.isCaptured) Color(0xFFE8F5E9) else Color(0xFFFFF8E1),
+                                shape = RoundedCornerShape(12.dp),
+                                border = BorderStroke(2.dp, if (curr.isCaptured) BambooGreen else SunsetAmber)
                             ) {
                                 Text(
-                                    text = curr.gradeLabel,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = when (curr.grade) {
-                                        ConservationGrade.GREEN -> BambooGreen
-                                        ConservationGrade.YELLOW -> Color(0xFFE65100)
-                                        ConservationGrade.RED -> DangerCoral
-                                    },
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                    text = if (curr.isCaptured) "🌟 好朋友貼紙已收集！" else "🔍 住在${curr.habitatName}",
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = if (curr.isCaptured) BambooGreen else Color(0xFFE65100),
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                                 )
                             }
                         }
 
-                        // Middle: PBR 3D Realistic Texture View & Sound Trigger
+                        // Middle: Giant Tappable 3D Animal Preview + 2 Huge Audio Buttons
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(160.dp),
+                                .height(165.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(150.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFF2C221E))
-                                    .border(1.5.dp, VintageBrass, RoundedCornerShape(12.dp)),
+                                    .size(160.dp)
+                                    .clip(RoundedCornerShape(18.dp))
+                                    .background(Color(0xFF23382C))
+                                    .border(2.5.dp, VintageBrass, RoundedCornerShape(18.dp))
+                                    .clickable {
+                                        onPlayAnimalSound(curr.callSoundName)
+                                        onSpeakGuide(curr)
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
                                 PbrAnimalRenderer(
                                     animal = curr,
                                     lightAngleDeg = 60f,
-                                    modifier = Modifier.size(130.dp)
+                                    modifier = Modifier.size(140.dp)
                                 )
                             }
 
@@ -286,63 +258,79 @@ fun AdventureJournalScreen(
 
                             Column(
                                 modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                Text("📍 棲息生境：${curr.habitatName}", fontSize = 12.sp, color = InkBlack)
-                                Text("☀️ 活動週期：${when (curr.activityCycle) {
-                                    com.game.wildcatcher.data.model.ActivityCycle.DIURNAL -> "日行性 (白天出沒)"
-                                    com.game.wildcatcher.data.model.ActivityCycle.NOCTURNAL -> "夜行性 (夜間現身)"
-                                    com.game.wildcatcher.data.model.ActivityCycle.CREPUSCULAR -> "晨昏出沒 (清晨與暮色)"
-                                }}", fontSize = 12.sp, color = InkBlack)
-                                Text("💰 庇護所產值：${curr.coinYieldPerHour} 竹幣 / 小時", fontSize = 12.sp, color = SunsetAmber, fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = "🏞️ 家在：${curr.habitatName}",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = InkBlack
+                                )
+                                Text(
+                                    text = when (curr.activityCycle) {
+                                        com.game.wildcatcher.data.model.ActivityCycle.DIURNAL -> "☀️ 喜歡大太陽出來玩"
+                                        com.game.wildcatcher.data.model.ActivityCycle.NOCTURNAL -> "🌙 喜歡晚上看月亮出來玩"
+                                        com.game.wildcatcher.data.model.ActivityCycle.CREPUSCULAR -> "🌅 喜歡太陽起床時出來玩"
+                                    },
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = BambooGreen
+                                )
 
-                                Spacer(modifier = Modifier.height(4.dp))
+                                // Two Giant Audio Buttons for 4-Year-Olds
+                                Button(
+                                    onClick = { onSpeakGuide(curr) },
+                                    colors = ButtonDefaults.buttonColors(containerColor = SunsetAmber),
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(46.dp)
+                                ) {
+                                    Text(
+                                        text = "🗣️ 聽波波講故事 🔊",
+                                        fontSize = 15.sp,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.ExtraBold
+                                    )
+                                }
 
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    // Play Sound Button
-                                    Button(
-                                        onClick = { onPlayAnimalSound(curr.callSoundName) },
-                                        colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
-                                        shape = RoundedCornerShape(8.dp),
-                                        modifier = Modifier.height(36.dp)
-                                    ) {
-                                        Text("🔊 真實叫聲", fontSize = 11.sp)
-                                    }
-
-                                    // TTS Voice Guide
-                                    Button(
-                                        onClick = { onSpeakGuide(curr) },
-                                        colors = ButtonDefaults.buttonColors(containerColor = VintageBrass),
-                                        shape = RoundedCornerShape(8.dp),
-                                        modifier = Modifier.height(36.dp)
-                                    ) {
-                                        Text("🗣️ 波波語音導覽", fontSize = 11.sp, color = LeatherDark, fontWeight = FontWeight.Bold)
-                                    }
+                                Button(
+                                    onClick = {
+                                        onPlayAnimalSound(curr.callSoundName)
+                                        onSpeakGuide(curr)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(44.dp)
+                                ) {
+                                    Text(
+                                        text = "🐾 聽小動物打招呼",
+                                        fontSize = 14.sp,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.ExtraBold
+                                    )
                                 }
                             }
                         }
 
-                        // Bottom: Fun Fact & Ecological Role Notes
-                        Column(
+                        // Bottom: Kid-Friendly Story Box (Tappable to Read Aloud)
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(ParchmentBg)
-                                .border(1.dp, ParchmentBorder, RoundedCornerShape(8.dp))
-                                .padding(10.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(Color(0xFFFFF9C4))
+                                .border(2.dp, SunsetAmber, RoundedCornerShape(14.dp))
+                                .clickable { onSpeakGuide(curr) }
+                                .padding(12.dp)
                         ) {
                             Text(
-                                text = "💡 生物特性：${curr.funFact}",
-                                fontSize = 12.sp,
+                                text = "🔊 點聽小秘密：${curr.funFact}",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
                                 color = InkBlack,
-                                lineHeight = 16.sp
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "🌱 生態價值：${curr.ecologyNote}",
-                                fontSize = 11.sp,
-                                color = InkGrey,
-                                lineHeight = 15.sp
+                                lineHeight = 20.sp
                             )
                         }
                     }

@@ -72,13 +72,21 @@ fun MainGameContainer(
             ScreenState.MAIN_MENU -> {
                 MainMenuScreen(
                     profile = profile ?: com.game.wildcatcher.data.model.PlayerProfile(),
+                    capturedAnimalsCount = shelteredAnimals.size,
                     onStartExpedition = { viewModel.startRandomExpedition() },
+                    onOpenJungleExplore = { viewModel.navigateTo(ScreenState.JUNGLE_EXPLORE) },
                     onOpenShelter = { viewModel.navigateTo(ScreenState.SHELTER_PARK) },
                     onOpenJournal = { viewModel.navigateTo(ScreenState.JOURNAL_ENCYCLOPEDIA) },
                     onOpenShop = { viewModel.navigateTo(ScreenState.UPGRADE_SHOP) },
                     onTriggerQuiz = { viewModel.triggerEcoQuiz() },
                     onSimulateThirtyMinutes = { viewModel.simulateThirtyMinutes() },
-                    onOpenParentDashboard = { viewModel.navigateTo(ScreenState.PARENT_DASHBOARD) }
+                    onOpenParentDashboard = { viewModel.navigateTo(ScreenState.PARENT_DASHBOARD) },
+                    onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
+                )
+            }
+            ScreenState.JUNGLE_EXPLORE -> {
+                JungleExploreScreen(
+                    onBackToMenu = { viewModel.navigateTo(ScreenState.MAIN_MENU) }
                 )
             }
             ScreenState.CAPTURE_BATTLE -> {
@@ -92,7 +100,12 @@ fun MainGameContainer(
                         onCaptureSuccess = { viewModel.onCaptureSuccess(it) },
                         onCaptureFailed = { viewModel.onCaptureFailed() },
                         onBackToMenu = { viewModel.navigateTo(ScreenState.MAIN_MENU) },
-                        onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
+                        onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) },
+                        onLeftHandHaptic = { viewModel.hapticManager.playLeftHandHeartbeatPulse() },
+                        onRightHandHaptic = {
+                            viewModel.hapticManager.playRightHandSweetSpotClick()
+                            viewModel.soundManager.playSound(com.game.wildcatcher.audio.SoundEffect.SWEET_SPOT_HIT)
+                        }
                     )
                 } ?: run {
                     viewModel.navigateTo(ScreenState.MAIN_MENU)
@@ -106,13 +119,14 @@ fun MainGameContainer(
                     playerCoins = profile?.coins ?: 0L,
                     onCollectRevenue = { viewModel.collectShelterRevenue(it) },
                     onUnlockZone = { id, cost -> viewModel.unlockZone(id, cost) },
-                    onBack = { viewModel.navigateTo(ScreenState.MAIN_MENU) }
+                    onBack = { viewModel.navigateTo(ScreenState.MAIN_MENU) },
+                    onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
                 )
             }
             ScreenState.JOURNAL_ENCYCLOPEDIA -> {
                 AdventureJournalScreen(
                     animals = allAnimals,
-                    onPlayAnimalSound = { soundKey ->
+                    onPlayAnimalSound = { _ ->
                         viewModel.soundManager.playSound(com.game.wildcatcher.audio.SoundEffect.SWEET_SPOT_HIT)
                     },
                     onSpeakGuide = { animal ->
@@ -125,7 +139,8 @@ fun MainGameContainer(
                 UpgradeShopScreen(
                     profile = profile ?: com.game.wildcatcher.data.model.PlayerProfile(),
                     onUpgradeItem = { id, cost -> viewModel.upgradeItem(id, cost) },
-                    onBack = { viewModel.navigateTo(ScreenState.MAIN_MENU) }
+                    onBack = { viewModel.navigateTo(ScreenState.MAIN_MENU) },
+                    onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
                 )
             }
             ScreenState.PARENT_DASHBOARD -> {
@@ -140,7 +155,7 @@ fun MainGameContainer(
             }
         }
 
-        // Panda Assistant Speech Balloon & 20-Minute Rest Time Alert
+        // Panda Assistant Speech Balloon & Rest Time Alert
         PandaAssistantOverlay(
             healthState = healthState,
             speechBubbleText = boboSpeech,
@@ -153,14 +168,15 @@ fun MainGameContainer(
             }
         )
 
-        // Eco Science Quiz Dialog
+        // Eco Science Quiz Dialog (Voice-first for 4yo)
         activeQuiz?.let { quiz ->
             EcoQuizDialog(
                 quiz = quiz,
                 onAnswerSubmitted = { correct, reward ->
                     viewModel.onQuizAnswered(correct, reward)
                 },
-                onDismiss = { viewModel.dismissQuiz() }
+                onDismiss = { viewModel.dismissQuiz() },
+                onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
             )
         }
 

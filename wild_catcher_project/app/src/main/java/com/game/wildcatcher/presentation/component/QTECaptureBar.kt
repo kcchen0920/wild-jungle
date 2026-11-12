@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -28,10 +26,10 @@ import com.game.wildcatcher.domain.capture.QTEState
 import com.game.wildcatcher.presentation.theme.*
 
 /**
- * 幼兒左右手協同訓練專用控制器 (Bimanual Early Motor Skill QTE Controller)
- * - 左手側：大拇指/掌心持續穩定按壓 (鍛鍊本體感覺施力控制，穩定動物氣場)
- * - 右手側：食指/雙指交替靈活節奏點擊 (鍛鍊指間獨立性與打擊靈活度)
- * - 具備超大防呆觸控區域、微物理回彈動畫與即時「小肌肉活力評級」
+ * 四歲幼兒專用雙手協同控制器 (4yo Toddler Visual Star & Bimanual Controller)
+ * - 移除複雜百分比文字，改以「5顆大星星集氣」呈現進度
+ * - 左手大按鈕：長按抱抱安撫
+ * - 右手大按鈕：連拍吹大泡泡
  */
 @Composable
 fun QTECaptureBar(
@@ -40,93 +38,101 @@ fun QTECaptureBar(
     onRightHandTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Soft breathing pulse for sweet spot
     val infiniteTransition = rememberInfiniteTransition(label = "pulse_sweet")
     val sweetPulse by infiniteTransition.animateFloat(
-        initialValue = 0.90f,
-        targetValue = 1.05f,
+        initialValue = 0.92f,
+        targetValue = 1.06f,
         animationSpec = infiniteRepeatable(
-            animation = tween(600, easing = FastOutSlowInEasing),
+            animation = tween(550, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "sweetPulse"
     )
 
-    // Left button press spring scale
     val leftButtonScale by animateFloatAsState(
-        targetValue = if (qteState.isLeftHandStabilizing) 0.92f else 1.0f,
+        targetValue = if (qteState.isLeftHandStabilizing) 0.94f else 1.0f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
         label = "leftButtonScale"
     )
 
+    val litStars = (qteState.captureProgress * 5f).toInt().coerceIn(0, 5)
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(22.dp))
-            .background(LeatherDark.copy(alpha = 0.94f))
-            .border(3.dp, VintageBrass, RoundedCornerShape(22.dp))
-            .padding(14.dp),
+            .clip(RoundedCornerShape(24.dp))
+            .background(LeatherDark.copy(alpha = 0.95f))
+            .border(3.dp, VintageBrass, RoundedCornerShape(24.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top Status Header: Toddler Finger Agility Badge & Capture Meters
+        // Top Visual Star Progress Bar (5 Giant Stars instead of abstract percentages)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Toddler Motor Agility Level
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(SunsetAmber.copy(alpha = 0.22f))
-                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(SunsetAmber.copy(alpha = 0.25f))
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
-                Text(
-                    text = "🌱 雙手協調指標：",
-                    color = BrassHighlight,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("👐 ", fontSize = 16.sp)
                 Text(
                     text = qteState.fingerAgilityLevel,
-                    color = Color.White,
-                    fontSize = 12.sp,
+                    color = BrassHighlight,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
             }
 
-            // Capture Progress & Gentle Tension
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            // 5 Giant Friendship Stars
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Text(
-                    text = "🌐 泡泡網收攏: ${(qteState.captureProgress * 100).toInt()}%",
-                    color = BubbleCyan,
-                    fontSize = 12.sp,
+                    text = "好朋友愛心集氣：",
+                    color = Color.White,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Text(
-                    text = "⚠️ 警覺度: ${(qteState.animalTension * 100).toInt()}%",
-                    color = if (qteState.animalTension > 0.7f) DangerCoral else Color.LightGray,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                for (i in 1..5) {
+                    val isLit = i <= litStars
+                    Text(
+                        text = if (isLit) "⭐" else "⚪",
+                        fontSize = if (isLit) 22.sp else 16.sp
+                    )
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Center: Smooth Horizontal Sweet-Spot Bar
+        // Center: Rainbow Bubble Progress & Sweet-Spot Track
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(42.dp)
-                .clip(RoundedCornerShape(21.dp))
+                .height(38.dp)
+                .clip(RoundedCornerShape(19.dp))
                 .background(Color(0xFF141312))
-                .border(2.dp, ParchmentBorder.copy(alpha = 0.6f), RoundedCornerShape(21.dp))
+                .border(2.dp, ParchmentBorder.copy(alpha = 0.7f), RoundedCornerShape(19.dp))
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val barW = size.width
                 val barH = size.height
+
+                // Background overall capture progress fill
+                drawRoundRect(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(Color(0xFF00ACC1).copy(alpha = 0.35f), BambooGreen.copy(alpha = 0.55f))
+                    ),
+                    topLeft = Offset(0f, 0f),
+                    size = Size(barW * qteState.captureProgress.coerceIn(0f, 1f), barH),
+                    cornerRadius = CornerRadius(19f, 19f)
+                )
 
                 // Draw Sweet Spot
                 val sweetW = barW * qteState.sweetSpotWidth
@@ -135,85 +141,73 @@ fun QTECaptureBar(
                 drawRoundRect(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            BambooLight.copy(alpha = 0.3f),
+                            BambooLight.copy(alpha = 0.35f),
                             BambooGreen.copy(alpha = 0.9f * sweetPulse),
-                            BambooLight.copy(alpha = 0.3f)
+                            BambooLight.copy(alpha = 0.35f)
                         ),
                         startX = sweetLeft,
                         endX = sweetLeft + sweetW
                     ),
                     topLeft = Offset(sweetLeft, 2f),
                     size = Size(sweetW, barH - 4f),
-                    cornerRadius = CornerRadius(18f, 18f)
+                    cornerRadius = CornerRadius(16f, 16f)
                 )
 
-                // Sweet spot bracket highlight
-                drawRoundRect(
-                    color = BrassHighlight,
-                    topLeft = Offset(sweetLeft, 2f),
-                    size = Size(sweetW, barH - 4f),
-                    cornerRadius = CornerRadius(18f, 18f),
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.5f)
-                )
-
-                // Moving Wildlife Cursor (soft round ball for kids)
+                // Moving Cute Bubble Cursor
                 val cursorX = barW * qteState.currentCursorPos
-                val cursorColor = if (qteState.isInSweetSpot) BrassHighlight else DangerCoral
+                val cursorColor = if (qteState.isInSweetSpot) BrassHighlight else BubbleCyan
 
-                // Dynamic glow halo
                 drawCircle(
-                    color = cursorColor.copy(alpha = 0.35f),
-                    radius = 24f,
+                    color = cursorColor.copy(alpha = 0.4f),
+                    radius = 22f,
                     center = Offset(cursorX, barH / 2f)
                 )
-
                 drawCircle(
                     color = cursorColor,
-                    radius = 14f,
+                    radius = 13f,
                     center = Offset(cursorX, barH / 2f)
                 )
-
                 drawCircle(
                     color = Color.White,
-                    radius = 6f,
+                    radius = 5f,
                     center = Offset(cursorX, barH / 2f)
                 )
             }
 
             Text(
-                text = if (qteState.isInSweetSpot) "🎯 綠色區內！右手快快點擊！" else "👀 觀察游標，雙手準備好～",
-                color = if (qteState.isInSweetSpot) BrassHighlight else Color.White.copy(alpha = 0.85f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
+                text = if (qteState.isLeftHandStabilizing) "💖 左手抱緊緊！右手快拍拍吹泡泡！" else "✋ 左手按住左邊 · 👇 右手拍拍右邊",
+                color = Color.White,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Bottom Bimanual Wings: Left Hand Stabilizer & Right Hand Tap Button
+        // Bottom Giant Bimanual Wings
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // --- LEFT HAND WING: Force & Pressure Holding (左手持續安撫) ---
+            // LEFT HAND WING: Giant Hold Button
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(68.dp)
+                    .height(72.dp)
                     .scale(leftButtonScale)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(18.dp))
                     .background(
                         if (qteState.isLeftHandStabilizing)
-                            Brush.verticalGradient(listOf(Color(0xFF8D6E63), Color(0xFF4E342E)))
+                            Brush.verticalGradient(listOf(Color(0xFFFF8F00), Color(0xFFE65100)))
                         else
                             Brush.verticalGradient(listOf(Color(0xFF5D4037), Color(0xFF3E2723)))
                     )
                     .border(
-                        width = if (qteState.isLeftHandStabilizing) 3.dp else 1.5.dp,
+                        width = if (qteState.isLeftHandStabilizing) 3.5.dp else 2.dp,
                         color = if (qteState.isLeftHandStabilizing) BrassHighlight else ParchmentBorder,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(18.dp)
                     )
                     .pointerInput(Unit) {
                         detectTapGestures(
@@ -224,26 +218,27 @@ fun QTECaptureBar(
                             }
                         )
                     }
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = 14.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = if (qteState.isLeftHandStabilizing) "🌿" else "✋",
-                        fontSize = 28.sp
+                        text = if (qteState.isLeftHandStabilizing) "💖" else "✋",
+                        fontSize = 34.sp
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
-                            text = if (qteState.isLeftHandStabilizing) "左手穩住中！(-50%晃動)" else "左手大拇指【長按住】",
-                            color = if (qteState.isLeftHandStabilizing) BrassHighlight else Color.White,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                            text = if (qteState.isLeftHandStabilizing) "太棒了！抱緊緊中～" else "左手【按住不放】",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
                         Text(
-                            text = "鍛鍊手指持續施力與穩定平衡",
-                            color = Color.LightGray,
-                            fontSize = 10.sp
+                            text = "給小動物溫暖抱抱",
+                            color = BrassHighlight,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -251,35 +246,37 @@ fun QTECaptureBar(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // --- RIGHT HAND WING: Rhythmic Precision Tapping (右手節奏連擊) ---
+            // RIGHT HAND WING: Giant Tap Button
             Button(
                 onClick = onRightHandTap,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (qteState.isInSweetSpot) BambooGreen else SunsetAmber
+                    containerColor = BambooGreen
                 ),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(18.dp),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
                 modifier = Modifier
                     .weight(1f)
-                    .height(68.dp)
+                    .height(72.dp)
+                    .border(3.dp, BrassHighlight, RoundedCornerShape(18.dp))
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = if (qteState.isInSweetSpot) "⚡" else "👆",
-                        fontSize = 28.sp
+                        text = "🫧",
+                        fontSize = 34.sp
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
-                            text = if (qteState.isInSweetSpot) "右手連擊！(收線 +40%)" else "右手食指【節奏輕點】",
+                            text = "右手【拍拍吹泡泡】",
                             color = Color.White,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
                         Text(
-                            text = "連擊次數: ${qteState.rightHandTapCount} 次 · 鍛鍊靈巧度",
+                            text = "已吹出 ${qteState.rightHandTapCount} 顆星星泡泡 ⭐",
                             color = BrassHighlight,
-                            fontSize = 10.sp
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
