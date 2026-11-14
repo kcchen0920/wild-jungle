@@ -31,7 +31,8 @@ fun MainMenuScreen(
     profile: PlayerProfile,
     capturedAnimalsCount: Int = profile.totalCaptures,
     onStartExpedition: () -> Unit,
-    onOpenJungleExplore: () -> Unit = {},
+    onOpenJungleExplore: () -> Unit = onStartExpedition,
+    onQuickBattle: () -> Unit = {},
     onOpenShelter: () -> Unit,
     onOpenJournal: () -> Unit,
     onOpenShop: () -> Unit,
@@ -331,9 +332,12 @@ fun MainMenuScreen(
                         }
                     }
 
-                    // 1. GIANT HERO BUTTON: Blow Bubbles & Befriend Animals
+                    // 1. GIANT HERO BUTTON: Explore Jungle Map (3800x2600 Adventure World)
                     Button(
-                        onClick = onStartExpedition,
+                        onClick = {
+                            onSpeakVoice("出發去森林探險囉！點點地面就能到處散步，遇到動物吹彩虹泡泡！")
+                            onOpenJungleExplore()
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = BambooGreen),
                         shape = RoundedCornerShape(20.dp),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
@@ -349,17 +353,17 @@ fun MainMenuScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("🫧🐼", fontSize = 36.sp)
+                                Text("🚙🌴", fontSize = 36.sp)
                                 Spacer(modifier = Modifier.width(14.dp))
                                 Column {
                                     Text(
-                                        text = "吹泡泡 · 找小動物玩！",
+                                        text = "出發！大森林探險 (3800x2600 地圖)",
                                         fontSize = 22.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = Color.White
                                     )
                                     Text(
-                                        text = "左手按住抱抱 · 右手拍拍吹大泡泡！",
+                                        text = "一指點地自由散步尋寶 · 吹彩虹泡泡找 100 種動物好朋友！",
                                         fontSize = 13.sp,
                                         color = BambooLight,
                                         fontWeight = FontWeight.Bold
@@ -378,11 +382,11 @@ fun MainMenuScreen(
                         }
                     }
 
-                    // 2. INTERACTIVE JUNGLE SAFARI BUS (3800x2600 Tap-to-Move Map)
+                    // 2. QUICK PLAY: Direct Bubble Mini-Game Practice
                     Button(
                         onClick = {
-                            onSpeakVoice("坐上探險車，點點森林地面就能自動走過去找動物喔！")
-                            onOpenJungleExplore()
+                            onSpeakVoice("快速吹泡泡時間！左手按住抱抱，右手拍拍吹大泡泡！")
+                            onQuickBattle()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00838F)),
                         shape = RoundedCornerShape(18.dp),
@@ -398,23 +402,23 @@ fun MainMenuScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("🚙🌴", fontSize = 30.sp)
+                                Text("🫧🐼", fontSize = 30.sp)
                                 Spacer(modifier = Modifier.width(14.dp))
                                 Column {
                                     Text(
-                                        text = "逛大森林地圖 (一指點地自動走)",
+                                        text = "快速吹泡泡練習 (直接遇見小動物)",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = Color.White
                                     )
                                     Text(
-                                        text = "在超大叢林裡散步、點動物直接吹泡泡！",
+                                        text = "免走地圖，直接和小動物玩雙手吹泡泡！",
                                         fontSize = 12.sp,
                                         color = Color(0xFFE0F7FA)
                                     )
                                 }
                             }
-                            Text("GO 🐾", fontWeight = FontWeight.ExtraBold, color = BrassHighlight, fontSize = 18.sp)
+                            Text("GO 🎯", fontWeight = FontWeight.ExtraBold, color = BrassHighlight, fontSize = 18.sp)
                         }
                     }
 

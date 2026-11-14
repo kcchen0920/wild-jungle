@@ -193,9 +193,14 @@ fun CaptureBattleScreen(
                         .height(54.dp)
                         .border(2.5.dp, VintageBrass, RoundedCornerShape(18.dp))
                 ) {
-                    Text("🏠", fontSize = 22.sp)
+                    Text(if (isFromJungleMap) "🚙" else "🏠", fontSize = 22.sp)
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("回首頁", color = BrassHighlight, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        text = if (isFromJungleMap) "回地圖" else "回首頁",
+                        color = BrassHighlight,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(14.dp))

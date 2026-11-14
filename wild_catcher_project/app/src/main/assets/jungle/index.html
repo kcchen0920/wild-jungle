@@ -51,6 +51,7 @@
     width: 100%; height: 100%;
     display: block;
     background: #0c1810;
+    touch-action: none;
   }
 
   /* Protagonist HUD Card (Featuring Photo Avatar) */
@@ -667,6 +668,38 @@
 
   <!-- GAME ENGINE SCRIPT -->
   <script>
+    // Canvas roundRect & ellipse Polyfills for Android WebView & older browser compatibility
+    if (typeof CanvasRenderingContext2D !== 'undefined') {
+      if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, radii) {
+          if (typeof radii === 'number') radii = [radii];
+          const r = (radii && radii[0]) || 0;
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.lineTo(x + w - r, y);
+          this.quadraticCurveTo(x + w, y, x + w, y + r);
+          this.lineTo(x + w, y + h - r);
+          this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+          this.lineTo(x + r, y + h);
+          this.quadraticCurveTo(x, y + h, x, y + h - r);
+          this.lineTo(x, y + r);
+          this.quadraticCurveTo(x, y, x + r, y);
+          this.closePath();
+          return this;
+        };
+      }
+      if (!CanvasRenderingContext2D.prototype.ellipse) {
+        CanvasRenderingContext2D.prototype.ellipse = function(x, y, rx, ry, rot, start, end, acw) {
+          this.save();
+          this.translate(x, y);
+          this.rotate(rot || 0);
+          this.scale(rx, ry);
+          this.arc(0, 0, 1, start || 0, end || Math.PI * 2, acw || false);
+          this.restore();
+        };
+      }
+    }
+
     // ========================================================
     // WORLD & ECOSYSTEM CONFIGURATION
     // ========================================================
@@ -837,6 +870,35 @@
         joystick.y = ky / maxRadius;
         joystick.active = true;
       }
+
+      // Pointer Events support (Tablet touch + Stylus + Mouse unified)
+      let activePointerId = null;
+      zone.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        activePointerId = e.pointerId;
+        try { zone.setPointerCapture(e.pointerId); } catch(err) {}
+        updateKnobPosition(e.clientX, e.clientY);
+      });
+
+      zone.addEventListener('pointermove', (e) => {
+        if (activePointerId !== null && e.pointerId === activePointerId) {
+          e.preventDefault();
+          updateKnobPosition(e.clientX, e.clientY);
+        }
+      });
+
+      const onPointerEnd = (e) => {
+        if (activePointerId !== null && e.pointerId === activePointerId) {
+          try { zone.releasePointerCapture(e.pointerId); } catch(err) {}
+          activePointerId = null;
+          joystick.active = false;
+          joystick.x = 0;
+          joystick.y = 0;
+          knob.style.transform = 'translate(0px, 0px)';
+        }
+      };
+      zone.addEventListener('pointerup', onPointerEnd);
+      zone.addEventListener('pointercancel', onPointerEnd);
 
       zone.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -1016,9 +1078,43 @@
       const canvas = document.getElementById('jungle-canvas');
       const ctx = canvas.getContext('2d');
 
+      // Ensure roundRect and ellipse are available on ctx
+      if (!ctx.roundRect) {
+        ctx.roundRect = function(x, y, w, h, radii) {
+          if (typeof radii === 'number') radii = [radii];
+          const r = (radii && radii[0]) || 0;
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.lineTo(x + w - r, y);
+          this.quadraticCurveTo(x + w, y, x + w, y + r);
+          this.lineTo(x + w, y + h - r);
+          this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+          this.lineTo(x + r, y + h);
+          this.quadraticCurveTo(x, y + h, x, y + h - r);
+          this.lineTo(x, y + r);
+          this.quadraticCurveTo(x, y, x + r, y);
+          this.closePath();
+          return this;
+        };
+      }
+      if (!ctx.ellipse) {
+        ctx.ellipse = function(x, y, rx, ry, rot, start, end, acw) {
+          this.save();
+          this.translate(x, y);
+          this.rotate(rot || 0);
+          this.scale(rx, ry);
+          this.arc(0, 0, 1, start || 0, end || Math.PI * 2, acw || false);
+          this.restore();
+        };
+      }
+
       function resize() {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
+        const w = window.innerWidth || document.documentElement.clientWidth || canvas.parentElement?.clientWidth || 1024;
+        const h = window.innerHeight || document.documentElement.clientHeight || canvas.parentElement?.clientHeight || 600;
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+        }
       }
       window.addEventListener('resize', resize);
       resize();
@@ -1031,16 +1127,35 @@
         if (screenX < 200 && screenY > canvas.height - 200) return; // joystick deadzone
         const targetWorldX = Math.max(50, Math.min(MAP_W - 50, screenX + camera.x));
         const targetWorldY = Math.max(50, Math.min(MAP_H - 50, screenY + camera.y));
-        // 4yo Toddler Tap-to-Walk + Auto-Aim Bubble!
-        player.walkTarget = { x: targetWorldX, y: targetWorldY, active: true };
-        player.aimAngle = Math.atan2(targetWorldY - (player.y - 14), targetWorldX - player.x);
-        player.facing = targetWorldX >= player.x ? 1 : -1;
-        handleFirePandaGun();
+
+        // Check if tapping directly on or near an animal (within animal.r + 36px)
+        let tappedAnimal = null;
+        for (let a of animals) {
+          if (Math.hypot(targetWorldX - a.x, targetWorldY - a.y) < a.r + 36) {
+            tappedAnimal = a;
+            break;
+          }
+        }
+
+        if (tappedAnimal) {
+          // Tapped on an animal -> Aim & Fire bubble at it!
+          player.aimAngle = Math.atan2(tappedAnimal.y - (player.y - 14), tappedAnimal.x - player.x);
+          player.facing = tappedAnimal.x >= player.x ? 1 : -1;
+          handleFirePandaGun();
+        } else {
+          // Tapped on open ground -> Walk to destination freely without shooting!
+          player.walkTarget = { x: targetWorldX, y: targetWorldY, active: true };
+          player.aimAngle = Math.atan2(targetWorldY - (player.y - 14), targetWorldX - player.x);
+          player.facing = targetWorldX >= player.x ? 1 : -1;
+        }
       });
 
       let lastT = performance.now();
 
       function gameLoop(now) {
+        if (canvas.width === 0 || canvas.height === 0 || canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+          resize();
+        }
         const dt = (now - lastT) / 1000;
         lastT = now;
 
@@ -1102,7 +1217,7 @@
       }
       player.stamina = 100; // Infinite stamina for 4yo toddlers
 
-      if (window.AndroidJungleBridge) {
+      if (window.AndroidJungleBridge && (typeof bridgeTick === 'undefined' ? (window.bridgeTick = 0) : ++window.bridgeTick) % 45 === 0) {
         try {
           document.getElementById('hud-coins-display').innerText = window.AndroidJungleBridge.getPlayerCoins();
           document.getElementById('hud-catches-display').innerText = window.AndroidJungleBridge.getCapturedCount() + ' 隻';

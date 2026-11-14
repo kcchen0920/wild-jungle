@@ -9,6 +9,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -69,6 +70,10 @@ fun JungleExploreScreen(
     val currentCaptured by rememberUpdatedState(capturedAnimalsCount)
     val currentOnEncounter by rememberUpdatedState(onEncounterAnimal)
     val currentOnCrate by rememberUpdatedState(onCrateReward)
+
+    BackHandler {
+        onBackToMenu()
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(

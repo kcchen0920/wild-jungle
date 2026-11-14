@@ -74,8 +74,9 @@ fun MainGameContainer(
                 MainMenuScreen(
                     profile = profile ?: com.game.wildcatcher.data.model.PlayerProfile(),
                     capturedAnimalsCount = shelteredAnimals.size,
-                    onStartExpedition = { viewModel.startRandomExpedition() },
+                    onStartExpedition = { viewModel.navigateTo(ScreenState.JUNGLE_EXPLORE) },
                     onOpenJungleExplore = { viewModel.navigateTo(ScreenState.JUNGLE_EXPLORE) },
+                    onQuickBattle = { viewModel.startRandomExpedition() },
                     onOpenShelter = { viewModel.navigateTo(ScreenState.SHELTER_PARK) },
                     onOpenJournal = { viewModel.navigateTo(ScreenState.JOURNAL_ENCYCLOPEDIA) },
                     onOpenShop = { viewModel.navigateTo(ScreenState.UPGRADE_SHOP) },

@@ -151,7 +151,7 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
             val curFailures = playerProfile.value?.consecutiveFailures ?: 0
             repository.updateFailures(curFailures + 1)
             _boboSpeech.value = "別灰心！波波已經微調了瞄準阻尼，下次甜蜜點會更寬大好抓！"
-            navigateTo(ScreenState.MAIN_MENU)
+            navigateTo(_captureOriginScreen.value)
         }
     }
 
