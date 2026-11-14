@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -79,7 +80,12 @@ fun JungleExploreScreen(
         AndroidView(
             factory = { context ->
                 WebView(context).apply {
-                    setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    setBackgroundColor(android.graphics.Color.parseColor("#132A1F"))
+                    setLayerType(View.LAYER_TYPE_NONE, null)
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
@@ -87,8 +93,8 @@ fun JungleExploreScreen(
                         allowContentAccess = true
                         mediaPlaybackRequiresUserGesture = false
                         cacheMode = WebSettings.LOAD_DEFAULT
-                        useWideViewPort = true
-                        loadWithOverviewMode = true
+                        useWideViewPort = false
+                        loadWithOverviewMode = false
                         databaseEnabled = true
                     }
                     addJavascriptInterface(
@@ -107,6 +113,8 @@ fun JungleExploreScreen(
                     loadUrl("file:///android_asset/jungle/index.html")
                 }
             },
+            update = {},
+            onRelease = { it.destroy() },
             modifier = Modifier.fillMaxSize()
         )
 

@@ -18,8 +18,8 @@
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
   
   html, body {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: #080C09;
     color: #FFF;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
@@ -37,10 +37,13 @@
   .main-viewport {
     position: absolute;
     top: 0; bottom: 0; left: 0; right: 0;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
   }
   .view-panel {
     width: 100%; height: 100%;
+    min-width: 100vw; min-height: 100vh;
     display: none;
     position: relative;
   }
@@ -49,6 +52,7 @@
   /* Jungle Canvas */
   #jungle-canvas {
     width: 100%; height: 100%;
+    min-width: 100vw; min-height: 100vh;
     display: block;
     background: #0c1810;
     touch-action: none;
@@ -2398,7 +2402,8 @@
 
     function selectWeapon(w) {
       player.weapon = w;
-      document.getElementById('hud-equipped-weapon').innerText = `${w.icon} ${w.name} Mk-${player.weaponLvl}`;
+      const hudWeapon = document.getElementById('hud-equipped-weapon');
+      if (hudWeapon) hudWeapon.innerText = `${w.icon} ${w.name} Mk-${player.weaponLvl}`;
       renderUpgradeModal();
       closeUpgradeModal();
       playUpgradeSound();
