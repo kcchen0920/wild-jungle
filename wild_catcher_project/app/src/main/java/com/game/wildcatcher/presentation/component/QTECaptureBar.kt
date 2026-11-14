@@ -175,9 +175,9 @@ fun QTECaptureBar(
             }
 
             Text(
-                text = if (qteState.isLeftHandStabilizing) "💖 左手抱緊緊！右手快拍拍吹泡泡！" else "✋ 左手按住左邊 · 👇 右手拍拍右邊",
+                text = "⭐ 集滿 5 顆星星就抓到好朋友囉！",
                 color = Color.White,
-                fontSize = 13.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -185,101 +185,32 @@ fun QTECaptureBar(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Bottom Giant Bimanual Wings
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        // Single Giant Toddler-Friendly Tap Button
+        Button(
+            onClick = onRightHandTap,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = BambooGreen
+            ),
+            shape = RoundedCornerShape(20.dp),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(68.dp)
+                .scale(sweetPulse)
+                .border(3.dp, BrassHighlight, RoundedCornerShape(20.dp))
         ) {
-            // LEFT HAND WING: Giant Hold Button
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(72.dp)
-                    .scale(leftButtonScale)
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(
-                        if (qteState.isLeftHandStabilizing)
-                            Brush.verticalGradient(listOf(Color(0xFFFF8F00), Color(0xFFE65100)))
-                        else
-                            Brush.verticalGradient(listOf(Color(0xFF5D4037), Color(0xFF3E2723)))
-                    )
-                    .border(
-                        width = if (qteState.isLeftHandStabilizing) 3.5.dp else 2.dp,
-                        color = if (qteState.isLeftHandStabilizing) BrassHighlight else ParchmentBorder,
-                        shape = RoundedCornerShape(18.dp)
-                    )
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onPress = {
-                                onLeftHandPressChanged(true)
-                                tryAwaitRelease()
-                                onLeftHandPressChanged(false)
-                            }
-                        )
-                    }
-                    .padding(horizontal = 14.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = if (qteState.isLeftHandStabilizing) "💖" else "✋",
-                        fontSize = 34.sp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column {
-                        Text(
-                            text = if (qteState.isLeftHandStabilizing) "太棒了！抱緊緊中～" else "左手【按住不放】",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                        Text(
-                            text = "給小動物溫暖抱抱",
-                            color = BrassHighlight,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // RIGHT HAND WING: Giant Tap Button
-            Button(
-                onClick = onRightHandTap,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = BambooGreen
-                ),
-                shape = RoundedCornerShape(18.dp),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(72.dp)
-                    .border(3.dp, BrassHighlight, RoundedCornerShape(18.dp))
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "🫧",
-                        fontSize = 34.sp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column {
-                        Text(
-                            text = "右手【拍拍吹泡泡】",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                        Text(
-                            text = "已吹出 ${qteState.rightHandTapCount} 顆星星泡泡 ⭐",
-                            color = BrassHighlight,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "👆🫧",
+                    fontSize = 32.sp
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "點這裡吹大泡泡抓動物！($litStars / 5 ⭐)",
+                    color = Color.White,
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
             }
         }
     }

@@ -12,8 +12,8 @@ android {
         applicationId = "com.game.wildcatcher"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -23,6 +23,15 @@ android {
         // Support ASTC texture compression and high-res tablet graphics
         ndk {
             abiFilters += listOf("arm64-v8a", "x86_64")
+        }
+    }
+
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("wildcatcher-debug.keystore")
+            storePassword = "wildcatcher"
+            keyAlias = "wildcatcherdebug"
+            keyPassword = "wildcatcher"
         }
     }
 

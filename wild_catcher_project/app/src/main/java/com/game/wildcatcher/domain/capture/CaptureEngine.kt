@@ -159,8 +159,8 @@ class CaptureEngine(
         val powerBonus = (1.0f + (gunPowerLevel - 1) * 0.15f) * bimanualBonus
 
         if (state.isInSweetSpot) {
-            // Sweet spot hit: rapid positive progress (+22%)
-            val baseGain = 0.22f * powerBonus
+            // Sweet spot hit: rapid positive progress (+25%)
+            val baseGain = 0.25f * powerBonus
             val newProgress = (state.captureProgress + baseGain).coerceIn(0.0f, 1.0f)
             val newCombo = state.comboCount + 1
 
@@ -174,15 +174,15 @@ class CaptureEngine(
                 isCompleted = newProgress >= 1.0f
             )
         } else {
-            // Outside sweet spot: STILL grants +10% friendly progress so toddler never fails!
-            val baseGain = 0.10f * powerBonus
+            // Toddler-friendly mode: every tap anywhere gives a generous +20% progress (about 5 taps to catch!)
+            val baseGain = 0.20f * powerBonus
             val newProgress = (state.captureProgress + baseGain).coerceIn(0.0f, 1.0f)
             state = state.copy(
                 captureProgress = newProgress,
                 rightHandTapCount = newTaps,
-                comboCount = 0,
-                animalTension = 0.05f,
-                squishScaleX = 1.05f,
+                comboCount = state.comboCount + 1,
+                animalTension = 0.0f,
+                squishScaleX = 0.88f,
                 squishScaleY = 0.95f,
                 isCompleted = newProgress >= 1.0f
             )

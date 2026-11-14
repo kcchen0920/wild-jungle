@@ -245,7 +245,7 @@ fun CaptureBattleScreen(
                 }
             }
 
-            // Cheerful Visual Hint Badge
+            // Cheerful Visual Hint Badge for 4-year-olds
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
@@ -255,9 +255,9 @@ fun CaptureBattleScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "✋ 左手按住抱抱 · 👇 右手拍拍吹泡泡",
+                    text = if (!isNetFired) "👆 點一下小動物吹泡泡！" else "💖 一直拍拍小動物就會抓到喔！",
                     color = BrassHighlight,
-                    fontSize = 14.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
             }
@@ -342,124 +342,34 @@ fun CaptureBattleScreen(
         }
 
         // =========================================================================
-        // FULL-SCREEN SPLIT BLIND-TOUCH OVERLAY + ANIMATED GHOST HAND COACH
+        // FULL-SCREEN TODDLER-FRIENDLY TAP ZONE (Tap anywhere to pat & catch!)
         // =========================================================================
         if (isNetFired && !showSuccessDialog) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp, vertical = 68.dp) // 24dp Edge Palm-Rejection
+                    .padding(horizontal = 24.dp, vertical = 68.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { handleRightTap() }
+                        )
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                // LEFT HALF: Blind Palm/Thumb Hold Zone + Animated Giant Left Hand Coach
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onPress = {
-                                    captureEngine.setLeftHandStabilizing(true)
-                                    qteState = captureEngine.getCurrentState()
-                                    if (qteState.isCompleted) showSuccessDialog = true
-                                    onLeftHandHaptic()
-                                    tryAwaitRelease()
-                                    captureEngine.setLeftHandStabilizing(false)
-                                    qteState = captureEngine.getCurrentState()
-                                },
-                                onTap = {
-                                    handleRightTap()
-                                }
-                            )
+                if (rightTapParticleCount > 0) {
+                    Text(
+                        text = when (rightTapParticleCount % 3) {
+                            0 -> "⭐🫧✨"
+                            1 -> "💖🎵🫧"
+                            else -> "🌈⭐💖"
                         },
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    // Visual Hand Coach on Left Side
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                        fontSize = 44.sp,
                         modifier = Modifier
-                            .padding(start = 12.dp, bottom = 80.dp)
-                            .scale(if (qteState.isLeftHandStabilizing) 1.12f else handCoachPulse)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(
-                                if (qteState.isLeftHandStabilizing)
-                                    SunsetAmber.copy(alpha = 0.45f)
-                                else
-                                    LeatherDark.copy(alpha = 0.65f)
+                            .offset(
+                                x = ((rightTapParticleCount * 47) % 180 - 90).dp,
+                                y = ((rightTapParticleCount * 31) % 120 - 80).dp
                             )
-                            .border(
-                                width = 3.dp,
-                                color = if (qteState.isLeftHandStabilizing) BrassHighlight else SunsetAmber.copy(alpha = 0.7f),
-                                shape = RoundedCornerShape(24.dp)
-                            )
-                            .padding(horizontal = 18.dp, vertical = 14.dp)
-                    ) {
-                        Text(
-                            text = if (qteState.isLeftHandStabilizing) "💖✋💖" else "✋",
-                            fontSize = 46.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = if (qteState.isLeftHandStabilizing) "好溫暖喔！" else "左手按這裡",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    }
-                }
-
-                // RIGHT HALF: Blind Tapping Zone + Animated Bouncing Right Hand Coach
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onTap = { handleRightTap() }
-                            )
-                        },
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    // Celebratory Floating Bubble & Star Particles on Tapping
-                    if (rightTapParticleCount > 0) {
-                        Text(
-                            text = when (rightTapParticleCount % 3) {
-                                0 -> "⭐🫧✨"
-                                1 -> "💖🎵🫧"
-                                else -> "🌈⭐💖"
-                            },
-                            fontSize = 38.sp,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .offset(
-                                    x = ((rightTapParticleCount * 31) % 110 - 55).dp,
-                                    y = ((rightTapParticleCount * 23) % 90 - 65).dp
-                                )
-                        )
-                    }
-
-                    // Visual Hand Coach on Right Side
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .padding(end = 12.dp, bottom = 80.dp)
-                            .scale(handCoachPulse)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(BambooGreen.copy(alpha = 0.72f))
-                            .border(3.dp, BrassHighlight, RoundedCornerShape(24.dp))
-                            .padding(horizontal = 18.dp, vertical = 14.dp)
-                    ) {
-                        Text(
-                            text = "👇🫧",
-                            fontSize = 46.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "右手拍拍我",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    }
+                    )
                 }
             }
         }
