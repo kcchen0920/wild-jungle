@@ -47,6 +47,16 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.soundManager.pauseBgm()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.soundManager.resumeBgm()
+    }
 }
 
 @Composable
@@ -65,6 +75,7 @@ fun MainGameContainer(
     val boboSpeech by viewModel.boboSpeech.collectAsState()
     val activeQuiz by viewModel.activeQuiz.collectAsState()
     val targetAnimal by viewModel.currentTargetAnimal.collectAsState()
+    val isMuted by viewModel.isMuted.collectAsState()
 
     val revenueReport = viewModel.shelterEngine.calculateHourlyRevenue(shelterZones, shelteredAnimals)
 
@@ -85,6 +96,8 @@ fun MainGameContainer(
                     onSimulateThirtyMinutes = { viewModel.simulateThirtyMinutes() },
                     onOpenParentDashboard = { viewModel.navigateTo(ScreenState.PARENT_DASHBOARD) },
                     onResetGame = { viewModel.resetGame() },
+                    isMuted = isMuted,
+                    onToggleMute = { viewModel.toggleMute() },
                     onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
                 )
             }

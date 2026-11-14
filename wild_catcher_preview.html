@@ -710,14 +710,39 @@
     const MAP_W = 3800;
     const MAP_H = 2600;
 
-    // 5 Thematic Ecological Zones
+    // 5 Thematic Ecological Zones (Bright, Storybook-Cute Sunlit Jungle Palette)
     const ZONES = [
-      { id: 'creek', name: '翡翠溪谷淺灘', x1: 0, y1: 0, x2: 1300, y2: 1300, color: '#1B3B30', desc: '清澈急流、跳石、竹林與翡翠樹蛙' },
-      { id: 'banyan', name: '神木板根迷宮', x1: 1300, y1: 0, x2: 2500, y2: 1300, color: '#1E2D1D', desc: '千年神木、中空倒木隧道、台灣黑熊與石虎' },
-      { id: 'swamp', name: '螢光迷霧沼澤', x1: 0, y1: 1300, x2: 1400, y2: 2600, color: '#15252B', desc: '幽暗沼澤、緩速泥濘、發光幽光蕈與百步蛇' },
-      { id: 'ruins', name: '古石陣祭壇遺跡', x1: 1400, y1: 1300, x2: 2500, y2: 2600, color: '#25201B', desc: '青苔石板屋、太陽圖騰石柱、穿山甲與山羊' },
-      { id: 'ridge', name: '雲霧懸崖與天橋', x1: 2500, y1: 0, x2: 3800, y2: 2600, color: '#202228', desc: '高聳險峻懸崖、搖晃木繩吊橋、大冠鷲與高山水鹿' }
+      { id: 'creek', name: '翡翠溪谷淺灘', x1: 0, y1: 0, x2: 1300, y2: 1300, color: '#66BB6A', accent: '#81C784', desc: '清澈急流、跳石、竹林與翡翠樹蛙' },
+      { id: 'banyan', name: '神木板根迷宮', x1: 1300, y1: 0, x2: 2500, y2: 1300, color: '#4CAF50', accent: '#66BB6A', desc: '千年神木、中空倒木隧道、台灣黑熊與石虎' },
+      { id: 'swamp', name: '螢光迷霧沼澤', x1: 0, y1: 1300, x2: 1400, y2: 2600, color: '#26A69A', accent: '#4DB6AC', desc: '幽暗沼澤、緩速泥濘、發光幽光蕈與百步蛇' },
+      { id: 'ruins', name: '古石陣祭壇遺跡', x1: 1400, y1: 1300, x2: 2500, y2: 2600, color: '#7CB342', accent: '#9CCC65', desc: '青苔石板屋、太陽圖騰石柱、穿山甲與山羊' },
+      { id: 'ridge', name: '雲霧懸崖與天橋', x1: 2500, y1: 0, x2: 3800, y2: 2600, color: '#4DB6AC', accent: '#80CBC4', desc: '高聳險峻懸崖、搖晃木繩吊橋、大冠鷲與高山水鹿' }
     ];
+
+    // Cute Meadow Decorations (Deterministic positions so no flicker)
+    const cuteFlowers = [];
+    const flowerColors = ['#FF80AB', '#FFD54F', '#FFF176', '#80D8FF', '#FFAB91', '#FFFFFF'];
+    for (let i = 0; i < 180; i++) {
+      cuteFlowers.push({
+        x: ((i * 397 + 131) % (MAP_W - 120)) + 60,
+        y: ((i * 613 + 277) % (MAP_H - 120)) + 60,
+        color: flowerColors[i % flowerColors.length],
+        size: 5 + (i % 4) * 1.5,
+        phase: i * 0.7
+      });
+    }
+    const cuteButterflies = [];
+    const bflyColors = ['#FF80AB', '#FFD54F', '#80D8FF', '#CE93D8', '#FFAB40'];
+    for (let i = 0; i < 24; i++) {
+      cuteButterflies.push({
+        cx: ((i * 521 + 210) % (MAP_W - 300)) + 150,
+        cy: ((i * 733 + 190) % (MAP_H - 300)) + 150,
+        color: bflyColors[i % bflyColors.length],
+        phase: i * 1.3,
+        rx: 55 + (i % 4) * 20,
+        ry: 35 + (i % 3) * 18
+      });
+    }
 
     // Interactive Supply Crates
     const crates = [
@@ -1473,106 +1498,232 @@
       ctx.save();
       ctx.translate(-camera.x, -camera.y);
 
-      // 1. Biomes
+      // 1. Biomes (Soft Storybook Meadow Base + Sunlit Patches)
       ZONES.forEach(z => {
         ctx.fillStyle = z.color;
         ctx.fillRect(z.x1, z.y1, z.x2 - z.x1, z.y2 - z.y1);
+        ctx.fillStyle = z.accent || 'rgba(255,255,255,0.08)';
+        for (let px = z.x1 + 140; px < z.x2 - 80; px += 320) {
+          for (let py = z.y1 + 140; py < z.y2 - 80; py += 280) {
+            ctx.beginPath();
+            ctx.ellipse(px, py, 110, 65, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
       });
 
-      // 2. Translucent River with Rapids (Zone 1)
+      // Cute Winding Sandy Footpaths connecting Camps & Exploration Zones
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(300, 520);
+      ctx.quadraticCurveTo(680, 680, 1250, 550);
+      ctx.quadraticCurveTo(1750, 480, 2000, 780);
+      ctx.quadraticCurveTo(2350, 1050, 2900, 1500);
+      ctx.moveTo(680, 720);
+      ctx.quadraticCurveTo(750, 1250, 1100, 1650);
+      ctx.quadraticCurveTo(1500, 1850, 1920, 1620);
+      ctx.lineWidth = 64;
+      ctx.strokeStyle = 'rgba(255, 224, 178, 0.48)';
+      ctx.stroke();
+      ctx.lineWidth = 44;
+      ctx.strokeStyle = 'rgba(255, 243, 224, 0.45)';
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Sparkling Sky-Blue River with Lily Pads & Lotus Flowers (Zone 1)
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(0, 680);
       ctx.bezierCurveTo(450, 600, 850, 850, 1350, 750);
-      ctx.lineWidth = 140;
-      ctx.strokeStyle = '#103038';
+      ctx.lineWidth = 148;
+      ctx.strokeStyle = '#E6EE9C'; // Sandy riverbank
       ctx.stroke();
-      ctx.lineWidth = 110;
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.22)';
+      ctx.lineWidth = 122;
+      ctx.strokeStyle = '#29B6F6';
+      ctx.stroke();
+      ctx.lineWidth = 90;
+      ctx.strokeStyle = '#81D4FA';
       ctx.stroke();
 
-      // River Log Bridges
-      ctx.fillStyle = '#4E342E';
-      ctx.fillRect(660, 640, 48, 140);
-      ctx.fillStyle = '#3E2723';
-      for (let y = 645; y < 780; y += 18) ctx.fillRect(655, y, 58, 6);
-      ctx.restore();
-
-      // 3. Tall Grass Stealth Patches
-      tallGrassPatches.forEach(g => {
-        ctx.fillStyle = 'rgba(46, 125, 50, 0.75)';
+      // Animated Water Sparkles
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 8; i++) {
+        const wx = 120 + i * 155 + Math.sin(t * 1.8 + i) * 18;
+        const wy = 675 + Math.sin(i * 1.1) * 45;
         ctx.beginPath();
-        ctx.roundRect(g.x, g.y, g.w, g.h, 16);
-        ctx.fill();
-        ctx.strokeStyle = '#81C784';
-        ctx.lineWidth = 2;
+        ctx.moveTo(wx - 14, wy);
+        ctx.quadraticCurveTo(wx, wy - 6, wx + 14, wy);
         ctx.stroke();
+      }
+
+      // Cute Lily Pads & Pink Lotus Flowers
+      const lilyPads = [
+        { x: 240, y: 655 }, { x: 480, y: 695 }, { x: 960, y: 785 }, { x: 1180, y: 760 }
+      ];
+      lilyPads.forEach((lp, idx) => {
+        const bob = Math.sin(t * 2 + idx) * 2;
+        ctx.fillStyle = '#43A047';
+        ctx.beginPath();
+        ctx.arc(lp.x, lp.y + bob, 18, 0.25, Math.PI * 1.9);
+        ctx.lineTo(lp.x, lp.y + bob);
+        ctx.closePath();
+        ctx.fill();
+        if (idx % 2 === 0) {
+          ctx.fillStyle = '#FF80AB';
+          ctx.beginPath(); ctx.arc(lp.x + 2, lp.y + bob - 4, 7, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFF59D';
+          ctx.beginPath(); ctx.arc(lp.x + 2, lp.y + bob - 4, 2.5, 0, Math.PI * 2); ctx.fill();
+        }
       });
 
-      // 4. Bioluminescent Mushrooms
+      // Cute Wooden Plank Bridge with Handrails
+      ctx.fillStyle = '#8D6E63';
+      ctx.fillRect(654, 628, 60, 152);
+      ctx.fillStyle = '#A1887F';
+      for (let y = 634; y < 774; y += 16) {
+        ctx.fillRect(658, y, 52, 10);
+      }
+      ctx.fillStyle = '#5D4037';
+      ctx.fillRect(650, 626, 6, 156);
+      ctx.fillRect(712, 626, 6, 156);
+      ctx.restore();
+
+      // 2b. Cute Blooming Wildflowers across the Meadow
+      cuteFlowers.forEach(fl => {
+        if (fl.x < camera.x - 40 || fl.x > camera.x + w + 40 || fl.y < camera.y - 40 || fl.y > camera.y + h + 40) return;
+        const sway = Math.sin(t * 2.4 + fl.phase) * 2;
+        ctx.fillStyle = fl.color;
+        for (let p = 0; p < 5; p++) {
+          const a = (p / 5) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.arc(fl.x + sway + Math.cos(a) * fl.size * 0.55, fl.y + Math.sin(a) * fl.size * 0.55, fl.size * 0.42, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = '#FFD54F';
+        ctx.beginPath();
+        ctx.arc(fl.x + sway, fl.y, fl.size * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 3. Cute Lush Tall Grass Patches
+      tallGrassPatches.forEach(g => {
+        ctx.fillStyle = 'rgba(56, 142, 60, 0.72)';
+        ctx.beginPath();
+        ctx.roundRect(g.x, g.y, g.w, g.h, 24);
+        ctx.fill();
+        ctx.strokeStyle = '#A5D6A7';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        // Cute grass tufts
+        ctx.strokeStyle = '#C8E6C9';
+        ctx.lineWidth = 2;
+        for (let gx = g.x + 28; gx < g.x + g.w - 20; gx += 46) {
+          for (let gy = g.y + 34; gy < g.y + g.h - 20; gy += 48) {
+            ctx.beginPath();
+            ctx.moveTo(gx, gy); ctx.lineTo(gx - 5, gy - 12);
+            ctx.moveTo(gx, gy); ctx.lineTo(gx + 5, gy - 11);
+            ctx.stroke();
+          }
+        }
+      });
+
+      // 4. Cute Polka-Dot Glowing Mushrooms & Bouncy Spring Mushrooms
       const shrooms = [
-        { x: 420, y: 1550, color: '#00E5FF' }, { x: 750, y: 1720, color: '#E040FB' },
-        { x: 300, y: 2100, color: '#00E5FF' }, { x: 1100, y: 1850, color: '#69F0AE' }
+        { x: 420, y: 1550, color: '#40C4FF' }, { x: 750, y: 1720, color: '#FF80AB' },
+        { x: 300, y: 2100, color: '#80D8FF' }, { x: 1100, y: 1850, color: '#69F0AE' }
       ];
       shrooms.forEach(sh => {
-        const radG = ctx.createRadialGradient(sh.x, sh.y, 4, sh.x, sh.y, 75);
+        const radG = ctx.createRadialGradient(sh.x, sh.y, 4, sh.x, sh.y, 68);
         radG.addColorStop(0, sh.color + '66');
         radG.addColorStop(1, 'transparent');
         ctx.fillStyle = radG;
-        ctx.beginPath(); ctx.arc(sh.x, sh.y, 75, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(sh.x, sh.y, 68, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFF8E1';
+        ctx.fillRect(sh.x - 5, sh.y - 6, 10, 14);
         ctx.fillStyle = sh.color;
-        ctx.beginPath(); ctx.arc(sh.x, sh.y - 6, 14, Math.PI, 0); ctx.fill();
-        ctx.fillStyle = '#FFF';
-        ctx.fillRect(sh.x - 3, sh.y - 6, 6, 12);
+        ctx.beginPath(); ctx.arc(sh.x, sh.y - 6, 16, Math.PI, 0); ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.arc(sh.x - 6, sh.y - 12, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(sh.x + 5, sh.y - 11, 2.5, 0, Math.PI * 2); ctx.fill();
       });
 
-      // 5. Ancient Totem Megaliths (Zone 4)
+      springMushrooms.forEach((sm, idx) => {
+        const bounce = Math.sin(t * 4 + idx) * 2.5;
+        ctx.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx.beginPath(); ctx.ellipse(sm.x, sm.y + 8, 22, 10, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFF3E0';
+        ctx.fillRect(sm.x - 8, sm.y - 8 + bounce, 16, 16);
+        ctx.fillStyle = '#FF4081';
+        ctx.beginPath(); ctx.ellipse(sm.x, sm.y - 10 + bounce, 24, 14, 0, Math.PI, 0); ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath(); ctx.arc(sm.x - 9, sm.y - 16 + bounce, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(sm.x + 8, sm.y - 15 + bounce, 3.5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(sm.x, sm.y - 20 + bounce, 3, 0, Math.PI * 2); ctx.fill();
+      });
+
+      // 5. Ancient Totem Megaliths (Warm Pastel Stone Pillars)
       const pillars = [
         { x: 1650, y: 1550 }, { x: 1950, y: 1550 },
         { x: 1650, y: 1950 }, { x: 1950, y: 1950 }
       ];
       pillars.forEach(p => {
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
         ctx.beginPath(); ctx.ellipse(p.x, p.y + 12, 28, 14, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#424242';
+        ctx.fillStyle = '#8D99AE';
         ctx.fillRect(p.x - 18, p.y - 60, 36, 68);
-        ctx.fillStyle = '#616161';
+        ctx.fillStyle = '#B0BEC5';
         ctx.fillRect(p.x - 22, p.y - 68, 44, 12);
         ctx.strokeStyle = '#FFD54F';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         ctx.strokeRect(p.x - 10, p.y - 45, 20, 30);
       });
 
-      // 6. Crates & Campsites
+      // 6. Cute Gift Treasure Crates & Cozy Campfire Campsites
       crates.forEach(c => {
-        ctx.fillStyle = c.opened ? '#5D4037' : '#F57C00';
-        ctx.fillRect(c.x - 16, c.y - 14, 32, 28);
-        ctx.strokeStyle = '#FFE082';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(c.x - 16, c.y - 14, 32, 28);
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath(); ctx.ellipse(c.x, c.y + 14, 18, 7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = c.opened ? '#8D6E63' : '#FFB74D';
+        ctx.beginPath(); ctx.roundRect(c.x - 17, c.y - 14, 34, 28, 6); ctx.fill();
+        ctx.strokeStyle = '#FFF59D';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
         if (!c.opened) {
-          ctx.fillStyle = '#FFF'; ctx.font = 'bold 12px sans-serif';
-          ctx.fillText('📦', c.x - 7, c.y + 4);
+          ctx.fillStyle = '#FF5252';
+          ctx.fillRect(c.x - 3, c.y - 14, 6, 28);
+          ctx.fillRect(c.x - 17, c.y - 3, 34, 6);
+          ctx.fillStyle = '#FFF'; ctx.font = 'bold 13px sans-serif';
+          ctx.fillText('🎁', c.x - 8, c.y - 18);
         }
       });
 
       campsites.forEach(camp => {
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.beginPath(); ctx.ellipse(camp.x, camp.y + 8, 30, 14, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = camp.unlocked ? '#FF5722' : '#757575';
-        ctx.beginPath(); ctx.arc(camp.x, camp.y - 10, 14, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#FFF'; ctx.font = '16px sans-serif';
-        ctx.fillText('⛺', camp.x - 8, camp.y - 4);
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.beginPath(); ctx.ellipse(camp.x, camp.y + 8, 34, 14, 0, 0, Math.PI * 2); ctx.fill();
+        if (camp.unlocked) {
+          const glowR = 44 + Math.sin(t * 6) * 4;
+          const cg = ctx.createRadialGradient(camp.x + 18, camp.y + 2, 4, camp.x + 18, camp.y + 2, glowR);
+          cg.addColorStop(0, 'rgba(255, 193, 7, 0.5)');
+          cg.addColorStop(1, 'transparent');
+          ctx.fillStyle = cg;
+          ctx.beginPath(); ctx.arc(camp.x + 18, camp.y + 2, glowR, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.fillStyle = camp.unlocked ? '#FF7043' : '#90A4AE';
+        ctx.beginPath(); ctx.arc(camp.x, camp.y - 10, 18, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFF'; ctx.font = '18px sans-serif';
+        ctx.fillText('⛺', camp.x - 10, camp.y - 4);
       });
 
       // 7. Depth Sorted Entities (Trees, Animals, Little Ranger Dave, Bubbles)
       const entities = [];
       const trees = [
-        { x: 450, y: 350, h: 220, r: 130 }, { x: 1050, y: 300, h: 210, r: 135 },
-        { x: 1750, y: 450, h: 260, r: 160 }, { x: 2250, y: 320, h: 240, r: 150 },
-        { x: 750, y: 1100, h: 200, r: 125 }, { x: 1450, y: 1050, h: 250, r: 155 },
-        { x: 550, y: 1950, h: 230, r: 140 }, { x: 1850, y: 2200, h: 240, r: 150 },
-        { x: 3200, y: 750, h: 230, r: 135 }, { x: 3300, y: 1650, h: 250, r: 145 }
+        { x: 450, y: 350, h: 190, r: 115 }, { x: 1050, y: 300, h: 185, r: 120 },
+        { x: 1750, y: 450, h: 220, r: 135 }, { x: 2250, y: 320, h: 210, r: 130 },
+        { x: 750, y: 1100, h: 180, r: 110 }, { x: 1450, y: 1050, h: 215, r: 135 },
+        { x: 550, y: 1950, h: 200, r: 120 }, { x: 1850, y: 2200, h: 210, r: 130 },
+        { x: 3200, y: 750, h: 200, r: 120 }, { x: 3300, y: 1650, h: 215, r: 130 }
       ];
       trees.forEach(tr => entities.push({ type: 'tree', y: tr.y, data: tr }));
       animals.forEach(a => entities.push({ type: 'animal', y: a.y, data: a }));
@@ -1586,6 +1737,19 @@
         else if (ent.type === 'animal') drawPhotorealisticAnimal(ctx, ent.data, t);
         else if (ent.type === 'player') draw25DLittleRanger(ctx, ent.data, t);
         else if (ent.type === 'bubble') drawBubbleNet(ctx, ent.data);
+      });
+
+      // 8. Cute Animated Butterflies Fluttering Around the Jungle
+      cuteButterflies.forEach(bf => {
+        const bx = bf.cx + Math.cos(t * 0.9 + bf.phase) * bf.rx;
+        const by = bf.cy + Math.sin(t * 1.4 + bf.phase) * bf.ry;
+        if (bx < camera.x - 40 || bx > camera.x + w + 40 || by < camera.y - 40 || by > camera.y + h + 40) return;
+        const wing = 4 + Math.abs(Math.sin(t * 12 + bf.phase)) * 6;
+        ctx.fillStyle = bf.color;
+        ctx.beginPath(); ctx.ellipse(bx - wing * 0.6, by, wing * 0.7, 5, -0.3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(bx + wing * 0.6, by, wing * 0.7, 5, 0.3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#4E342E';
+        ctx.fillRect(bx - 1, by - 4, 2, 8);
       });
 
       // Flashlight Cone
@@ -1610,26 +1774,35 @@
     function draw25DAncientBanyanTree(ctx, tr, t) {
       const sway = Math.sin(t * 1.4 + tr.x * 0.01) * 5;
       ctx.beginPath();
-      ctx.ellipse(tr.x + 30, tr.y + 20, tr.r * 1.1, tr.r * 0.55, 0.25, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.42)';
+      ctx.ellipse(tr.x + 24, tr.y + 18, tr.r * 1.0, tr.r * 0.48, 0.2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
       ctx.fill();
 
-      // Massive Buttress Roots (板根)
-      ctx.fillStyle = '#26180F';
+      // Warm Storybook Tree Trunk
+      ctx.fillStyle = '#6D4C41';
       ctx.beginPath();
-      ctx.moveTo(tr.x - 45, tr.y + 12);
-      ctx.quadraticCurveTo(tr.x - 22, tr.y - 60, tr.x - 18, tr.y - tr.h);
-      ctx.lineTo(tr.x + 18, tr.y - tr.h);
-      ctx.quadraticCurveTo(tr.x + 22, tr.y - 60, tr.x + 50, tr.y + 12);
+      ctx.moveTo(tr.x - 36, tr.y + 10);
+      ctx.quadraticCurveTo(tr.x - 18, tr.y - 55, tr.x - 16, tr.y - tr.h);
+      ctx.lineTo(tr.x + 16, tr.y - tr.h);
+      ctx.quadraticCurveTo(tr.x + 18, tr.y - 55, tr.x + 40, tr.y + 10);
       ctx.closePath();
       ctx.fill();
 
-      // Canopy
+      // Fluffy Multi-Layered Pastel-Emerald Canopy + Cute Jungle Berries
       const cY = tr.y - tr.h;
-      ctx.fillStyle = '#143C1D';
-      ctx.beginPath(); ctx.arc(tr.x + sway, cY, tr.r, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#1B5E20';
-      ctx.beginPath(); ctx.arc(tr.x - 25 + sway, cY - 25, tr.r * 0.72, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#2E7D32';
+      ctx.beginPath(); ctx.arc(tr.x + sway, cY + 12, tr.r * 0.95, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#43A047';
+      ctx.beginPath(); ctx.arc(tr.x - 28 + sway, cY - 10, tr.r * 0.72, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(tr.x + 30 + sway, cY - 8, tr.r * 0.68, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#66BB6A';
+      ctx.beginPath(); ctx.arc(tr.x + sway, cY - 32, tr.r * 0.62, 0, Math.PI * 2); ctx.fill();
+
+      // Cute Red Berries on Canopy
+      ctx.fillStyle = '#FF5252';
+      ctx.beginPath(); ctx.arc(tr.x - 25 + sway, cY - 12, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(tr.x + 28 + sway, cY - 18, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(tr.x + 4 + sway, cY - 40, 5.5, 0, Math.PI * 2); ctx.fill();
     }
 
     // ========================================================
@@ -2530,6 +2703,36 @@
         o.start(); o.stop(c.currentTime + 0.3);
       } catch(e) {}
     }
+
+    // Gentle Storybook Jungle BGM for standalone browser preview (Android uses native SoundManager)
+    (function initPreviewBgm() {
+      if (window.WildBridge) return;
+      let started = false;
+      const notes = [523.25, 659.25, 783.99, 659.25, 880.0, 783.99, 659.25, 587.33];
+      let idx = 0;
+      function startLoop() {
+        if (started) return;
+        started = true;
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          setInterval(() => {
+            if (ctx.state === 'suspended') ctx.resume();
+            const f = notes[idx % notes.length];
+            idx++;
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(f, ctx.currentTime);
+            g.gain.setValueAtTime(0.04, ctx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.34);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(); o.stop(ctx.currentTime + 0.35);
+          }, 380);
+        } catch(e) {}
+      }
+      window.addEventListener('pointerdown', startLoop, { once: true });
+      window.addEventListener('keydown', startLoop, { once: true });
+    })();
   </script>
 </body>
 </html>

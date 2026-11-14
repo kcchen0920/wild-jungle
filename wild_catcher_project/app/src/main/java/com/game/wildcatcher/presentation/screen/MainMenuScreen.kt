@@ -40,6 +40,8 @@ fun MainMenuScreen(
     onSimulateThirtyMinutes: () -> Unit,
     onOpenParentDashboard: () -> Unit = {},
     onResetGame: () -> Unit = {},
+    isMuted: Boolean = false,
+    onToggleMute: () -> Unit = {},
     onSpeakVoice: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -298,7 +300,19 @@ fun MainMenuScreen(
                                     .clickable { showResetConfirm = true },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("🔄 重新開始", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                                Text("🔄 重來", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(0.9f)
+                                    .height(36.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(if (isMuted) Color(0xFF78909C) else Color(0xFF43A047))
+                                    .clickable { onToggleMute() },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(if (isMuted) "🔇 靜音" else "🔊 音樂", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
                             }
                         }
                     }

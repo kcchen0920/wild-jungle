@@ -64,6 +64,13 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
     private val _boboSpeech = MutableStateFlow<String?>("歡迎來到野性冒險世界！今天想先探索哪座自然園區呢？")
     val boboSpeech: StateFlow<String?> = _boboSpeech.asStateFlow()
 
+    private val _isMuted = MutableStateFlow(false)
+    val isMuted: StateFlow<Boolean> = _isMuted.asStateFlow()
+
+    fun toggleMute() {
+        _isMuted.value = soundManager.toggleMute()
+    }
+
     val allAnimals = repository.allAnimals.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     val shelteredAnimals = repository.shelterAnimals.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     val shelterZones = repository.allZones.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
