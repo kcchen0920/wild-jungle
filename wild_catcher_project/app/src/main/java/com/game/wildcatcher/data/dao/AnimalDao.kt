@@ -26,4 +26,7 @@ interface AnimalDao {
 
     @Query("UPDATE animals SET isCaptured = 1, captureCount = captureCount + 1, isInShelter = 1 WHERE id = :animalId")
     suspend fun markCaptured(animalId: String)
+
+    @Query("UPDATE animals SET isCaptured = 0, captureCount = 0, isInShelter = 0")
+    suspend fun resetAllAnimals()
 }

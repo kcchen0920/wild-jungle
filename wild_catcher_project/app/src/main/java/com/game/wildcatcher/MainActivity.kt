@@ -83,6 +83,7 @@ fun MainGameContainer(
                     onTriggerQuiz = { viewModel.triggerEcoQuiz() },
                     onSimulateThirtyMinutes = { viewModel.simulateThirtyMinutes() },
                     onOpenParentDashboard = { viewModel.navigateTo(ScreenState.PARENT_DASHBOARD) },
+                    onResetGame = { viewModel.resetGame() },
                     onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
                 )
             }
@@ -171,7 +172,7 @@ fun MainGameContainer(
             }
         }
 
-        // Panda Assistant Speech Balloon & Rest Time Alert (with Voice & Parent Gate)
+        // Panda Assistant Speech Balloon & Rest Time Alert (TopCenter so it never covers top-left ID icon)
         PandaAssistantOverlay(
             healthState = healthState,
             speechBubbleText = boboSpeech,
@@ -181,7 +182,8 @@ fun MainGameContainer(
             onRestNow = {
                 viewModel.claimRestBonusAndReset()
             },
-            onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) }
+            onSpeakVoice = { text -> viewModel.ttsManager.speakCustomText(text) },
+            modifier = Modifier.align(Alignment.TopCenter)
         )
 
         // Eco Science Quiz Dialog (Voice-first for 4yo)

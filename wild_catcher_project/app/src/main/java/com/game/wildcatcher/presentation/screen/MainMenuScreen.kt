@@ -39,6 +39,7 @@ fun MainMenuScreen(
     onTriggerQuiz: () -> Unit,
     onSimulateThirtyMinutes: () -> Unit,
     onOpenParentDashboard: () -> Unit = {},
+    onResetGame: () -> Unit = {},
     onSpeakVoice: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -55,6 +56,7 @@ fun MainMenuScreen(
     )
 
     var showParentHint by remember { mutableStateOf(false) }
+    var showResetConfirm by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -286,7 +288,43 @@ fun MainMenuScreen(
                             ) {
                                 Text("🛡️ 家長專區", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.SemiBold)
                             }
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(36.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(DangerCoral.copy(alpha = 0.9f))
+                                    .clickable { showResetConfirm = true },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("🔄 重新開始", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                            }
                         }
+                    }
+
+                    if (showResetConfirm) {
+                        AlertDialog(
+                            onDismissRequest = { showResetConfirm = false },
+                            title = { Text("🔄 確定要重新開始新遊戲嗎？", fontWeight = FontWeight.ExtraBold) },
+                            text = { Text("這會清除所有已收集的動物好朋友與快樂竹幣，從頭開始新的森林探險喔！") },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        showResetConfirm = false
+                                        onResetGame()
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = DangerCoral)
+                                ) {
+                                    Text("確定重設", color = Color.White, fontWeight = FontWeight.Bold)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showResetConfirm = false }) {
+                                    Text("取消", fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        )
                     }
                 }
 

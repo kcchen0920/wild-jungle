@@ -794,18 +794,55 @@
     const camera = { x: 0, y: 0 };
     const keys = { up: false, down: false, left: false, right: false, shift: false };
 
-    // 10 Detailed Living Wild Animals with Anatomical Silhouette Attributes
+    // 36 Detailed Living Wild Animals across the 3600x2400 jungle map
     const animals = [
-      { id: 'formosan_black_bear', name: '台灣黑熊', x: 1900, y: 550, vx: 0.5, vy: 0.2, type: 'bear', r: 52, facing: 1, coins: 180, state: 'idle', alertTimer: 0 },
-      { id: 'leopard_cat', name: '台灣石虎', x: 1650, y: 750, vx: -0.8, vy: 0.3, type: 'cat', r: 36, facing: -1, coins: 160, state: 'idle', alertTimer: 0 },
+      // Around starting camp (650, 680) so player immediately sees lively wildlife
       { id: 'emerald_tree_frog', name: '翡翠樹蛙', x: 580, y: 420, vx: 0.4, vy: -0.2, type: 'frog', r: 28, facing: 1, coins: 120, state: 'idle', alertTimer: 0 },
       { id: 'formosan_sika_deer', name: '台灣梅花鹿', x: 920, y: 880, vx: 0.7, vy: -0.3, type: 'deer', r: 46, facing: 1, coins: 100, state: 'idle', alertTimer: 0 },
-      { id: 'pangolin', name: '台灣穿山甲', x: 1800, y: 1800, vx: -0.3, vy: -0.2, type: 'pangolin', r: 38, facing: -1, coins: 200, state: 'idle', alertTimer: 0 },
-      { id: 'crested_serpent_eagle', name: '大冠鷲', x: 3000, y: 650, vx: 1.6, vy: 0.4, type: 'eagle', r: 56, facing: 1, coins: 140, state: 'idle', alertTimer: 0, isFlying: true },
+      { id: 'camp_frog_2', name: '小樹蛙', x: 460, y: 760, vx: 0.5, vy: 0.3, type: 'frog', r: 26, facing: 1, coins: 90, state: 'idle', alertTimer: 0 },
+      { id: 'camp_pangolin', name: '小穿山甲', x: 850, y: 520, vx: -0.4, vy: 0.2, type: 'pangolin', r: 34, facing: -1, coins: 150, state: 'idle', alertTimer: 0 },
+      { id: 'camp_monkey', name: '台灣獼猴', x: 420, y: 520, vx: 0.6, vy: 0.4, type: 'monkey', r: 36, facing: 1, coins: 110, state: 'idle', alertTimer: 0 },
+      { id: 'camp_cat', name: '小石虎', x: 980, y: 660, vx: -0.7, vy: -0.2, type: 'cat', r: 34, facing: -1, coins: 140, state: 'idle', alertTimer: 0 },
+
+      // Northwest & West Forest
+      { id: 'nw_boar', name: '山豬寶寶', x: 350, y: 1150, vx: 0.8, vy: -0.2, type: 'boar', r: 40, facing: 1, coins: 95, state: 'idle', alertTimer: 0, chargeSpeed: 0 },
+      { id: 'nw_deer', name: '小水鹿', x: 520, y: 1420, vx: 0.6, vy: 0.3, type: 'deer', r: 44, facing: 1, coins: 115, state: 'idle', alertTimer: 0 },
+      { id: 'nw_eagle', name: '林鵰', x: 750, y: 320, vx: 1.4, vy: 0.3, type: 'eagle', r: 52, facing: 1, coins: 135, state: 'idle', alertTimer: 0, isFlying: true },
+      { id: 'nw_monkey', name: '金絲猴', x: 1180, y: 380, vx: -0.5, vy: 0.4, type: 'monkey', r: 38, facing: -1, coins: 145, state: 'idle', alertTimer: 0 },
+
+      // Central & Highland Jungle
+      { id: 'formosan_black_bear', name: '台灣黑熊', x: 1900, y: 550, vx: 0.5, vy: 0.2, type: 'bear', r: 52, facing: 1, coins: 180, state: 'idle', alertTimer: 0 },
+      { id: 'leopard_cat', name: '台灣石虎', x: 1650, y: 750, vx: -0.8, vy: 0.3, type: 'cat', r: 36, facing: -1, coins: 160, state: 'idle', alertTimer: 0 },
       { id: 'golden_snub_nosed_monkey', name: '川金絲猴', x: 2200, y: 480, vx: -0.6, vy: 0.5, type: 'monkey', r: 38, facing: -1, coins: 150, state: 'idle', alertTimer: 0 },
+      { id: 'central_deer', name: '梅花鹿媽媽', x: 1350, y: 980, vx: 0.6, vy: -0.4, type: 'deer', r: 48, facing: 1, coins: 120, state: 'idle', alertTimer: 0 },
+      { id: 'central_frog', name: '諸羅樹蛙', x: 1550, y: 1180, vx: 0.4, vy: 0.4, type: 'frog', r: 28, facing: 1, coins: 110, state: 'idle', alertTimer: 0 },
+      { id: 'central_boar', name: '大野豬', x: 1950, y: 1100, vx: -0.9, vy: 0.2, type: 'boar', r: 46, facing: -1, coins: 105, state: 'idle', alertTimer: 0, chargeSpeed: 0 },
+      { id: 'central_bear_2', name: '小黑熊', x: 1420, y: 460, vx: 0.4, vy: 0.3, type: 'bear', r: 44, facing: 1, coins: 165, state: 'idle', alertTimer: 0 },
+      { id: 'central_eagle', name: '大冠鷲', x: 2050, y: 820, vx: 1.5, vy: -0.3, type: 'eagle', r: 54, facing: 1, coins: 140, state: 'idle', alertTimer: 0, isFlying: true },
+
+      // Southwest & South Riverlands
       { id: 'taiwan_wild_boar', name: '台灣野豬', x: 800, y: 1850, vx: 0.9, vy: 0.1, type: 'boar', r: 44, facing: 1, coins: 90, state: 'idle', alertTimer: 0, chargeSpeed: 0 },
+      { id: 'pangolin', name: '台灣穿山甲', x: 1800, y: 1800, vx: -0.3, vy: -0.2, type: 'pangolin', r: 38, facing: -1, coins: 200, state: 'idle', alertTimer: 0 },
+      { id: 'sw_frog', name: '台北樹蛙', x: 450, y: 1980, vx: 0.5, vy: -0.3, type: 'frog', r: 28, facing: 1, coins: 100, state: 'idle', alertTimer: 0 },
+      { id: 'sw_cat', name: '山貓', x: 1150, y: 1650, vx: 0.7, vy: 0.2, type: 'cat', r: 36, facing: 1, coins: 155, state: 'idle', alertTimer: 0 },
+      { id: 'sw_deer', name: '小梅花鹿', x: 1220, y: 2050, vx: -0.6, vy: -0.3, type: 'deer', r: 42, facing: -1, coins: 110, state: 'idle', alertTimer: 0 },
+      { id: 'south_bear', name: '月亮熊', x: 1580, y: 2020, vx: 0.5, vy: -0.2, type: 'bear', r: 50, facing: 1, coins: 185, state: 'idle', alertTimer: 0 },
+      { id: 'south_monkey', name: '小獼猴', x: 2150, y: 1960, vx: 0.7, vy: 0.4, type: 'monkey', r: 36, facing: 1, coins: 130, state: 'idle', alertTimer: 0 },
+
+      // East & Northeast Peaks
+      { id: 'crested_serpent_eagle', name: '大冠鷲', x: 3000, y: 650, vx: 1.6, vy: 0.4, type: 'eagle', r: 56, facing: 1, coins: 140, state: 'idle', alertTimer: 0, isFlying: true },
+      { id: 'ne_bear', name: '台灣黑熊王', x: 2650, y: 450, vx: -0.5, vy: 0.3, type: 'bear', r: 54, facing: -1, coins: 190, state: 'idle', alertTimer: 0 },
+      { id: 'ne_cat', name: '花豹貓', x: 2850, y: 920, vx: 0.8, vy: -0.2, type: 'cat', r: 36, facing: 1, coins: 160, state: 'idle', alertTimer: 0 },
+      { id: 'ne_monkey', name: '長尾猴', x: 3250, y: 480, vx: -0.6, vy: 0.5, type: 'monkey', r: 38, facing: -1, coins: 145, state: 'idle', alertTimer: 0 },
+      { id: 'ne_boar', name: '叢林野豬', x: 3200, y: 1050, vx: -0.8, vy: 0.2, type: 'boar', r: 44, facing: -1, coins: 100, state: 'idle', alertTimer: 0, chargeSpeed: 0 },
+
+      // Southeast & Deep Jungle
       { id: 'formosan_sambar', name: '台灣水鹿', x: 2900, y: 1500, vx: 0.5, vy: -0.4, type: 'deer', r: 54, facing: 1, coins: 130, state: 'idle', alertTimer: 0 },
-      { id: 'serow', name: '台灣長鬃山羊', x: 2300, y: 1500, vx: -0.5, vy: 0.6, type: 'deer', r: 42, facing: -1, coins: 140, state: 'idle', alertTimer: 0 }
+      { id: 'serow', name: '台灣長鬃山羊', x: 2300, y: 1500, vx: -0.5, vy: 0.6, type: 'deer', r: 42, facing: -1, coins: 140, state: 'idle', alertTimer: 0 },
+      { id: 'se_pangolin', name: '黃金穿山甲', x: 2650, y: 1850, vx: 0.4, vy: -0.2, type: 'pangolin', r: 38, facing: 1, coins: 210, state: 'idle', alertTimer: 0 },
+      { id: 'se_frog', name: '莫氏樹蛙', x: 3150, y: 1820, vx: -0.4, vy: 0.3, type: 'frog', r: 28, facing: -1, coins: 115, state: 'idle', alertTimer: 0 },
+      { id: 'se_eagle', name: '黑鳶', x: 2550, y: 1220, vx: 1.5, vy: 0.3, type: 'eagle', r: 54, facing: 1, coins: 145, state: 'idle', alertTimer: 0, isFlying: true },
+      { id: 'se_cat', name: '雲豹貓', x: 3280, y: 2050, vx: -0.7, vy: -0.3, type: 'cat', r: 38, facing: -1, coins: 175, state: 'idle', alertTimer: 0 }
     ];
 
     const bubbles = [];

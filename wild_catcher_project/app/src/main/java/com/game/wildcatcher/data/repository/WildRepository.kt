@@ -35,6 +35,12 @@ class WildRepository(
         }
     }
 
+    suspend fun resetGameData() {
+        animalDao.resetAllAnimals()
+        shelterDao.insertZones(DEFAULT_SHELTER_ZONES)
+        playerDao.insertProfile(PlayerProfile())
+    }
+
     companion object {
         // Complete dataset of 32 realistic fauna strictly covering all habitats & conservation grades
         val FULL_100_REALISTIC_ANIMALS = listOf(

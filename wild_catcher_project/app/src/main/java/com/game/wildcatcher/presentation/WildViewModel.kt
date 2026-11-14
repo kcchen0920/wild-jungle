@@ -229,6 +229,16 @@ class WildViewModel(application: Application) : AndroidViewModel(application) {
         ttsManager.speakAnimalGuide(animal.name, animal.getFullBopomofo(), animal.funFact)
     }
 
+    fun resetGame() {
+        viewModelScope.launch {
+            repository.resetGameData()
+            playTimeManager.resetTimerAfterRest()
+            soundManager.playSound(SoundEffect.WOOD_CLICK)
+            _boboSpeech.value = "遊戲已重設，我們重新開始森林冒險吧！"
+            _currentScreen.value = ScreenState.MAIN_MENU
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         soundManager.release()
