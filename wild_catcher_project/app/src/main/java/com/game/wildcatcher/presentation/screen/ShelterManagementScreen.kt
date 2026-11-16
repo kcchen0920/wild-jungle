@@ -175,9 +175,9 @@ fun ShelterManagementScreen(
                             ) {
                                 Text(
                                     text = if (animalsInZone.isEmpty())
-                                        "🌱 點「去森林吹泡泡」帶小動物來住喔！"
+                                        "🏕️ 叢林樹屋營地準備好了！去森林帶小動物來住喔！"
                                     else
-                                        "🌟 好朋友：${animalsInZone.take(3).joinToString("、") { it.name }}",
+                                        "🏕️🔥 營地好朋友：${animalsInZone.take(3).joinToString("、") { it.name }}",
                                     fontSize = 13.sp,
                                     color = InkBlack,
                                     fontWeight = FontWeight.Bold
