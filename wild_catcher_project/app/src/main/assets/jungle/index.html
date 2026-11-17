@@ -3033,8 +3033,28 @@
           border: none; border-radius: 14px; padding: 12px 28px; font-size: 16px;
           font-weight: 800; cursor: pointer; box-shadow: 0 6px 16px rgba(22,163,74,0.4);
         }
+        .jungle-leaf-corner {
+          position: fixed; pointer-events: none; z-index: 45; opacity: 0.42;
+          filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
+          transform-origin: center center;
+        }
+        .jungle-leaf-tl { top: -12px; left: -12px; animation: leafSwayA 6s ease-in-out infinite; }
+        .jungle-leaf-tr { top: -12px; right: -12px; transform: scaleX(-1); animation: leafSwayB 7s ease-in-out infinite; }
+        .jungle-leaf-bl { bottom: -14px; left: -14px; transform: scaleY(-1); animation: leafSwayB 6.5s ease-in-out infinite; }
+        .jungle-leaf-br { bottom: -14px; right: -14px; transform: scale(-1, -1); animation: leafSwayA 7.5s ease-in-out infinite; }
+        @keyframes leafSwayA { 0%, 100% { rotate: 0deg; } 50% { rotate: 4deg; } }
+        @keyframes leafSwayB { 0%, 100% { rotate: 0deg; } 50% { rotate: -4deg; } }
       `;
       document.head.appendChild(style);
+
+      // Foreground Foliage Parallax (4 corners)
+      const leafSvg = `<svg width="140" height="140" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0 C40 10, 85 35, 110 85 C75 75, 45 55, 25 95 C15 65, 10 35, 0 0 Z" fill="#14532d"/><path d="M0 0 C55 5, 95 20, 115 55 C85 50, 60 40, 45 70 C30 45, 15 20, 0 0 Z" fill="#166534"/></svg>`;
+      ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+        const el = document.createElement('div');
+        el.className = `jungle-leaf-corner jungle-leaf-${pos}`;
+        el.innerHTML = leafSvg;
+        document.body.appendChild(el);
+      });
 
       // 2. Time-of-Day Overlay & Toggle
       const todOverlay = document.createElement('div');
@@ -3138,10 +3158,18 @@
                     an.x += (dx / dist) * 2.2;
                     an.y += (dy / dist) * 2.2;
                     an.facing = dx >= 0 ? 1 : -1;
+                    if (!an._notifiedApple && typeof particles !== 'undefined' && Array.isArray(particles)) {
+                      an._notifiedApple = true;
+                      particles.push({ x: an.x, y: an.y - 38, vx: 0, vy: -0.9, life: 35, text: '🍎' });
+                    }
                   } else if (dist <= 28) {
                     apples.splice(i, 1);
+                    an._notifiedApple = false;
+                    an.y -= 8; // playful hop
+                    setTimeout(() => { an.y += 8; }, 140);
                     if (typeof particles !== 'undefined' && Array.isArray(particles)) {
-                      particles.push({ x: an.x, y: an.y - 30, vx: 0, vy: -1.2, life: 45, text: '❤️' });
+                      particles.push({ x: an.x, y: an.y - 34, vx: 0, vy: -1.3, life: 48, text: '❤️' });
+                      particles.push({ x: an.x + 14, y: an.y - 26, vx: 0.4, vy: -1.1, life: 40, text: '🎵' });
                     }
                     break;
                   }
