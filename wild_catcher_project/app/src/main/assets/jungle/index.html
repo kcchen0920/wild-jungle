@@ -1546,9 +1546,10 @@
 
         if (caught.coins >= 140 || player.catches % 2 === 0) {
           setTimeout(() => openFieldUpgradeModal('catch_milestone'), 300);
+        } else if (typeof showDiscoveryCard === 'function') {
+          showDiscoveryCard(caught);
         } else {
-          alert(`🎉 小獵人成功捕獲【${caught.name}】！
-獲得金幣 +${caught.coins} G，探險筆記已更新！`);
+          alert(`🎉 小獵人成功捕獲【${caught.name}】！\n獲得金幣 +${caught.coins} G，探險筆記已更新！`);
         }
       }
 
@@ -2981,6 +2982,175 @@
       }
       window.addEventListener('pointerdown', startLoop, { once: true });
       window.addEventListener('keydown', startLoop, { once: true });
+    })();
+
+    // ========================================================
+    // JUNGLE DLC ENHANCEMENTS:
+    // 1. Dave-Style Discovery Card + TTS Voice
+    // 2. Palm Rejection (24px Edge Dead-Zone) + Dual-Channel Haptics
+    // 3. Time-of-Day Cycle (Dawn / Noon / Sunset / Firefly Night)
+    // 4. Herbivore Dino-Eat-Apple Ecology + Particle Pool Cap
+    // ========================================================
+    (function initJungleEnhancements() {
+      // 1. Inject Discovery Card & Time-of-Day UI styles
+      const style = document.createElement('style');
+      style.textContent = `
+        #jungle-tod-overlay {
+          position: fixed; inset: 0; pointer-events: none; z-index: 40;
+          transition: background 4s ease, opacity 4s ease;
+        }
+        #jungle-tod-badge {
+          position: fixed; top: 14px; right: 14px; z-index: 60;
+          background: rgba(20, 35, 24, 0.78); color: #FFE066;
+          border: 2px solid rgba(255, 224, 102, 0.45); border-radius: 999px;
+          padding: 6px 14px; font-size: 13px; font-weight: 700;
+          cursor: pointer; backdrop-filter: blur(6px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3); user-select: none;
+        }
+        #dino-discovery-modal {
+          position: fixed; inset: 0; z-index: 9999; display: none;
+          align-items: center; justify-content: center;
+          background: rgba(10, 22, 14, 0.72); backdrop-filter: blur(6px);
+        }
+        #dino-discovery-modal.visible { display: flex; animation: discPop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes discPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .disc-card {
+          width: min(420px, 88vw); background: linear-gradient(160deg, #1b3a24, #0f2416);
+          border: 3px solid #FFE066; border-radius: 24px; padding: 24px;
+          color: #fff; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+        .disc-badge {
+          display: inline-block; background: #FFE066; color: #1b3a24;
+          font-weight: 800; font-size: 12px; padding: 4px 12px; border-radius: 999px;
+          margin-bottom: 10px; letter-spacing: 0.5px;
+        }
+        .disc-title { font-size: 28px; font-weight: 800; margin: 4px 0; color: #fff; }
+        .disc-zhuyin { font-size: 14px; color: #A7F3D0; margin-bottom: 10px; }
+        .disc-desc { font-size: 15px; line-height: 1.55; color: #E2E8F0; margin: 12px 0 18px; }
+        .disc-coins { font-size: 18px; font-weight: 800; color: #FFE066; margin-bottom: 16px; }
+        .disc-btn {
+          background: linear-gradient(135deg, #4ADE80, #16A34A); color: #052e16;
+          border: none; border-radius: 14px; padding: 12px 28px; font-size: 16px;
+          font-weight: 800; cursor: pointer; box-shadow: 0 6px 16px rgba(22,163,74,0.4);
+        }
+      `;
+      document.head.appendChild(style);
+
+      // 2. Time-of-Day Overlay & Toggle
+      const todOverlay = document.createElement('div');
+      todOverlay.id = 'jungle-tod-overlay';
+      document.body.appendChild(todOverlay);
+
+      const todPhases = [
+        { name: '☀️ 陽光正午', bg: 'rgba(255, 245, 200, 0.0)' },
+        { name: '🌅 黃金黃昏', bg: 'rgba(255, 140, 50, 0.16)' },
+        { name: '🌙 螢火蟲之夜', bg: 'rgba(10, 20, 48, 0.34)' },
+        { name: '🌤️ 清晨微光', bg: 'rgba(180, 235, 255, 0.08)' }
+      ];
+      let todIndex = 0;
+      const todBadge = document.createElement('div');
+      todBadge.id = 'jungle-tod-badge';
+      todBadge.textContent = todPhases[0].name;
+      todBadge.title = '點擊切換叢林日夜光影';
+      todBadge.addEventListener('click', () => {
+        todIndex = (todIndex + 1) % todPhases.length;
+        todOverlay.style.background = todPhases[todIndex].bg;
+        todBadge.textContent = todPhases[todIndex].name;
+        if (navigator.vibrate) navigator.vibrate(10);
+      });
+      document.body.appendChild(todBadge);
+
+      // Auto-advance time of day every 90 seconds
+      setInterval(() => {
+        todIndex = (todIndex + 1) % todPhases.length;
+        todOverlay.style.background = todPhases[todIndex].bg;
+        todBadge.textContent = todPhases[todIndex].name;
+      }, 90000);
+
+      // 3. Discovery Card Modal + TTS
+      const discModal = document.createElement('div');
+      discModal.id = 'dino-discovery-modal';
+      discModal.innerHTML = `
+        <div class="disc-card">
+          <div class="disc-badge">✨ 叢林新發現</div>
+          <div class="disc-title" id="discTitle">暴龍</div>
+          <div class="disc-zhuyin" id="discZhuyin"></div>
+          <div class="disc-desc" id="discDesc"></div>
+          <div class="disc-coins" id="discCoins">+100 G</div>
+          <button class="disc-btn" id="discCloseBtn">收進探險筆記！</button>
+        </div>
+      `;
+      document.body.appendChild(discModal);
+      document.getElementById('discCloseBtn').addEventListener('click', () => {
+        discModal.classList.remove('visible');
+        if (navigator.vibrate) navigator.vibrate(12);
+      });
+
+      window.showDiscoveryCard = function(caught) {
+        const info = (typeof ALL_100_ANIMALS !== 'undefined' && ALL_100_ANIMALS.find(a => a.id === caught.id)) || caught;
+        document.getElementById('discTitle').textContent = info.name || '神秘生物';
+        document.getElementById('discZhuyin').textContent = info.zhuyin ? `${info.zhuyin} · ${info.habitat || ''}` : (info.habitat || '');
+        document.getElementById('discDesc').textContent = info.desc || '成功與叢林夥伴成為好朋友！';
+        document.getElementById('discCoins').textContent = `獲得金幣 +${caught.coins || 50} G`;
+        discModal.classList.add('visible');
+
+        if (navigator.vibrate) navigator.vibrate([20, 40, 30]);
+        try {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(`哇！發現${info.name}！${info.desc || ''}`);
+            utter.lang = 'zh-TW';
+            utter.rate = 0.95;
+            window.speechSynthesis.speak(utter);
+          }
+        } catch (e) {}
+      };
+
+      // 4. Palm Rejection (24px Edge Dead-Zone) + Crisp Tap Haptics
+      window.addEventListener('touchstart', (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        const x = e.touches[0].clientX;
+        const w = window.innerWidth;
+        if (x < 24 || x > w - 24) {
+          e.stopPropagation();
+          return;
+        }
+        if (navigator.vibrate) navigator.vibrate(10);
+      }, { capture: true, passive: true });
+
+      // 5. Particle Pool Cap & Herbivore-Apple Ecology Loop
+      setInterval(() => {
+        try {
+          if (typeof particles !== 'undefined' && Array.isArray(particles) && particles.length > 140) {
+            particles.splice(0, particles.length - 140);
+          }
+          if (typeof apples !== 'undefined' && Array.isArray(apples) && apples.length > 0 &&
+              typeof animals !== 'undefined' && Array.isArray(animals)) {
+            const herbivoreIds = ['dino_triceratops', 'dino_stego', 'dino_bronto', 'dino_ankylo', 'dino_parasaurolophus', 'dino_plateosaurus', 'formosan_sika_deer'];
+            for (let i = apples.length - 1; i >= 0; i--) {
+              const ap = apples[i];
+              for (const an of animals) {
+                if (herbivoreIds.includes(an.id) || (an.type && an.type.includes('trike')) || (an.type && an.type.includes('bronto'))) {
+                  const dx = ap.x - an.x;
+                  const dy = ap.y - an.y;
+                  const dist = Math.hypot(dx, dy);
+                  if (dist < 260 && dist > 28) {
+                    an.x += (dx / dist) * 2.2;
+                    an.y += (dy / dist) * 2.2;
+                    an.facing = dx >= 0 ? 1 : -1;
+                  } else if (dist <= 28) {
+                    apples.splice(i, 1);
+                    if (typeof particles !== 'undefined' && Array.isArray(particles)) {
+                      particles.push({ x: an.x, y: an.y - 30, vx: 0, vy: -1.2, life: 45, text: '❤️' });
+                    }
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) {}
+      }, 60);
     })();
   </script>
 </body>
