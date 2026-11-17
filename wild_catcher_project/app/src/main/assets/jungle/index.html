@@ -3058,6 +3058,46 @@
           animation: spinSunburst 16s linear infinite; pointer-events: none; z-index: -1;
         }
         @keyframes spinSunburst { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Fever Rainbow Border */
+        #jungle-fever-border {
+          position: fixed; inset: 0; pointer-events: none; z-index: 48;
+          border: 6px solid transparent; border-radius: 12px; opacity: 0;
+          transition: opacity 0.4s ease;
+          box-shadow: inset 0 0 36px rgba(255, 224, 102, 0.75), inset 0 0 70px rgba(74, 222, 128, 0.5);
+        }
+        #jungle-fever-border.active { opacity: 1; animation: feverPulse 1s ease-in-out infinite alternate; }
+        @keyframes feverPulse {
+          0% { box-shadow: inset 0 0 32px rgba(255, 224, 102, 0.75), inset 0 0 60px rgba(56, 189, 248, 0.5); }
+          100% { box-shadow: inset 0 0 42px rgba(244, 114, 182, 0.8), inset 0 0 80px rgba(74, 222, 128, 0.6); }
+        }
+        /* Night Fireflies */
+        .jungle-firefly {
+          position: fixed; width: 7px; height: 7px; border-radius: 50%;
+          background: #fef08a; box-shadow: 0 0 12px 3px #fde047;
+          pointer-events: none; z-index: 44; opacity: 0;
+          transition: opacity 1.5s ease;
+          animation: fireflyFloat 5s ease-in-out infinite alternate;
+        }
+        @keyframes fireflyFloat {
+          0% { transform: translate(0, 0) scale(0.8); opacity: 0.3; }
+          50% { transform: translate(18px, -24px) scale(1.25); opacity: 0.95; }
+          100% { transform: translate(-14px, -10px) scale(0.9); opacity: 0.4; }
+        }
+        /* Tropical Rain & Rainbow */
+        #jungle-rain-layer {
+          position: fixed; inset: 0; pointer-events: none; z-index: 43; opacity: 0;
+          background-image: repeating-linear-gradient(105deg, transparent 0 18px, rgba(186, 230, 253, 0.22) 18px 20px);
+          background-size: 40px 40px; transition: opacity 1s ease;
+        }
+        #jungle-rain-layer.active { opacity: 1; animation: rainFall 0.45s linear infinite; }
+        @keyframes rainFall { from { background-position: 0 0; } to { background-position: -14px 40px; } }
+        #jungle-rainbow {
+          position: fixed; top: -120px; right: -120px; width: 440px; height: 440px;
+          border-radius: 50%; pointer-events: none; z-index: 42; opacity: 0;
+          background: radial-gradient(circle, transparent 52%, rgba(248,113,113,0.22) 56%, rgba(251,191,36,0.22) 60%, rgba(74,222,128,0.22) 64%, rgba(96,165,250,0.22) 68%, transparent 72%);
+          transition: opacity 2s ease;
+        }
+        #jungle-rainbow.active { opacity: 1; }
       `;
       document.head.appendChild(style);
 
@@ -3070,10 +3110,61 @@
         document.body.appendChild(el);
       });
 
-      // 2. Time-of-Day Overlay & Toggle
+      // 2. Time-of-Day Overlay & Toggle + Fireflies + Rain/Rainbow + Fever Border
       const todOverlay = document.createElement('div');
       todOverlay.id = 'jungle-tod-overlay';
       document.body.appendChild(todOverlay);
+
+      const feverBorder = document.createElement('div');
+      feverBorder.id = 'jungle-fever-border';
+      document.body.appendChild(feverBorder);
+
+      const rainLayer = document.createElement('div');
+      rainLayer.id = 'jungle-rain-layer';
+      document.body.appendChild(rainLayer);
+
+      const rainbowEl = document.createElement('div');
+      rainbowEl.id = 'jungle-rainbow';
+      document.body.appendChild(rainbowEl);
+
+      const fireflies = [];
+      for (let i = 0; i < 16; i++) {
+        const ff = document.createElement('div');
+        ff.className = 'jungle-firefly';
+        ff.style.left = (8 + Math.random() * 84) + 'vw';
+        ff.style.top = (12 + Math.random() * 75) + 'vh';
+        ff.style.animationDelay = (Math.random() * 4).toFixed(2) + 's';
+        document.body.appendChild(ff);
+        fireflies.push(ff);
+      }
+
+      function updateNightFireflies(isNight) {
+        fireflies.forEach(ff => { ff.style.opacity = isNight ? '0.9' : '0'; });
+      }
+
+      // Tropical Rain + Post-Rain Rainbow cycle (every 2.5 mins)
+      function triggerTropicalShower() {
+        rainLayer.classList.add('active');
+        setTimeout(() => {
+          rainLayer.classList.remove('active');
+          rainbowEl.classList.add('active');
+          setTimeout(() => rainbowEl.classList.remove('active'), 18000);
+        }, 16000);
+      }
+      setInterval(triggerTropicalShower, 150000);
+
+      // Fever Combo on rapid taps
+      let tapCombo = 0, comboTimer = null;
+      window.addEventListener('pointerdown', () => {
+        tapCombo++;
+        clearTimeout(comboTimer);
+        comboTimer = setTimeout(() => { tapCombo = 0; }, 1200);
+        if (tapCombo >= 5) {
+          feverBorder.classList.add('active');
+          setTimeout(() => feverBorder.classList.remove('active'), 5000);
+          tapCombo = 0;
+        }
+      }, { passive: true });
 
       const todPhases = [
         { name: '☀️ 陽光正午', bg: 'rgba(255, 245, 200, 0.0)' },
@@ -3090,6 +3181,7 @@
         todIndex = (todIndex + 1) % todPhases.length;
         todOverlay.style.background = todPhases[todIndex].bg;
         todBadge.textContent = todPhases[todIndex].name;
+        updateNightFireflies(todIndex === 2);
         if (navigator.vibrate) navigator.vibrate(10);
       });
       document.body.appendChild(todBadge);
@@ -3099,6 +3191,7 @@
         todIndex = (todIndex + 1) % todPhases.length;
         todOverlay.style.background = todPhases[todIndex].bg;
         todBadge.textContent = todPhases[todIndex].name;
+        updateNightFireflies(todIndex === 2);
       }, 90000);
 
       // 3. Discovery Card Modal + TTS
